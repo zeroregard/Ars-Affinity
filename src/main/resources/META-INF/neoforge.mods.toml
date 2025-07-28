@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="MIT"
+
+[[mods]]
+modId="arsaffinity"
+version="${mod_version}"
+displayName="Ars Affinity"
+authors="arsaffinity-team"
+description='''
+A mod focused on affinity systems for Ars Nouveau.
+'''
+
+[[dependencies.arsaffinity]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[21.1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.arsaffinity]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.21.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.arsaffinity]]
+    modId="ars_nouveau"
+    mandatory=true
+    versionRange="[5.8.2,)"
+    ordering="AFTER"
+    side="BOTH" 

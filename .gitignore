@@ -1,0 +1,17 @@
+build/*
+bin/*
+.gradle/*
+run/*
+.DS_Store
+src/generated/resources/.cache
+.idea/
+out/
+
+# Node.js
+node_modules/
+.github/scripts/node_modules/
+.github/scripts/dist/
+.github/scripts/coverage/
+.github/scripts/debug/
+
+MR_ROBOT.md 
