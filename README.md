@@ -9,11 +9,12 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 ## Buffs and Debuffs
 
 ### Fire School
-- **PASSIVE_DOUSED**: Reduces mana regeneration by % when in water or rain
+- **PASSIVE_DOUSED**: Reduces mana regeneration by % when in water or rain (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
+- **PASSIVE_FIRE_THORNS**: Has % chance to ignite enemies when attacked (Tier 2: 50%, Tier 3: 100%)
 - **PASSIVE_MOB_PACIFICATION**: Mobs Blaze and Magma Cube ignore you (Tier 3)
 
 ### Water School
-- **PASSIVE_DEHYDRATED**: Reduces mana regeneration by % when in the Nether or on fire
+- **PASSIVE_DEHYDRATED**: Reduces mana regeneration by % when in the Nether or on fire (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
 
 ### Earth School
 - TBD
