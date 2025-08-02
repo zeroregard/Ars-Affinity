@@ -20,6 +20,7 @@ public class SchoolAffinityProgressProvider {
         
         return playerProgressCache.computeIfAbsent(playerId, id -> {
             SchoolAffinityProgress newProgress = new SchoolAffinityProgress();
+            newProgress.setPlayer(player); // Set player reference for cache invalidation
             CompoundTag playerData = player.getPersistentData();
             if (playerData.contains(IDENTIFIER.toString())) {
                 CompoundTag affinityData = playerData.getCompound(IDENTIFIER.toString());

@@ -1,12 +1,15 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.event.TierChangeEvent;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.HashMap;
@@ -16,9 +19,14 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     private final Map<SpellSchool, Float> schoolAffinities = new HashMap<>();
     private final Map<SpellSchool, Integer> schoolTiers = new HashMap<>();
+    private Player player; // Reference to the player for event firing
     
     public SchoolAffinityProgress() {
         initializeDefaultAffinities();
+    }
+    
+    public void setPlayer(Player player) {
+        this.player = player;
     }
     
     private void initializeDefaultAffinities() {
@@ -40,8 +48,15 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     public void setAffinity(SpellSchool school, float value) {
         float clampedValue = Math.max(0.0f, Math.min(1.0f, value));
+        int oldTier = getTier(school);
         schoolAffinities.put(school, clampedValue);
-        schoolTiers.put(school, calculateTier(clampedValue));
+        int newTier = calculateTier(clampedValue);
+        schoolTiers.put(school, newTier);
+        
+        // Fire event if tier changed
+        if (oldTier != newTier && player != null) {
+            NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+        }
     }
     
     private int calculateTier(float affinity) {
@@ -69,8 +84,15 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         if (total > 0.0f) {
             for (SpellSchool school : schoolAffinities.keySet()) {
                 float normalized = schoolAffinities.get(school) / total;
+                int oldTier = getTier(school);
                 schoolAffinities.put(school, normalized);
-                schoolTiers.put(school, calculateTier(normalized));
+                int newTier = calculateTier(normalized);
+                schoolTiers.put(school, newTier);
+                
+                // Fire event if tier changed during normalization
+                if (oldTier != newTier && player != null) {
+                    NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+                }
             }
         }
     }
