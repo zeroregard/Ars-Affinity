@@ -1,0 +1,53 @@
+package com.github.ars_affinity.perk;
+
+import com.github.ars_affinity.ArsAffinity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.EntityType;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class AffinityPerkDescriptionHelper {
+
+    public static MutableComponent getPerkDescription(AffinityPerk perk) {
+        String translationKey = "ars_affinity.perk." + perk.perk.name();
+
+        switch (perk.perk) {
+            case PASSIVE_DOUSED:
+            case PASSIVE_DEHYDRATED:
+            case PASSIVE_FIRE_THORNS:
+                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                    return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
+                }
+                return Component.translatable(translationKey, 0);
+            case PASSIVE_MOB_PACIFICATION:
+                if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
+                    if (entityPerk.entities != null && !entityPerk.entities.isEmpty()) {
+                        String entityNames = getEntityNames(entityPerk.entities);
+                        return Component.translatable(translationKey, entityNames);
+                    } else {
+                        return Component.translatable(translationKey, "unknown entities");
+                    }
+                }
+                return Component.translatable(translationKey, "unknown entities");
+            default:
+                return Component.translatable(translationKey, 0);
+        }
+    }
+
+    public static String getPerkPrefix(AffinityPerk perk) {
+        return perk.isBuff ? "+" : "-";
+    }
+    
+    private static String getEntityNames(List<String> entityIds) {
+        return entityIds.stream()
+            .map(id -> EntityType.byString(id))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(EntityType::getDescriptionId)
+            .map(key -> Component.translatable(key).getString())
+            .collect(Collectors.joining(", "));
+    }
+} 

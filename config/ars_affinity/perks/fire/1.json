@@ -1,0 +1,13 @@
+[
+    {
+      "perk": "PASSIVE_DOUSED",
+      "amount": 0.3,
+      "isBuff": false
+    },
+    {
+      "perk": "PASSIVE_FIRE_THORNS",
+      "amount": 0.25,
+      "isBuff": true
+    }
+  ]
+  
