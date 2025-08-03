@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
+import ConfigTooltip from './ConfigTooltip'
 
 type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
 
@@ -28,36 +29,16 @@ const tierSettings = [{
 function App(): React.JSX.Element {
     const [hoveredSchool, setHoveredSchool] = useState<School | null>(null)
     const [hoveredTier, setHoveredTier] = useState<number | null>(null)
-    const [configData, setConfigData] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
     useEffect(() => {
-        const loadConfig = async () => {
-            if (!hoveredSchool || !hoveredTier) {
-                setConfigData(null)
-                return
-            }
-
-            setLoading(true)
-            try {
-                const response = await fetch(`/config/ars_affinity/perks/${hoveredSchool}/${hoveredTier}.json`)
-                if (response.ok) {
-                    const data = await response.json()
-                    setConfigData(data)
-                } else {
-                    console.warn(`Config file not found: ${hoveredSchool}/${hoveredTier}.json`)
-                    setConfigData(null)
-                }
-            } catch (error) {
-                console.error('Error loading config:', error)
-                setConfigData(null)
-            } finally {
-                setLoading(false)
-            }
+        const handleMouseMove = (event: MouseEvent) => {
+            setMousePosition({ x: event.clientX, y: event.clientY })
         }
 
-        loadConfig()
-    }, [hoveredSchool, hoveredTier])
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => window.removeEventListener('mousemove', handleMouseMove)
+    }, [])
 
     return (
         <div className="app">
@@ -112,43 +93,15 @@ function App(): React.JSX.Element {
                 </div>
             </div>
             
-            {/* Config Display */}
-            <div style={{ 
-                position: 'fixed', 
-                top: '10px', 
-                right: '10px', 
-                backgroundColor: 'white', 
-                padding: '15px', 
-                border: '1px solid black',
-                borderRadius: '5px',
-                maxWidth: '400px',
-                maxHeight: '300px',
-                overflow: 'auto',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-            }}>
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>
-                    {hoveredSchool && hoveredTier ? `${hoveredSchool} Tier ${hoveredTier}` : 'Hover over a school tier'}
-                </h3>
-                {loading && <div>Loading...</div>}
-                {configData && (
-                    <pre style={{ 
-                        fontSize: '12px', 
-                        margin: 0, 
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'monospace'
-                    }}>
-                        {JSON.stringify(configData, null, 2)}
-                    </pre>
-                )}
-                {!loading && !configData && hoveredSchool && hoveredTier && (
-                    <div style={{ color: '#666', fontStyle: 'italic' }}>
-                        No config file found for {hoveredSchool} tier {hoveredTier}
-                    </div>
-                )}
-            </div>
+            <ConfigTooltip 
+                hoveredSchool={hoveredSchool}
+                hoveredTier={hoveredTier}
+                mousePosition={mousePosition}
+            />
         </div>
     )
 }
+
 
 function SchoolDisplay({ school, hoveredSchool, hoveredTier }: { school: School, hoveredSchool: School | null, hoveredTier: number | null }) {
     return (
