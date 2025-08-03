@@ -62,10 +62,11 @@ function ConfigTooltip({
             </style>
             <div style={{ 
                 position: 'fixed', 
-                left: `${mousePosition.x + 15}px`, 
-                top: `${mousePosition.y - 10}px`, 
+                left: `${mousePosition.x}px`, 
+                top: `${mousePosition.y + 16}px`, 
                 zIndex: 1000,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                transform: 'translateX(-50%)'
             }}>
                 <div style={{
                     width: '400px',
@@ -91,7 +92,7 @@ function ConfigTooltip({
                         margin: '0 0 10px 0', 
                         fontSize: '18px', 
                     }}>
-                        {titleCase(hoveredSchool)}
+                       <SchoolTitle school={hoveredSchool} />
                     </h2>
                     <h3 style={{ fontSize: '16px' }}> Tier {hoveredTier}</h3>
                     {configData && (
@@ -118,6 +119,11 @@ function ConfigTooltip({
             </div>
         </>
     )
+}
+
+function SchoolTitle({ school }: { school: School }) {
+    const schoolName = school === 'necromancy' ? 'Anima' : school
+    return titleCase(schoolName)
 }
 
 export default ConfigTooltip 

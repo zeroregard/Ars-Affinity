@@ -15,11 +15,7 @@ interface PerkRendererProps {
 
 function PerkRenderer({ perk }: PerkRendererProps) {
     const intl = useIntl()
-    console.log('Perk data:', perk)
-    
-    // Try different possible perk ID fields
     const perkId = perk.perk;
-    console.log('Perk ID:', perkId)
     
     if (!perkId) {
         return <span style={{ color: '#ff6b6b' }}>Invalid perk data: {JSON.stringify(perk)}</span>
@@ -34,7 +30,6 @@ function PerkRenderer({ perk }: PerkRendererProps) {
 
     let formattedMessage = message
 
-    // Replace %d with the value
     if (perk.amount !== undefined) {
         const percentage = perk.amount * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())

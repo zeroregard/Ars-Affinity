@@ -71,10 +71,11 @@ function App(): React.JSX.Element {
                         {schools.map((school) => (<SchoolDisplay key={school} school={school} hoveredSchool={hoveredSchool} hoveredTier={hoveredTier} />))}
                     </div>
                     <div className="schools-overlay" style={{ position: 'absolute', left: 'calc(50%)', top: 'calc(50% - 8px)', width: '100%', height: '100%' }}>
-                        {tierSettings.map((tierSetting, tierIndex) =>
-                            schools.map((school, index) => {
-                                const angle = (index * 360 / schools.length) - 90
-                                const angleRad = (angle * Math.PI) / 180
+                        {schools.map((school, index) => {
+                            const angle = (index * 360 / schools.length) - 90
+                            const angleRad = (angle * Math.PI) / 180
+                            
+                            const tierHoverButtons = tierSettings.map((tierSetting, tierIndex) => {
                                 const width = 16;
                                 const height = tierSetting.height;
 
@@ -108,7 +109,31 @@ function App(): React.JSX.Element {
                                     </button>
                                 )
                             })
-                        )}
+
+
+                            const iconRadius = 120
+                            const iconSize = 32
+                            const iconX = (iconRadius * Math.cos(angleRad)) - (iconSize / 2)
+                            const iconY = (iconRadius * Math.sin(angleRad)) - (iconSize / 2)
+
+                            return (
+                                <div key={school}>
+                                    {tierHoverButtons}
+                                    <img
+                                        src={`/icons/${school}_tooltip.png`}
+                                        alt={`${school} icon`}
+                                        style={{
+                                            width: `${iconSize}px`,
+                                            height: `${iconSize}px`,
+                                            position: 'absolute',
+                                            left: `${iconX}px`,
+                                            top: `${iconY}px`,
+                                            imageRendering: 'pixelated'
+                                        }}
+                                    />
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
                 
