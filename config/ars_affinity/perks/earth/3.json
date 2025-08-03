@@ -1,5 +1,10 @@
 [
   {
+    "perk": "PASSIVE_GROUNDED",
+    "amount": 0.9,
+    "isBuff": false
+  },
+  {
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
     "entities": ["minecraft:spider", "minecraft:cave_spider", "minecraft:silverfish"]

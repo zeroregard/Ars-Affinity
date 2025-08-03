@@ -1,1 +1,7 @@
-[] 
+[
+  {
+    "perk": "PASSIVE_GROUNDED",
+    "amount": 0.3,
+    "isBuff": false
+  }
+] 

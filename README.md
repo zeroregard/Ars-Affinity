@@ -17,7 +17,8 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 - **PASSIVE_DEHYDRATED**: Reduces mana regeneration by % when in the Nether or on fire (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
 
 ### Earth School
-- TBD
+- **PASSIVE_GROUNDED**: Reduces mana regeneration by % when not touching the ground (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
+- **PASSIVE_MOB_PACIFICATION**: Mobs Spider, Cave Spider, and Silverfish ignore you (Tier 3)
 
 ### Air School
 - TBD
