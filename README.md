@@ -27,7 +27,7 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 - TBD
 
 ### Conjuration School
-- TBD
+- **PASSIVE_SUMMON_HEALTH**: Grants summoned creatures health boost for a duration (Tier 1: 10% for 25s, Tier 2: 20% for 50s, Tier 3: 30% for 75s)
 
 ### Necromancy School
 - TBD

@@ -34,6 +34,10 @@ public abstract class AffinityPerk {
                 case PASSIVE_FIRE_THORNS:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
+                case PASSIVE_SUMMON_HEALTH:
+                    float healthAmount = jsonObject.get("amount").getAsFloat();
+                    int duration = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, healthAmount, duration, isBuff);
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
@@ -52,6 +56,17 @@ public abstract class AffinityPerk {
         public AmountBasedPerk(AffinityPerkType perk, float amount, boolean isBuff) {
             super(perk, isBuff);
             this.amount = amount;
+        }
+    }
+
+    public static class DurationBasedPerk extends AffinityPerk {
+        public float amount;
+        public int time;
+
+        public DurationBasedPerk(AffinityPerkType perk, float amount, int time, boolean isBuff) {
+            super(perk, isBuff);
+            this.amount = amount;
+            this.time = time;
         }
     }
 
