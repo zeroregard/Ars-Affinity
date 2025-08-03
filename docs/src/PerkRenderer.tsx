@@ -5,6 +5,7 @@ import { titleCase } from './utils/string'
 interface Perk {
     isBuff?: boolean
     amount?: number
+    time?: number
     perk?: string
     entities?: string[]
     health?: number
@@ -31,17 +32,22 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     }
 
     let formattedMessage = message
-    console.log(perk)
 
-    if (perk.amount !== undefined) {
+    if (perk.time && perk.amount) {
+        formattedMessage = formattedMessage
+            .replace(/%s/g, perk.amount.toString())
+            .replace(/%d/g, (perk.time/20).toString())
+        
+    }
+    else if (perk.amount !== undefined) {
         const percentage = perk.amount * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }
-    if(perk.health && perk.hunger) {
+    else if(perk.health && perk.hunger) {
         formattedMessage = formattedMessage.replace(/%.1f/g, perk.health.toString()).replace(/%.2f/g, perk.hunger.toString())
     }
-    if(perk.entities) {
+    else if(perk.entities) {
         formattedMessage = formattedMessage.replace(/%s/g, perk.entities.map(entity => titleCase(entity
             .replace('minecraft:', '')
             .replace('_', ' ')))
