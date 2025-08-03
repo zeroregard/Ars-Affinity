@@ -7,6 +7,8 @@ interface Perk {
     amount?: number
     perk?: string
     entities?: string[]
+    health?: number
+    hunger?: number
 }
 
 interface PerkRendererProps {
@@ -29,11 +31,15 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     }
 
     let formattedMessage = message
+    console.log(perk)
 
     if (perk.amount !== undefined) {
         const percentage = perk.amount * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
         formattedMessage = formattedMessage.replace(/%%/g, '%')
+    }
+    if(perk.health && perk.hunger) {
+        formattedMessage = formattedMessage.replace(/%.1f/g, perk.health.toString()).replace(/%.2f/g, perk.hunger.toString())
     }
     if(perk.entities) {
         formattedMessage = formattedMessage.replace(/%s/g, perk.entities.map(entity => titleCase(entity

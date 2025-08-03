@@ -1,1 +1,7 @@
-[] 
+[
+  {
+    "perk": "PASSIVE_MANA_TAP",
+    "amount": 2.0,
+    "isBuff": true
+  }
+] 

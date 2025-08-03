@@ -32,6 +32,7 @@ public abstract class AffinityPerk {
                 case PASSIVE_BURIED:
                 case PASSIVE_GROUNDED:
                 case PASSIVE_FIRE_THORNS:
+                case PASSIVE_MANA_TAP:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_SUMMON_HEALTH:

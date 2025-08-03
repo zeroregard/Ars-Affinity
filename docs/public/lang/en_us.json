@@ -3,6 +3,9 @@
   "ars_affinity.perk.PASSIVE_DEHYDRATED": "Inhibits mana regeneration by %d%% in the Nether or when on fire",
   "ars_affinity.perk.PASSIVE_BURIED": "Inhibits mana regeneration by %d%% when deep underground",
   "ars_affinity.perk.PASSIVE_GROUNDED": "Inhibits mana regeneration by %d%% when not touching the ground",
+  "ars_affinity.perk.PASSIVE_SUMMON_HEALTH": "Grants summoned creatures +%d health boost for %d seconds",
+  "ars_affinity.perk.PASSIVE_LICH_FEAST": "Restores %.1f health and %.2f hunger when killing non-undead enemies",
+  "ars_affinity.perk.PASSIVE_MANA_TAP": "Restores %d%% of spell damage dealt as mana",
   "ars_affinity.perk.PASSIVE_MOB_PACIFICATION": "%s ignore you",
   "ars_affinity.perk.PASSIVE_FIRE_THORNS": "%d%% chance to ignite enemies when attacked",
   "ars_affinity.screen.affinity.title": "Affinities"

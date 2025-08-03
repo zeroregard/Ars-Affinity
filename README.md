@@ -34,7 +34,7 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 - **PASSIVE_MOB_PACIFICATION**: Undead mobs ignore you (Tier 3)
 
 ### Manipulation School
-- TBD
+- **PASSIVE_MANA_TAP**: Restores mana based on spell damage dealt (Tier 1: 10%, Tier 2: 20%, Tier 3: 30%)
 
 ## Commands (OP Only)
 

@@ -19,6 +19,7 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_DEHYDRATED:
             case PASSIVE_BURIED:
             case PASSIVE_GROUNDED:
+            case PASSIVE_MANA_TAP:
             case PASSIVE_FIRE_THORNS:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
