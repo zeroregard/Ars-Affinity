@@ -70,7 +70,7 @@ function ConfigTooltip({
             }}>
                 <div style={{
                     width: '400px',
-                    height: '300px',
+                    height: '250px',
                     backgroundColor: 'rgba(30, 15, 30, 0.9)',
                     border: '7px solid transparent',
                     borderImage: 'url(/tooltip.png) 3',
@@ -89,12 +89,12 @@ function ConfigTooltip({
                     textShadow: '2px 2px 0px rgba(62, 62, 62, 1)'
                 }}>
                     <h2 style={{ 
-                        margin: '0 0 10px 0', 
+                        margin: '0 0 4px 0', 
                         fontSize: '18px', 
                     }}>
                        <SchoolTitle school={hoveredSchool} />
                     </h2>
-                    <h3 style={{ fontSize: '16px' }}> Tier {hoveredTier}</h3>
+                    <h3 style={{ fontSize: '14px', color: '#ccc' }}> Tier {hoveredTier}</h3>
                     {configData && (
                         <div style={{ marginTop: '10px' }}>
                             {configData && Array.isArray(configData) && configData

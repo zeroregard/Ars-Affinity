@@ -60,7 +60,9 @@ function App(): React.JSX.Element {
 
     return (
         <IntlProvider messages={messages} locale="en">
+
             <div className="app">
+                <span style={{ fontSize: '14px', opacity: 0.5 }}>Hover tier bars below to see perks for each school</span>
                 <div className="background-container">
                     <img
                         src="/affinity_bg.png"
@@ -111,7 +113,7 @@ function App(): React.JSX.Element {
                             })
 
 
-                            const iconRadius = 120
+                            const iconRadius = 122
                             const iconSize = 32
                             const iconX = (iconRadius * Math.cos(angleRad)) - (iconSize / 2)
                             const iconY = (iconRadius * Math.sin(angleRad)) - (iconSize / 2)
