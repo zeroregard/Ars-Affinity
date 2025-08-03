@@ -7,6 +7,7 @@ public class ArsAffinityConfig {
     public static ModConfigSpec SERVER_CONFIG;
     public static ModConfigSpec.DoubleValue OPPOSING_SCHOOL_PENALTY_PERCENTAGE;
     public static ModConfigSpec.DoubleValue AFFINITY_GAIN_MULTIPLIER;
+    public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
     
     static {
         ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
@@ -18,6 +19,9 @@ public class ArsAffinityConfig {
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.001 to 0.1)")
             .defineInRange("affinityGainMultiplier", 0.01, 0.001, 0.1);
+        DEEP_UNDERGROUND_Y_THRESHOLD = SERVER_BUILDER
+            .comment("Y coordinate threshold for deep underground detection. Players below this Y level are considered deep underground")
+            .defineInRange("deepUndergroundYThreshold", 20, -64, 320);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();

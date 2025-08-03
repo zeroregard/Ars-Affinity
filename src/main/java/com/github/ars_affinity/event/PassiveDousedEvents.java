@@ -28,8 +28,8 @@ public class PassiveDousedEvents {
             if (progress != null) {
                 int fireTier = progress.getTier(SpellSchools.ELEMENTAL_FIRE);
                 if (fireTier > 0) {
-                    AffinityPerkHelper.applyPerks(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, perk -> {
-                        if (perk.perk == AffinityPerkType.PASSIVE_DOUSED && perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                    AffinityPerkHelper.applyHighestTierPerk(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.PASSIVE_DOUSED, perk -> {
+                        if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                             double currentRegen = event.getRegen();
                             double reduction = currentRegen * amountPerk.amount;
                             double newRegen = currentRegen - reduction;

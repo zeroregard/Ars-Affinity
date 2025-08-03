@@ -36,8 +36,8 @@ public class FireThornsEvents {
 
         int fireTier = progress.getTier(SpellSchools.ELEMENTAL_FIRE);
         if (fireTier > 0) {
-            AffinityPerkHelper.applyPerks(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, perk -> {
-                if (perk.perk == AffinityPerkType.PASSIVE_FIRE_THORNS && perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+            AffinityPerkHelper.applyHighestTierPerk(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.PASSIVE_FIRE_THORNS, perk -> {
+                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     if (RANDOM.nextFloat() < amountPerk.amount) {
                         // Set the attacker on fire
                         attacker.setRemainingFireTicks(3 * 20);

@@ -17,6 +17,7 @@ public class AffinityPerkDescriptionHelper {
         switch (perk.perk) {
             case PASSIVE_DOUSED:
             case PASSIVE_DEHYDRATED:
+            case PASSIVE_BURIED:
             case PASSIVE_FIRE_THORNS:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
@@ -38,7 +39,7 @@ public class AffinityPerkDescriptionHelper {
     }
 
     public static String getPerkPrefix(AffinityPerk perk) {
-        return perk.isBuff ? "+" : "-";
+        return perk.isBuff ? "+ " : "- ";
     }
     
     private static String getEntityNames(List<String> entityIds) {

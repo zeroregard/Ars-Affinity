@@ -110,6 +110,7 @@ public class AffinityScreen extends Screen {
             // Current tier perks only (not all perks up to this tier)
             List<AffinityPerk> perks = AffinityPerkManager.getPerksForCurrentLevel(school, tier);
             if (!perks.isEmpty()) {
+                perks.sort((a, b) -> Boolean.compare(!a.isBuff, !b.isBuff));
                 tooltip.add(Component.literal("Current Perks:"));
                 for (AffinityPerk perk : perks) {
                     String prefix = AffinityPerkDescriptionHelper.getPerkPrefix(perk);

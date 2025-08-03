@@ -81,19 +81,13 @@ public class MobPacificationEvents {
         }
         
         // Check all schools for mob pacification perks
-        for (var school : com.github.ars_affinity.school.SchoolRelationshipHelper.ALL_SCHOOLS) {
-            int tier = progress.getTier(school);
-            
-            if (tier > 0) {
-                AffinityPerkHelper.applyPerks(progress, tier, school, perk -> {
-                    if (perk.perk == AffinityPerkType.PASSIVE_MOB_PACIFICATION && perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
-                        if (entityPerk.entities != null) {
-                            pacifiedMobs.addAll(entityPerk.entities);
-                        }
-                    }
-                });
+        AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_MOB_PACIFICATION, perk -> {
+            if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
+                if (entityPerk.entities != null) {
+                    pacifiedMobs.addAll(entityPerk.entities);
+                }
             }
-        }
+        });
         
         playerMobPacificationCache.put(playerId, pacifiedMobs);
     }

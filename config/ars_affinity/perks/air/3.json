@@ -7,6 +7,9 @@
   {
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
-    "entities": ["minecraft:ghast", "minecraft:phantom"]
+    "entities": [
+      "minecraft:ghast",
+      "minecraft:phantom"
+    ]
   }
 ]
