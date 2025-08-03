@@ -1,5 +1,10 @@
 [
   {
+    "perk": "PASSIVE_BURIED",
+    "amount": 0.9,
+    "isBuff": false
+  },
+  {
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
     "entities": ["minecraft:ghast", "minecraft:phantom"]
