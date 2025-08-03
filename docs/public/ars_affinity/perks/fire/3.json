@@ -1,0 +1,17 @@
+[
+  {
+    "perk": "PASSIVE_DOUSED",
+    "amount": 0.9,
+    "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_MOB_PACIFICATION",
+    "isBuff": true,
+    "entities": ["minecraft:blaze", "minecraft:magma_cube"]
+  },
+  {
+    "perk": "PASSIVE_FIRE_THORNS",
+    "amount": 1.0,
+    "isBuff": true
+  }
+]

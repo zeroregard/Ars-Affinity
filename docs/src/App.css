@@ -7,6 +7,8 @@
   justify-items: center;
   align-items: center;
   justify-content: center;
+  background-color: #20152e;
+  background-image: radial-gradient(at 100% 0%,hsla(262,95%,23%,.44) 0px,transparent 50%),radial-gradient(at 0% 99%,hsla(322,74%,45%,.63) 0px,transparent 50%);
 }
 
 .background-container {
