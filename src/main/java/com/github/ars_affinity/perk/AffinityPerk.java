@@ -38,6 +38,10 @@ public abstract class AffinityPerk {
                     float healthAmount = jsonObject.get("amount").getAsFloat();
                     int duration = jsonObject.get("time").getAsInt();
                     return new DurationBasedPerk(perkType, healthAmount, duration, isBuff);
+                case PASSIVE_LICH_FEAST:
+                    float healthRestore = jsonObject.get("health").getAsFloat();
+                    float hungerRestore = jsonObject.get("hunger").getAsFloat();
+                    return new LichFeastPerk(perkType, healthRestore, hungerRestore, isBuff);
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
@@ -70,12 +74,34 @@ public abstract class AffinityPerk {
         }
     }
 
+    public static class TupleAmountPerk extends AffinityPerk {
+        public float amount1;
+        public float amount2;
+
+        public TupleAmountPerk(AffinityPerkType perk, float amount1, float amount2, boolean isBuff) {
+            super(perk, isBuff);
+            this.amount1 = amount1;
+            this.amount2 = amount2;
+        }
+    }
+
     public static class EntityBasedPerk extends AffinityPerk {
         public java.util.List<String> entities;
 
         public EntityBasedPerk(AffinityPerkType perk, boolean isBuff, java.util.List<String> entities) {
             super(perk, isBuff);
             this.entities = entities;
+        }
+    }
+
+    public static class LichFeastPerk extends AffinityPerk {
+        public float health;
+        public float hunger;
+
+        public LichFeastPerk(AffinityPerkType perk, float health, float hunger, boolean isBuff) {
+            super(perk, isBuff);
+            this.health = health;
+            this.hunger = hunger;
         }
     }
 } 

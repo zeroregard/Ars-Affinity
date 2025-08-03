@@ -30,7 +30,8 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 - **PASSIVE_SUMMON_HEALTH**: Grants summoned creatures health boost for a duration (Tier 1: 10% for 25s, Tier 2: 20% for 50s, Tier 3: 30% for 75s)
 
 ### Necromancy School
-- TBD
+- **PASSIVE_LICH_FEAST**: Restores health and hunger when killing non-undead enemies (Tier 3: 0.5 health, 0.5 hunger)
+- **PASSIVE_MOB_PACIFICATION**: Undead mobs ignore you (Tier 3)
 
 ### Manipulation School
 - TBD

@@ -29,6 +29,11 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
+            case PASSIVE_LICH_FEAST:
+                if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
+                    return Component.translatable(translationKey, lichPerk.health, lichPerk.hunger);
+                }
+                return Component.translatable(translationKey, 0, 0);
             case PASSIVE_MOB_PACIFICATION:
                 if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
                     if (entityPerk.entities != null && !entityPerk.entities.isEmpty()) {
