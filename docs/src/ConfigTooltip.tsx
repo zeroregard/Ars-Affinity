@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import PerkRenderer from './PerkRenderer'
+import { titleCase } from './utils/string'
 
 type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
 
@@ -88,23 +90,25 @@ function ConfigTooltip({
                     <h2 style={{ 
                         margin: '0 0 10px 0', 
                         fontSize: '18px', 
-   
-                       
                     }}>
-                        {hoveredSchool}
+                        {titleCase(hoveredSchool)}
                     </h2>
                     <h3 style={{ fontSize: '16px' }}> Tier {hoveredTier}</h3>
-                    {loading && <div style={{ color: 'white' }}>Loading...</div>}
                     {configData && (
-                        <pre style={{ 
-                            fontSize: '12px', 
-                            margin: 0, 
-                            whiteSpace: 'pre-wrap',
-                            fontFamily: 'Minecraft, monospace',
-                            color: 'white'
-                        }}>
-                            {JSON.stringify(configData, null, 2)}
-                        </pre>
+                        <div style={{ marginTop: '10px' }}>
+                            {configData && Array.isArray(configData) && configData
+                                .sort((a, b) => {
+                                    // Sort buffs first (true), then negatives (false)
+                                    if (a.isBuff && !b.isBuff) return -1
+                                    if (!a.isBuff && b.isBuff) return 1
+                                    return 0
+                                })
+                                .map((perk: any, index: number) => (
+                                    <div key={index} style={{ marginBottom: '2px' }}>
+                                        <PerkRenderer perk={perk} />
+                                    </div>
+                                ))}
+                        </div>
                     )}
                     {!loading && !configData && (
                         <div style={{ color: '#ccc', fontStyle: 'italic' }}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import ConfigTooltip from './ConfigTooltip'
+import { IntlProvider } from 'react-intl'
 
 type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
 
@@ -30,6 +31,23 @@ function App(): React.JSX.Element {
     const [hoveredSchool, setHoveredSchool] = useState<School | null>(null)
     const [hoveredTier, setHoveredTier] = useState<number | null>(null)
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+    const [messages, setMessages] = useState<Record<string, string>>({})
+
+    useEffect(() => {
+        const loadMessages = async () => {
+            try {
+                const response = await fetch('/lang/en_us.json')
+                if (response.ok) {
+                    const data = await response.json()
+                    setMessages(data)
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error)
+            }
+        }
+
+        loadMessages()
+    }, [])
 
     useEffect(() => {
         const handleMouseMove = (event: MouseEvent) => {
@@ -41,64 +59,66 @@ function App(): React.JSX.Element {
     }, [])
 
     return (
-        <div className="app">
-            <div className="background-container">
-                <img
-                    src="/affinity_bg.png"
-                    alt="Affinity Background"
-                    className="affinity-bg"
+        <IntlProvider messages={messages} locale="en">
+            <div className="app">
+                <div className="background-container">
+                    <img
+                        src="/affinity_bg.png"
+                        alt="Affinity Background"
+                        className="affinity-bg"
+                    />
+                    <div className="schools-overlay">
+                        {schools.map((school) => (<SchoolDisplay key={school} school={school} hoveredSchool={hoveredSchool} hoveredTier={hoveredTier} />))}
+                    </div>
+                    <div className="schools-overlay" style={{ position: 'absolute', left: 'calc(50%)', top: 'calc(50% - 8px)', width: '100%', height: '100%' }}>
+                        {tierSettings.map((tierSetting, tierIndex) =>
+                            schools.map((school, index) => {
+                                const angle = (index * 360 / schools.length) - 90
+                                const angleRad = (angle * Math.PI) / 180
+                                const width = 16;
+                                const height = tierSetting.height;
+
+                                const x = (tierSetting.radius * Math.cos(angleRad)) - (width / 2)
+                                const y = (tierSetting.radius * Math.sin(angleRad)) - (height / 2)
+
+                                const tier = tierIndex + 1
+
+                                return (
+                                    <button
+                                        key={`${school}_${tierSetting.radius}`}
+                                        onClick={() => console.log('hello')}
+                                        onMouseEnter={() => {
+                                            setHoveredSchool(school)
+                                            setHoveredTier(tier)
+                                        }}
+                                        onMouseLeave={() => {
+                                            setHoveredSchool(null)
+                                            setHoveredTier(null)
+                                        }}
+                                        style={{ 
+                                            width: `${width}px`, 
+                                            border: 'none',
+                                            transform: `rotate(${angle}deg)`, 
+                                            height: `${height}px`, 
+                                            background: 'transparent',
+                                            position: 'absolute', 
+                                            left: `${x}px`, 
+                                            top: `${y}px` 
+                                        }}>
+                                    </button>
+                                )
+                            })
+                        )}
+                    </div>
+                </div>
+                
+                <ConfigTooltip 
+                    hoveredSchool={hoveredSchool}
+                    hoveredTier={hoveredTier}
+                    mousePosition={mousePosition}
                 />
-                <div className="schools-overlay">
-                    {schools.map((school) => (<SchoolDisplay key={school} school={school} hoveredSchool={hoveredSchool} hoveredTier={hoveredTier} />))}
-                </div>
-                <div className="schools-overlay" style={{ position: 'absolute', left: 'calc(50%)', top: 'calc(50% - 8px)', width: '100%', height: '100%' }}>
-                    {tierSettings.map((tierSetting, tierIndex) =>
-                        schools.map((school, index) => {
-                            const angle = (index * 360 / schools.length) - 90
-                            const angleRad = (angle * Math.PI) / 180
-                            const width = 16;
-                            const height = tierSetting.height;
-
-                            const x = (tierSetting.radius * Math.cos(angleRad)) - (width / 2)
-                            const y = (tierSetting.radius * Math.sin(angleRad)) - (height / 2)
-
-                            const tier = tierIndex + 1
-
-                            return (
-                                <button
-                                    key={`${school}_${tierSetting.radius}`}
-                                    onClick={() => console.log('hello')}
-                                    onMouseEnter={() => {
-                                        setHoveredSchool(school)
-                                        setHoveredTier(tier)
-                                    }}
-                                    onMouseLeave={() => {
-                                        setHoveredSchool(null)
-                                        setHoveredTier(null)
-                                    }}
-                                    style={{ 
-                                        width: `${width}px`, 
-                                        border: 'none',
-                                        transform: `rotate(${angle}deg)`, 
-                                        height: `${height}px`, 
-                                        background: 'transparent',
-                                        position: 'absolute', 
-                                        left: `${x}px`, 
-                                        top: `${y}px` 
-                                    }}>
-                                </button>
-                            )
-                        })
-                    )}
-                </div>
             </div>
-            
-            <ConfigTooltip 
-                hoveredSchool={hoveredSchool}
-                hoveredTier={hoveredTier}
-                mousePosition={mousePosition}
-            />
-        </div>
+        </IntlProvider>
     )
 }
 
