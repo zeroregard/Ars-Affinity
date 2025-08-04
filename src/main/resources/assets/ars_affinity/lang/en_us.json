@@ -8,5 +8,6 @@
   "ars_affinity.perk.PASSIVE_MANA_TAP": "Restore %d%% of spell damage dealt as mana",
   "ars_affinity.perk.PASSIVE_MOB_PACIFICATION": "%s ignore you",
   "ars_affinity.perk.PASSIVE_FIRE_THORNS": "%d%% chance to ignite enemies when attacked",
+  "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.screen.affinity.title": "Affinities"
 }

@@ -1,1 +1,7 @@
-[] 
+[
+  {
+    "perk": "PASSIVE_HEALING_AMPLIFICATION",
+    "amount": 0.25,
+    "isBuff": true
+  }
+]
