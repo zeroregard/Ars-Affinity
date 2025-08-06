@@ -1,12 +1,10 @@
 package com.github.ars_affinity.perk;
 
 import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import java.lang.reflect.Type;
 
 public abstract class AffinityPerk {
     public AffinityPerkType perk;
@@ -34,6 +32,7 @@ public abstract class AffinityPerk {
                 case PASSIVE_FIRE_THORNS:
                 case PASSIVE_MANA_TAP:
                 case PASSIVE_HEALING_AMPLIFICATION:
+                case PASSIVE_BUBBLE_GUARD:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_SUMMON_HEALTH:
@@ -106,4 +105,6 @@ public abstract class AffinityPerk {
             this.hunger = hunger;
         }
     }
+
+
 } 

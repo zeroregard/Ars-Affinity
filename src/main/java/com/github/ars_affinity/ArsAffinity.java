@@ -6,6 +6,7 @@ import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.registry.ModPotions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +44,9 @@ public class ArsAffinity {
         
         // Register capabilities
         modEventBus.addListener(this::registerCapabilities);
+        
+        // Register potions
+        ModPotions.EFFECTS.register(modEventBus);
         
         // Initialize client-side components
         if (FMLEnvironment.dist.isClient()) {
