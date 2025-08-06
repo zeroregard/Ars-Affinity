@@ -1,5 +1,8 @@
-{
-  "perk": "PASSIVE_BUBBLE_GUARD",
-  "isBuff": true,
-  "amount": 6.0
-}
+[
+  {
+    "perk": "PASSIVE_BUBBLE_GUARD",
+    "isBuff": true,
+    "amount": 100,
+    "time": 120
+  }
+]

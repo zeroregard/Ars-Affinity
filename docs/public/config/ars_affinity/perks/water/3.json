@@ -4,5 +4,11 @@
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
     "entities": ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"]
-  }
+  },
+      {
+      "perk": "PASSIVE_BUBBLE_GUARD",
+      "isBuff": true,
+      "amount": 100,
+      "time": 60
+    }
 ]

@@ -8,6 +8,7 @@
       {
       "perk": "PASSIVE_BUBBLE_GUARD",
       "isBuff": true,
-      "amount": 2.0
+      "amount": 100,
+      "time": 40
     }
 ]

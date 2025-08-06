@@ -50,7 +50,7 @@ public class BubbleGuardEvents {
 
         final boolean[] hasPerk = {false};
         AffinityPerkHelper.applyHighestTierPerk(progress, waterTier, com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_WATER, AffinityPerkType.PASSIVE_BUBBLE_GUARD, perk -> {
-            if (perk instanceof AffinityPerk.AmountBasedPerk) {
+            if (perk instanceof AffinityPerk.DurationBasedPerk) {
                 hasPerk[0] = true;
             }
         });
@@ -85,9 +85,8 @@ public class BubbleGuardEvents {
 
             // Apply cooldown to the player
             AffinityPerkHelper.applyHighestTierPerk(progress, waterTier, com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_WATER, AffinityPerkType.PASSIVE_BUBBLE_GUARD, perk -> {
-                if (perk instanceof AffinityPerk.AmountBasedPerk bubbleGuardPerk) {
-                    int cooldownTicks = (int) (bubbleGuardPerk.amount * 20);
-                    player.addEffect(new MobEffectInstance(ModPotions.BUBBLE_GUARD_COOLDOWN_EFFECT, cooldownTicks));
+                if (perk instanceof AffinityPerk.DurationBasedPerk bubbleGuardPerk) {
+                    player.addEffect(new MobEffectInstance(ModPotions.BUBBLE_GUARD_COOLDOWN_EFFECT, bubbleGuardPerk.time));
                 }
             });
 
