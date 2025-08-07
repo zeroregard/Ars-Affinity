@@ -8,6 +8,7 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue OPPOSING_SCHOOL_PENALTY_PERCENTAGE;
     public static ModConfigSpec.DoubleValue AFFINITY_GAIN_MULTIPLIER;
     public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
+    public static ModConfigSpec.IntValue ANCHOR_CHARM_DEFAULT_CHARGES;
     
     static {
         ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
@@ -22,6 +23,12 @@ public class ArsAffinityConfig {
         DEEP_UNDERGROUND_Y_THRESHOLD = SERVER_BUILDER
             .comment("Y coordinate threshold for deep underground detection. Players below this Y level are considered deep underground")
             .defineInRange("deepUndergroundYThreshold", 20, -64, 320);
+        SERVER_BUILDER.pop();
+        
+        SERVER_BUILDER.comment("Anchor Charm Configuration").push("anchor_charm");
+        ANCHOR_CHARM_DEFAULT_CHARGES = SERVER_BUILDER
+            .comment("Default number of charges for new Anchor Charms. Each spell cast consumes 1 charge when preventing affinity changes.")
+            .defineInRange("defaultCharges", 1000, 1, 10000);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();

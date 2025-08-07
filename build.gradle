@@ -88,7 +88,7 @@ dependencies {
     
     implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}")
     runtimeOnly("vazkii.patchouli:Patchouli:1.21-${patchouli_version}")
-    runtimeOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}")
+    implementation("top.theillusivec4.curios:curios-neoforge:${curios_version}+${minecraft_version}")
 }
 
 tasks.withType(Copy).configureEach {

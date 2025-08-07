@@ -11,5 +11,11 @@
   "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.perk.PASSIVE_BUBBLE_GUARD": "Incoming projectiles get encased in a bubble (%d second cooldown)",
   "effect.ars_affinity.bubble_guard_cooldown": "Bubble Guard Cooldown",
-  "ars_affinity.screen.affinity.title": "Affinities"
+  "ars_affinity.screen.affinity.title": "Affinities",
+  "item.ars_affinity.affinity_anchor_charm": "Affinity Anchor Charm",
+  "tooltip.ars_affinity.anchor_charm.desc": "Prevents affinity changes while worn",
+  "tooltip.ars_affinity.anchor_charm.charges": "Charges: %d/%d",
+  "tooltip.ars_affinity.anchor_charm.shift_info": "Costs one charge per spell cast",
+  "ars_affinity.anchor_charm.shift_info": "Hold %s for more info",
+  "itemGroup.ars_affinity": "Ars Affinity"
 }

@@ -5,6 +5,7 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgress;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
+import com.github.ars_affinity.util.CuriosHelper;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.entity.player.Player;
@@ -113,6 +114,13 @@ public abstract class SpellTrackingMixin {
     }
 
     private void trackSchoolProgress(Player player, AbstractSpellPart glyph, List<AbstractAugment> augments) {
+        // Check if player has an active Anchor Charm
+        if (CuriosHelper.hasActiveAnchorCharm(player)) {
+            ArsAffinity.LOGGER.info("Player {} has active Anchor Charm - preventing affinity changes", player.getName().getString());
+            CuriosHelper.consumeAnchorCharmCharge(player);
+            return;
+        }
+        
         float manaCost = glyph.getCastingCost();
 
         List<SpellSchool> schools = glyph.spellSchools;

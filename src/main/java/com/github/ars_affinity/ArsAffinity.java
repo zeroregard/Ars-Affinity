@@ -6,6 +6,9 @@ import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.registry.ModCreativeTabs;
+import com.github.ars_affinity.registry.ModDataComponents;
+import com.github.ars_affinity.registry.ModItems;
 import com.github.ars_affinity.registry.ModPotions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -39,27 +42,25 @@ public class ArsAffinity {
     }
 
     public ArsAffinity(IEventBus modEventBus, ModContainer modContainer) {
-        // Register config
         modContainer.registerConfig(ModConfig.Type.SERVER, ArsAffinityConfig.SERVER_CONFIG);
-        
-        // Register capabilities
+
         modEventBus.addListener(this::registerCapabilities);
-        
-        // Register potions
+
         ModPotions.EFFECTS.register(modEventBus);
+
+        ModItems.ITEMS.register(modEventBus);
+        ModDataComponents.DATA.register(modEventBus);
+        ModCreativeTabs.TABS.register(modEventBus);
         
-        // Initialize client-side components
         if (FMLEnvironment.dist.isClient()) {
             ArsAffinityClient.init(modEventBus);
         }
-        
-        // Register events to save data when players disconnect or server stops
+
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
-        
-        // Load affinity perks config
+
         AffinityPerkManager.loadConfig();
     }
     
