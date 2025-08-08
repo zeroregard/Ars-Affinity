@@ -14,6 +14,9 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveFreeJumpEvents {
+    
+    private static final float VANILLA_JUMP_EXHAUSTION = 0.2F;
+    
     @SubscribeEvent
     public static void onLivingJump(LivingEvent.LivingJumpEvent event) {
         LivingEntity entity = event.getEntity();
@@ -26,8 +29,8 @@ public class PassiveFreeJumpEvents {
             if (airTier > 0) {
                 AffinityPerkHelper.applyHighestTierPerk(progress, airTier, SpellSchools.ELEMENTAL_AIR, AffinityPerkType.PASSIVE_FREE_JUMP, perk -> {
                     if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                        // Vanilla jump exhaustion cost is 0.2F
-                        float refund = 0.2F * amountPerk.amount;
+                        // Vanilla jump exhaustion cost
+                        float refund = VANILLA_JUMP_EXHAUSTION * amountPerk.amount;
                         player.getFoodData().addExhaustion(-refund);
                         ArsAffinity.LOGGER.info("Player {} jumped - PASSIVE_FREE_JUMP refunded {} exhaustion", player.getName().getString(), refund);
                     }
