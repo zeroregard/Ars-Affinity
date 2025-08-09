@@ -50,6 +50,13 @@ public abstract class AffinityPerk {
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
+                case ACTIVE_ICE_BLAST:
+                    float manaCost = jsonObject.get("manaCost").getAsFloat();
+                    int cooldown = jsonObject.get("cooldown").getAsInt();
+                    float damage = jsonObject.get("damage").getAsFloat();
+                    int freezeTime = jsonObject.get("freezeTime").getAsInt();
+                    float radius = jsonObject.get("radius").getAsFloat();
+                    return new ActiveAbilityPerk(perkType, manaCost, cooldown, damage, freezeTime, radius, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -107,6 +114,23 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.health = health;
             this.hunger = hunger;
+        }
+    }
+
+    public static class ActiveAbilityPerk extends AffinityPerk {
+        public float manaCost;
+        public int cooldown;
+        public float damage;
+        public int freezeTime;
+        public float radius;
+
+        public ActiveAbilityPerk(AffinityPerkType perk, float manaCost, int cooldown, float damage, int freezeTime, float radius, boolean isBuff) {
+            super(perk, isBuff);
+            this.manaCost = manaCost;
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.freezeTime = freezeTime;
+            this.radius = radius;
         }
     }
 } 

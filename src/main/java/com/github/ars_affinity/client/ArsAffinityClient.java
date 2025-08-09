@@ -23,6 +23,14 @@ public class ArsAffinityClient {
         )
     );
     
+    public static final Lazy<net.minecraft.client.KeyMapping> ICE_BLAST_KEY = Lazy.of(() -> 
+        new net.minecraft.client.KeyMapping(
+            "key.ars_affinity.ice_blast", 
+            GLFW.GLFW_KEY_F, // Default to F key
+            "key.categories.ars_affinity"
+        )
+    );
+    
     public static void init(IEventBus modEventBus) {
         ArsAffinity.LOGGER.info("Initializing Ars Affinity client...");
         
@@ -38,6 +46,7 @@ public class ArsAffinityClient {
     
     private static void registerKeybindings(final RegisterKeyMappingsEvent event) {
         event.register(AFFINITY_UI_KEY.get());
+        event.register(ICE_BLAST_KEY.get());
         ArsAffinity.LOGGER.info("Ars Affinity keybindings registered!");
     }
     
@@ -51,6 +60,11 @@ public class ArsAffinityClient {
         if (AFFINITY_UI_KEY.get().consumeClick()) {
             LocalPlayer player = minecraft.player;
             minecraft.setScreen(new AffinityScreen(player));
+        }
+        
+        if (ICE_BLAST_KEY.get().consumeClick()) {
+            // Send packet to server to trigger ICE BLAST ability
+            com.github.ars_affinity.common.IceBlastPacket.INSTANCE.sendToServer(new com.github.ars_affinity.common.IceBlastPacket());
         }
     }
 } 

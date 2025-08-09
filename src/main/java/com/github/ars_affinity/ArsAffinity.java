@@ -69,6 +69,9 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
 
         AffinityPerkManager.loadConfig();
+        
+        // Register network packets
+        com.github.ars_affinity.common.IceBlastPacket.register();
     }
     
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
