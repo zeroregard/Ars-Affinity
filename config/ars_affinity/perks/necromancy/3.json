@@ -1,5 +1,10 @@
 [
   {
+    "perk": "PASSIVE_BLIGHTED",
+    "amount": 1.0,
+    "isBuff": false
+  },
+  {
     "perk": "PASSIVE_LICH_FEAST",
     "health": 0.5,
     "hunger": 0.25,
