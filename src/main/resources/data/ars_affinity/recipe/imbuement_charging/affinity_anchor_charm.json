@@ -1,0 +1,6 @@
+{
+  "type": "ars_affinity:charm_charging",
+  "id": "ars_affinity:affinity_anchor_charm",
+  "item": "ars_affinity:affinity_anchor_charm",
+  "costPerDamage": 5
+}
