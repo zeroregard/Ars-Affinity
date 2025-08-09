@@ -3,5 +3,10 @@
     "perk": "PASSIVE_HEALING_AMPLIFICATION",
     "amount": 0.75,
     "isBuff": true
+  },
+  {
+    "perk": "PACIFIST",
+    "amount": 0.50,
+    "isBuff": false
   }
 ]
