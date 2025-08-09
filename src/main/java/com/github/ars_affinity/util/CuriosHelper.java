@@ -1,6 +1,5 @@
 package com.github.ars_affinity.util;
 
-import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.common.item.AffinityAnchorCharm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

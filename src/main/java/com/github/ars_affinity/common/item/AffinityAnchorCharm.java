@@ -18,15 +18,21 @@ import top.theillusivec4.curios.api.SlotContext;
 import java.util.List;
 
 public class AffinityAnchorCharm extends ArsNouveauCurio {
+    private static final int DEFAULT_CHARGES = 1000; // Fallback value
     private final int maxCharges;
 
     public AffinityAnchorCharm() {
-        super(ModItems.defaultItemProperties().stacksTo(1).durability(getDefaultCharges()).component(ModDataComponents.ANCHOR_CHARM_DATA, new AnchorCharmData(getDefaultCharges())));
-        this.maxCharges = getDefaultCharges();
+        super(ModItems.defaultItemProperties().stacksTo(1).durability(DEFAULT_CHARGES).component(ModDataComponents.ANCHOR_CHARM_DATA, new AnchorCharmData(DEFAULT_CHARGES)));
+        this.maxCharges = DEFAULT_CHARGES;
     }
 
     private static int getDefaultCharges() {
-        return ArsAffinityConfig.ANCHOR_CHARM_DEFAULT_CHARGES.get();
+        try {
+            return ArsAffinityConfig.ANCHOR_CHARM_DEFAULT_CHARGES.get();
+        } catch (IllegalStateException e) {
+            // Config not loaded yet, return fallback
+            return DEFAULT_CHARGES;
+        }
     }
 
     @Override
