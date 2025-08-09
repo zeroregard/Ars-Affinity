@@ -69,7 +69,6 @@ repositories {
     maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
     maven { url = "https://jitpack.io" }
     maven { url = "https://maven.octo-studios.com/releases" }
-    
     exclusiveContent {
         forRepository {
             maven {
@@ -88,7 +87,10 @@ dependencies {
     
     implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}")
     runtimeOnly("vazkii.patchouli:Patchouli:1.21-${patchouli_version}")
-    runtimeOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}")
+    implementation("top.theillusivec4.curios:curios-neoforge:${curios_version}+${minecraft_version}")
+
+    compileOnly("mezz.jei:jei-1.21.1-neoforge-api:19.21.0.247")
+    runtimeOnly("mezz.jei:jei-1.21.1-neoforge:19.21.0.247")
 }
 
 tasks.withType(Copy).configureEach {
