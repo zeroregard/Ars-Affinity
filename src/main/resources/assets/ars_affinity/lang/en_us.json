@@ -10,7 +10,7 @@
   "ars_affinity.perk.PASSIVE_FIRE_THORNS": "%d%% chance to ignite enemies when attacked",
   "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.perk.PASSIVE_BUBBLE_GUARD": "Incoming projectiles get encased in a bubble (%d second cooldown)",
-  "ars_affinity.perk.PASSIVE_REVERBERATION": "While crouching, melee attacks send back knockback but cost %d%% of your mana",
+  "ars_affinity.perk.PASSIVE_REVERBERATION": "While crouching, reflect melee knockback - stronger with more mana (%d%% cost)",
   "effect.ars_affinity.bubble_guard_cooldown": "Bubble Guard Cooldown",
   "effect.ars_affinity.knockback_immunity": "Knockback Immunity",
   "ars_affinity.screen.affinity.title": "Affinities",
