@@ -6,7 +6,7 @@
     },
     {
         "perk": "PASSIVE_FREE_JUMP",
-        "amount": 1.0,
+        "amount": 0.5,
         "isBuff": true
     }
 ]
