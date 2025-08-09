@@ -33,6 +33,7 @@ public abstract class AffinityPerk {
                 case PASSIVE_HEALING_AMPLIFICATION:
                 case PASSIVE_FREE_JUMP:
                 case PASSIVE_REVERBERATION:
+                case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_BUBBLE_GUARD:
