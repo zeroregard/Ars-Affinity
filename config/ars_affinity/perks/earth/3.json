@@ -13,5 +13,9 @@
     "perk": "PASSIVE_REVERBERATION",
     "amount": 0.2,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_IGNORE_SKULK",
+    "isBuff": true
   }
 ]

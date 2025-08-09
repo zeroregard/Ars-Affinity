@@ -50,6 +50,8 @@ public abstract class AffinityPerk {
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
+                case PASSIVE_IGNORE_SKULK:
+                    return new SimplePerk(perkType, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -107,6 +109,12 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.health = health;
             this.hunger = hunger;
+        }
+    }
+
+    public static class SimplePerk extends AffinityPerk {
+        public SimplePerk(AffinityPerkType perk, boolean isBuff) {
+            super(perk, isBuff);
         }
     }
 } 
