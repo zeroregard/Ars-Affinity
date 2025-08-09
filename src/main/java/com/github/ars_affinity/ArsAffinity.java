@@ -10,6 +10,8 @@ import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModItems;
 import com.github.ars_affinity.registry.ModPotions;
+import com.github.ars_affinity.registry.ModRecipeRegistry;
+import com.hollingsworth.arsnouveau.api.registry.ImbuementRecipeRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -51,6 +53,11 @@ public class ArsAffinity {
         ModItems.ITEMS.register(modEventBus);
         ModDataComponents.DATA.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
+        ModRecipeRegistry.RECIPE_TYPES.register(modEventBus);
+        ModRecipeRegistry.RECIPE_SERIALIZERS.register(modEventBus);
+        
+        // Register our imbuement recipe type with Ars Nouveau so the chamber recognizes it
+        ImbuementRecipeRegistry.INSTANCE.addRecipeType(ModRecipeRegistry.CHARM_CHARGING_TYPE);
         
         if (FMLEnvironment.dist.isClient()) {
             ArsAffinityClient.init(modEventBus);

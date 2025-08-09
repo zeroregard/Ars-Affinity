@@ -1,7 +1,6 @@
 package com.github.ars_affinity.common.item.data;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

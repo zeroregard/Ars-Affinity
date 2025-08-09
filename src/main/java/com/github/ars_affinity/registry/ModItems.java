@@ -2,7 +2,6 @@ package com.github.ars_affinity.registry;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.common.item.AffinityAnchorCharm;
-import com.github.ars_affinity.registry.ModDataComponents;
 import com.hollingsworth.arsnouveau.setup.registry.ItemRegistryWrapper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;

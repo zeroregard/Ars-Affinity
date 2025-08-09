@@ -1,7 +1,6 @@
 package com.github.ars_affinity.common.item;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.client.TooltipUtils;
 import com.github.ars_affinity.common.item.data.AnchorCharmData;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.registry.ModDataComponents;
@@ -43,10 +42,8 @@ public class AffinityAnchorCharm extends ArsNouveauCurio {
 
         int charges = AnchorCharmData.getOrDefault(stack, maxCharges).charges();
         tooltip.add(Component.translatable("tooltip.ars_affinity.anchor_charm.charges", charges, maxCharges).withStyle(ChatFormatting.GOLD));
-
-        TooltipUtils.addOnShift(tooltip, () -> {
-            tooltip.add(Component.translatable("tooltip.ars_affinity.anchor_charm.shift_info").withStyle(ChatFormatting.AQUA));
-        }, "anchor_charm");
+        
+        tooltip.add(Component.translatable("tooltip.ars_affinity.anchor_charm.shift_info").withStyle(ChatFormatting.AQUA));
     }
 
     @Override

@@ -114,7 +114,6 @@ public abstract class SpellTrackingMixin {
     }
 
     private void trackSchoolProgress(Player player, AbstractSpellPart glyph, List<AbstractAugment> augments) {
-        // Check if player has an active Anchor Charm
         if (CuriosHelper.hasActiveAnchorCharm(player)) {
             ArsAffinity.LOGGER.info("Player {} has active Anchor Charm - preventing affinity changes", player.getName().getString());
             CuriosHelper.consumeAnchorCharmCharge(player);
