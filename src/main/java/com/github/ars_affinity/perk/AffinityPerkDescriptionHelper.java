@@ -22,6 +22,7 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_MANA_TAP:
             case PASSIVE_FIRE_THORNS:
             case PASSIVE_HEALING_AMPLIFICATION:
+            case PASSIVE_BLIGHTED:
             case PASSIVE_FREE_JUMP:
             case PASSIVE_REVERBERATION:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
