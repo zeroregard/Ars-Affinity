@@ -8,5 +8,9 @@
     "perk": "PASSIVE_GROUNDED",
     "amount": 0.6,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_IGNORE_SKULK",
+    "isBuff": true
   }
 ] 
