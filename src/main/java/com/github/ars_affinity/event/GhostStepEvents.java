@@ -42,7 +42,7 @@ public class GhostStepEvents {
         }
 
         int abjurationTier = progress.getTier(SpellSchools.ABJURATION);
-        if (abjurationTier < 3) {
+        if (abjurationTier <= 0) {
             return;
         }
 
