@@ -11,5 +11,10 @@
       "minecraft:ghast",
       "minecraft:phantom"
     ]
+  },
+  {
+    "perk": "PASSIVE_FREE_JUMP",
+    "amount": 1.0,
+    "isBuff": true
   }
 ]
