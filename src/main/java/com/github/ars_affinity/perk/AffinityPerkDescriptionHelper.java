@@ -53,6 +53,16 @@ public class AffinityPerkDescriptionHelper {
                     }
                 }
                 return Component.translatable(translationKey, "unknown entities");
+            case PASSIVE_UNSTABLE_SUMMONING:
+                if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
+                    if (unstablePerk.entities != null && !unstablePerk.entities.isEmpty()) {
+                        String entityNames = getEntityNames(unstablePerk.entities);
+                        return Component.translatable(translationKey, (int)(unstablePerk.chance * 100), entityNames);
+                    } else {
+                        return Component.translatable(translationKey, (int)(unstablePerk.chance * 100), "unknown entities");
+                    }
+                }
+                return Component.translatable(translationKey, 0, "unknown entities");
             default:
                 return Component.translatable(translationKey, 0);
         }

@@ -50,6 +50,10 @@ public abstract class AffinityPerk {
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
+                case PASSIVE_UNSTABLE_SUMMONING:
+                    float chance = jsonObject.get("chance").getAsFloat();
+                    java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
+                    return new UnstableSummoningPerk(perkType, chance, possibleEntities, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -107,6 +111,17 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.health = health;
             this.hunger = hunger;
+        }
+    }
+
+    public static class UnstableSummoningPerk extends AffinityPerk {
+        public float chance;
+        public java.util.List<String> entities;
+
+        public UnstableSummoningPerk(AffinityPerkType perk, float chance, java.util.List<String> entities, boolean isBuff) {
+            super(perk, isBuff);
+            this.chance = chance;
+            this.entities = entities;
         }
     }
 } 
