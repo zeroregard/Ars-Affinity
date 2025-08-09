@@ -10,6 +10,12 @@
 
 }
 
+@media (min-width: 1400px) {
+  .app {
+    transform: scale(1.5);
+  }
+}
+
 body {
   height: 100svh;
   overflow: hidden;

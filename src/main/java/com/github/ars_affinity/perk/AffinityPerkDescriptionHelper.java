@@ -23,6 +23,7 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_FIRE_THORNS:
             case PASSIVE_HEALING_AMPLIFICATION:
             case PASSIVE_FREE_JUMP:
+            case PASSIVE_REVERBERATION:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
                 }
@@ -32,6 +33,11 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
+            case PASSIVE_BUBBLE_GUARD:
+                if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+                    return Component.translatable(translationKey, durationPerk.time / 20);
+                }
+                return Component.translatable(translationKey, 0);
             case PASSIVE_LICH_FEAST:
                 if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
                     return Component.translatable(translationKey, lichPerk.health, lichPerk.hunger);
