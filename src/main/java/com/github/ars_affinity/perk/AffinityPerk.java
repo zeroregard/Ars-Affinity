@@ -37,7 +37,7 @@ public abstract class AffinityPerk {
                 case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
-                case PASSIVE_PROJECTILE_REVERSAL:
+                case PASSIVE_DEFLECTION:
                     float reversalAmount = jsonObject.get("amount").getAsFloat();
                     int reversalDuration = jsonObject.get("time").getAsInt();
                     return new DurationBasedPerk(perkType, reversalAmount, reversalDuration, isBuff);
