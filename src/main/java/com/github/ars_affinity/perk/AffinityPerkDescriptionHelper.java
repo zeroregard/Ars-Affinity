@@ -22,6 +22,7 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_MANA_TAP:
             case PASSIVE_FIRE_THORNS:
             case PASSIVE_HEALING_AMPLIFICATION:
+            case PASSIVE_BLIGHTED:
             case PASSIVE_FREE_JUMP:
             case PASSIVE_REVERBERATION:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
@@ -43,6 +44,11 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, lichPerk.health, lichPerk.hunger);
                 }
                 return Component.translatable(translationKey, 0, 0);
+            case PASSIVE_GHOST_STEP:
+                if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
+                    return Component.translatable(translationKey, (int)(ghostStepPerk.amount * 100), ghostStepPerk.time, ghostStepPerk.cooldown);
+                }
+                return Component.translatable(translationKey, 0, 0, 0);
             case PASSIVE_MOB_PACIFICATION:
                 if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
                     if (entityPerk.entities != null && !entityPerk.entities.isEmpty()) {
