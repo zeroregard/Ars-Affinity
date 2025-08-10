@@ -3,5 +3,22 @@
     "perk": "PASSIVE_MANA_TAP",
     "amount": 2.0,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_DEFLECTION",
+    "isBuff": true,
+    "amount": 100,
+    "time": 120
+  },
+  {	 
+    "perk": "PASSIVE_UNSTABLE_SUMMONING",	 
+    "chance": 0.66,	  
+    "entities": [	  
+      "minecraft:chicken",	  
+      "minecraft:sheep",	
+      "minecraft:zombie",	
+      "minecraft:skeleton"	
+    ],	
+    "isBuff": false	
   }
 ] 

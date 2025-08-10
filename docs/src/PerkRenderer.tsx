@@ -5,6 +5,7 @@ import { titleCase } from './utils/string'
 interface Perk {
     isBuff?: boolean
     amount?: number
+    chance?: number
     time?: number
     perk?: string
     entities?: string[]
@@ -33,6 +34,7 @@ function PerkRenderer({ perk }: PerkRendererProps) {
 
     let formattedMessage = message
 
+
     if (perk.time && perk.amount) {
         formattedMessage = formattedMessage
             .replace(/%s/g, perk.amount.toString())
@@ -41,6 +43,11 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     }
     else if (perk.amount !== undefined) {
         const percentage = perk.amount * 100
+        formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
+        formattedMessage = formattedMessage.replace(/%%/g, '%')
+    }
+    else if (perk.chance !== undefined) {
+        const percentage = perk.chance * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }

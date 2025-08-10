@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class BubbleGuardCooldownEffect extends MobEffect {
-    public BubbleGuardCooldownEffect() {
-        super(MobEffectCategory.HARMFUL, 0x87CEEB);
+public class DeflectionCooldownEffect extends MobEffect {
+    public DeflectionCooldownEffect() {
+        super(MobEffectCategory.HARMFUL, 0x8B4513);
     }
 
     @Override
