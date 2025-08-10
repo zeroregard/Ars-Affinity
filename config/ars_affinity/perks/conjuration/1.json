@@ -4,15 +4,5 @@
     "amount": 1,
     "time": 400,
     "isBuff": true
-  },
-  {
-    "perk": "PASSIVE_UNSTABLE_SUMMONING",
-    "chance": 0.15,
-    "entities": [
-      "minecraft:zombie",
-      "minecraft:skeleton",
-      "minecraft:spider"
-    ],
-    "isBuff": true
   }
 ] 

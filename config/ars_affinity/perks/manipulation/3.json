@@ -18,6 +18,6 @@
       "minecraft:magma_cube",
       "minecraft:wither_skeleton"
     ],
-    "isBuff": true
+    "isBuff": false
   }
 ] 

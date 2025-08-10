@@ -13,6 +13,6 @@
       "minecraft:zombie",
       "minecraft:skeleton"
     ],
-    "isBuff": true
+    "isBuff": false
   }
 ] 

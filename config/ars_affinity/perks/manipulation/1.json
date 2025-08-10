@@ -11,6 +11,6 @@
       "minecraft:chicken",
       "minecraft:sheep"
     ],
-    "isBuff": true
+    "isBuff": false
   }
 ] 
