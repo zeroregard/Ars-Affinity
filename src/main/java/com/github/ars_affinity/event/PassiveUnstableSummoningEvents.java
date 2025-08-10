@@ -58,8 +58,10 @@ public class PassiveUnstableSummoningEvents {
                                     if (newEntity instanceof LivingEntity livingEntity) {
                                         livingEntity.setPos(x, y, z);
                                         
-                                        // Prevent XP and item drops
-                                        livingEntity.setPersistenceRequired();
+                                        // Prevent XP and item drops for mobs
+                                        if (livingEntity instanceof net.minecraft.world.entity.Mob mob) {
+                                            mob.setPersistenceRequired();
+                                        }
                                         livingEntity.setCustomName(net.minecraft.network.chat.Component.literal("Unstable Summon"));
                                         
                                         // Spawn the entity
