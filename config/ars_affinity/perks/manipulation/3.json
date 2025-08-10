@@ -9,8 +9,14 @@
     "chance": 1.0,
     "entities": [
       "minecraft:chicken",
+      "minecraft:creeper",
+      "minecraft:sheep",
       "minecraft:zombie",
-      "minecraft:creeper"
+      "minecraft:skeleton",
+      "minecraft:ghast",
+      "minecraft:blaze",
+      "minecraft:magma_cube",
+      "minecraft:wither_skeleton"
     ],
     "isBuff": true
   }

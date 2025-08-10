@@ -8,7 +8,8 @@
     "perk": "PASSIVE_UNSTABLE_SUMMONING",
     "chance": 0.33,
     "entities": [
-      "minecraft:chicken"
+      "minecraft:chicken",
+      "minecraft:sheep"
     ],
     "isBuff": true
   }
