@@ -21,7 +21,7 @@ public class ActiveAbilityManager {
     
     static {
         SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
-        SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_MANIPULATION_ABILITY);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
         // Add more schools and their abilities here as they are implemented
     }
     
@@ -79,10 +79,10 @@ public class ActiveAbilityManager {
         // Route to the appropriate ability helper
         switch (abilityPerk.perk) {
             case ACTIVE_ICE_BLAST:
-                IceBlastHelper.executeAbility(player, abilityPerk, (int)requiredMana, (int)currentMana);
+                IceBlastHelper.executeAbility(player, abilityPerk);
                 break;
-            case ACTIVE_MANIPULATION_ABILITY:
-                ManipulationAbilityHelper.executeAbility(player, abilityPerk, (int)requiredMana, (int)currentMana);
+            case ACTIVE_SWAP_ABILITY:
+                SwapAbilityHelper.executeAbility(player, abilityPerk, (int)requiredMana, (int)currentMana);
                 break;
             default:
                 ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);

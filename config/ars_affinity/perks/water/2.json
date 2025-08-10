@@ -1,20 +1,5 @@
 [
   {
-    "perk": "PASSIVE_BUBBLE_GUARD",
-    "isBuff": true,
-    "amount": 100,
-    "time": 120
-  },
-  {
-    "perk": "ACTIVE_ICE_BLAST",
-    "isBuff": true,
-    "manaCost": 0.3,
-    "cooldown": 300,
-    "damage": 6.0,
-    "freezeTime": 80,
-    "radius": 4.0
-  },
-  {
     "perk": "PASSIVE_DEHYDRATED",
     "amount": 0.6,
     "isBuff": false

@@ -4,7 +4,6 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
-import com.github.ars_affinity.common.ability.NetworkHandler;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerkManager;
 import com.github.ars_affinity.registry.ModCreativeTabs;
@@ -48,7 +47,6 @@ public class ArsAffinity {
         modContainer.registerConfig(ModConfig.Type.SERVER, ArsAffinityConfig.SERVER_CONFIG);
 
         modEventBus.addListener(this::registerCapabilities);
-        modEventBus.addListener(NetworkHandler::registerPayloads);
 
         ModPotions.EFFECTS.register(modEventBus);
 

@@ -5,7 +5,7 @@
     "isBuff": true
   },
   {
-    "perk": "ACTIVE_MANIPULATION_ABILITY",
+    "perk": "ACTIVE_SWAP_ABILITY",
     "isBuff": true,
     "manaCost": 0.25,
     "cooldown": 400

@@ -2,6 +2,7 @@ package com.github.ars_affinity.client;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.client.screen.AffinityScreen;
+import com.github.ars_affinity.common.ability.ActiveAbilityPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -64,7 +65,7 @@ public class ArsAffinityClient {
         
         if (ABILITY_KEY.get().consumeClick()) {
             // Send packet to server to trigger active ability
-            com.github.ars_affinity.common.ActiveAbilityPacket.INSTANCE.sendToServer(new com.github.ars_affinity.common.ActiveAbilityPacket());
+            ActiveAbilityPacket.sendToServer();
         }
     }
 } 
