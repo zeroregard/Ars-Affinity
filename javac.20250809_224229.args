@@ -1,3 +1,0 @@
--cp
-.:./gradle/wrapper/gradle-wrapper.jar:
-src/main/java/com/github/ars_affinity/perk/AffinityPerkManager.java
