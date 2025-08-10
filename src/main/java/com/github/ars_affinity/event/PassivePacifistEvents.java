@@ -6,6 +6,7 @@ import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.hollingsworth.arsnouveau.api.event.SpellDamageEvent;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,7 +16,10 @@ public class PassivePacifistEvents {
     
     @SubscribeEvent
     public static void onSpellDamage(SpellDamageEvent.Pre event) {
-        if (!(event.caster instanceof Player player)) return;
+        if (!(event.context.getCaster() instanceof PlayerCaster playerCaster)) {
+            return;
+        }
+        var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
