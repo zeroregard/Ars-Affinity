@@ -7,6 +7,7 @@
   "ars_affinity.perk.PASSIVE_LICH_FEAST": "Restore %.1f health and %.1f hunger when killing non-undead enemies",
   "ars_affinity.perk.PASSIVE_MANA_TAP": "Restore %d%% of spell damage dealt as mana",
   "ars_affinity.perk.PASSIVE_MOB_PACIFICATION": "%s ignore you",
+  "ars_affinity.perk.PASSIVE_PACIFIST": "%d%% spell power reduction",
   "ars_affinity.perk.PASSIVE_FIRE_THORNS": "%d%% chance to ignite enemies when attacked",
   "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.perk.PASSIVE_BLIGHTED": "Healing spells are %d%% less effective and add nausea",
