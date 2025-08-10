@@ -51,6 +51,11 @@ public abstract class AffinityPerk {
                 case PASSIVE_MOB_PACIFICATION:
                     java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
                     return new EntityBasedPerk(perkType, isBuff, entities);
+                case PASSIVE_GHOST_STEP:
+                    float healAmount = jsonObject.get("amount").getAsFloat();
+                    int invisibilityTime = jsonObject.get("time").getAsInt();
+                    int cooldownTime = jsonObject.get("cooldown").getAsInt();
+                    return new GhostStepPerk(perkType, healAmount, invisibilityTime, cooldownTime, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -108,6 +113,19 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.health = health;
             this.hunger = hunger;
+        }
+    }
+
+    public static class GhostStepPerk extends AffinityPerk {
+        public float amount; // Health percentage to heal
+        public int time; // Time for invisibility and decoy
+        public int cooldown; // Cooldown time
+
+        public GhostStepPerk(AffinityPerkType perk, float amount, int time, int cooldown, boolean isBuff) {
+            super(perk, isBuff);
+            this.amount = amount;
+            this.time = time;
+            this.cooldown = cooldown;
         }
     }
 } 
