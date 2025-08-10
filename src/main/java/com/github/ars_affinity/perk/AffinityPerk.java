@@ -37,10 +37,10 @@ public abstract class AffinityPerk {
                 case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
-                case PASSIVE_BUBBLE_GUARD:
-                    float bubbleAmount = jsonObject.get("amount").getAsFloat();
-                    int bubbleDuration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, bubbleAmount, bubbleDuration, isBuff);
+                case PASSIVE_DEFLECTION:
+                    float reversalAmount = jsonObject.get("amount").getAsFloat();
+                    int reversalDuration = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, reversalAmount, reversalDuration, isBuff);
                 case PASSIVE_SUMMON_HEALTH:
                     float healthAmount = jsonObject.get("amount").getAsFloat();
                     int duration = jsonObject.get("time").getAsInt();

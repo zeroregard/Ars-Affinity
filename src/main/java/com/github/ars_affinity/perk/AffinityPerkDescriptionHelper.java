@@ -34,7 +34,7 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
-            case PASSIVE_BUBBLE_GUARD:
+            case PASSIVE_DEFLECTION:
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
                     return Component.translatable(translationKey, durationPerk.time / 20);
                 }
