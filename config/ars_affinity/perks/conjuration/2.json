@@ -1,14 +1,8 @@
 [
   {
-    "perk": "PASSIVE_UNSTABLE_SUMMONING",
-    "chance": 0.30,
-    "entities": [
-      "minecraft:blaze",
-      "minecraft:ghast",
-      "minecraft:magma_cube",
-      "minecraft:guardian",
-      "minecraft:elder_guardian"
-    ],
+    "perk": "PASSIVE_SUMMON_HEALTH",
+    "amount": 2,
+    "time": 800,
     "isBuff": true
   }
 ] 

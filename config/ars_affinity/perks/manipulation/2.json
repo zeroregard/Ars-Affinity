@@ -3,5 +3,14 @@
     "perk": "PASSIVE_MANA_TAP",
     "amount": 2.0,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_UNSTABLE_SUMMONING",
+    "chance": 0.66,
+    "entities": [
+      "minecraft:chicken",
+      "minecraft:zombie"
+    ],
+    "isBuff": true
   }
 ] 
