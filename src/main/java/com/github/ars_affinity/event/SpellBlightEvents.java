@@ -98,10 +98,25 @@ public class SpellBlightEvents {
         if (event.resolveEffect instanceof EffectHeal) {
             Float blightReduction = playerBlightReduction.get(player.getUUID());
             if (blightReduction != null) {
-                // Add nausea effect based on blight level
-                // Duration scales with blight amount (3-6 seconds)
-                int nauseaDuration = Math.round(60 + (blightReduction * 60)); // 3-6 seconds (60-120 ticks)
+                // Apply food poisoning effects similar to rotten flesh
+                // Duration scales with blight amount (5-10 seconds)
+                int hungerDuration = Math.round(100 + (blightReduction * 100)); // 5-10 seconds (100-200 ticks)
                 // Amplifier increases with higher blight levels
+                int hungerAmplifier = Math.min(1, Math.round(blightReduction * 2)); // 0-1 amplifier
+                
+                // Apply hunger effect (food poisoning)
+                MobEffectInstance hungerEffect = new MobEffectInstance(
+                    MobEffects.HUNGER, 
+                    hungerDuration, 
+                    hungerAmplifier, 
+                    false, 
+                    true
+                );
+                
+                player.addEffect(hungerEffect);
+                
+                // Apply nausea effect for visual disorientation
+                int nauseaDuration = Math.round(60 + (blightReduction * 60)); // 3-6 seconds (60-120 ticks)
                 int nauseaAmplifier = Math.min(2, Math.round(blightReduction * 3)); // 0-2 amplifier
                 
                 MobEffectInstance nauseaEffect = new MobEffectInstance(
@@ -114,8 +129,13 @@ public class SpellBlightEvents {
                 
                 player.addEffect(nauseaEffect);
                 
-                ArsAffinity.LOGGER.info("Applied nausea (amplifier {}, duration {}s) to player {} due to blight", 
-                    nauseaAmplifier, nauseaDuration / 20, player.getName().getString());
+                // Apply additional food exhaustion to simulate the sickness
+                var foodData = player.getFoodData();
+                float exhaustion = 2.0f + (blightReduction * 3.0f); // 2.0-5.0 exhaustion
+                foodData.addExhaustion(exhaustion);
+                
+                ArsAffinity.LOGGER.info("Applied food poisoning (hunger amplifier {}, duration {}s, nausea amplifier {}, duration {}s, exhaustion {}) to player {} due to blight", 
+                    hungerAmplifier, hungerDuration / 20, nauseaAmplifier, nauseaDuration / 20, exhaustion, player.getName().getString());
             }
         }
     }
