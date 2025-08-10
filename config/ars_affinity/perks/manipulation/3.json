@@ -1,7 +1,13 @@
 [
   {
     "perk": "PASSIVE_MANA_TAP",
-    "amount": 3.0,
+    "amount": 1.0,
     "isBuff": true
+  },
+  {
+    "perk": "ACTIVE_MANIPULATION_ABILITY",
+    "isBuff": true,
+    "manaCost": 0.25,
+    "cooldown": 200
   }
 ] 

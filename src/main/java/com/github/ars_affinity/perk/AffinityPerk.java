@@ -57,6 +57,10 @@ public abstract class AffinityPerk {
                     int freezeTime = jsonObject.get("freezeTime").getAsInt();
                     float radius = jsonObject.get("radius").getAsFloat();
                     return new ActiveAbilityPerk(perkType, manaCost, cooldown, damage, freezeTime, radius, isBuff);
+                case ACTIVE_MANIPULATION_ABILITY:
+                    float manipManaCost = jsonObject.get("manaCost").getAsFloat();
+                    int manipCooldown = jsonObject.get("cooldown").getAsInt();
+                    return new ActiveAbilityPerk(perkType, manipManaCost, manipCooldown, 0.0f, 0, 0.0f, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }

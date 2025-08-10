@@ -9,33 +9,33 @@ import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 import java.util.function.Supplier;
 
-public class IceBlastPacket {
+public class ActiveAbilityPacket {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-        new ResourceLocation("ars_affinity", "ice_blast"),
+        new ResourceLocation("ars_affinity", "active_ability"),
         () -> PROTOCOL_VERSION,
         PROTOCOL_VERSION::equals,
         PROTOCOL_VERSION::equals
     );
 
     public static void register() {
-        INSTANCE.registerMessage(0, IceBlastPacket.class, IceBlastPacket::encode, IceBlastPacket::decode, IceBlastPacket::handle);
+        INSTANCE.registerMessage(0, ActiveAbilityPacket.class, ActiveAbilityPacket::encode, ActiveAbilityPacket::decode, ActiveAbilityPacket::handle);
     }
 
     public void encode(FriendlyByteBuf buf) {
         // No data to encode for this simple packet
     }
 
-    public static IceBlastPacket decode(FriendlyByteBuf buf) {
-        return new IceBlastPacket();
+    public static ActiveAbilityPacket decode(FriendlyByteBuf buf) {
+        return new ActiveAbilityPacket();
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
-                // Trigger ICE BLAST ability on the server
-                IceBlastEvents.triggerIceBlast(player);
+                // Trigger generic active ability on the server
+                ActiveAbilityManager.triggerActiveAbility(player);
             }
         });
         ctx.get().setPacketHandled(true);

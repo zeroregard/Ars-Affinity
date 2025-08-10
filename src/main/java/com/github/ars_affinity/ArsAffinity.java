@@ -71,7 +71,7 @@ public class ArsAffinity {
         AffinityPerkManager.loadConfig();
         
         // Register network packets
-        com.github.ars_affinity.common.IceBlastPacket.register();
+        com.github.ars_affinity.common.ActiveAbilityPacket.register();
     }
     
     private void registerCapabilities(RegisterCapabilitiesEvent event) {

@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class IceBlastCooldownEffect extends MobEffect {
-    public IceBlastCooldownEffect() {
+public class ActiveAbilityCooldownEffect extends MobEffect {
+    public ActiveAbilityCooldownEffect() {
         super(MobEffectCategory.HARMFUL, 0x87CEEB);
     }
 

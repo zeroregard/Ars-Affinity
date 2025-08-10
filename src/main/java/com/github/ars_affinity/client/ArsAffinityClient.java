@@ -63,8 +63,8 @@ public class ArsAffinityClient {
         }
         
         if (ABILITY_KEY.get().consumeClick()) {
-            // Send packet to server to trigger ICE BLAST ability
-            com.github.ars_affinity.common.IceBlastPacket.INSTANCE.sendToServer(new com.github.ars_affinity.common.IceBlastPacket());
+            // Send packet to server to trigger active ability
+            com.github.ars_affinity.common.ActiveAbilityPacket.INSTANCE.sendToServer(new com.github.ars_affinity.common.ActiveAbilityPacket());
         }
     }
 } 

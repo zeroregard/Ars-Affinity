@@ -58,6 +58,11 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, activePerk.damage, activePerk.freezeTime / 20, activePerk.radius, activePerk.manaCost * 100, activePerk.cooldown / 20);
                 }
                 return Component.translatable(translationKey, 0, 0, 0, 0, 0);
+            case ACTIVE_MANIPULATION_ABILITY:
+                if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+                    return Component.translatable(translationKey, activePerk.manaCost * 100, activePerk.cooldown / 20);
+                }
+                return Component.translatable(translationKey, 0, 0);
             default:
                 return Component.translatable(translationKey, 0);
         }
