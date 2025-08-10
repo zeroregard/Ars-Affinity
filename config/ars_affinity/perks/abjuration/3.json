@@ -5,6 +5,11 @@
     "isBuff": true
   },
   {
+    "perk": "PASSIVE_PACIFIST",
+    "amount": 0.50,
+    "isBuff": false
+  },
+  {
     "perk": "PASSIVE_GHOST_STEP",
     "amount": 0.20,
     "time": 10,
