@@ -31,14 +31,16 @@ public abstract class AffinityPerk {
                 case PASSIVE_FIRE_THORNS:
                 case PASSIVE_MANA_TAP:
                 case PASSIVE_HEALING_AMPLIFICATION:
+                case PASSIVE_BLIGHTED:
                 case PASSIVE_FREE_JUMP:
                 case PASSIVE_REVERBERATION:
+                case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
-                case PASSIVE_BUBBLE_GUARD:
-                    float bubbleAmount = jsonObject.get("amount").getAsFloat();
-                    int bubbleDuration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, bubbleAmount, bubbleDuration, isBuff);
+                case PASSIVE_DEFLECTION:
+                    float reversalAmount = jsonObject.get("amount").getAsFloat();
+                    int reversalDuration = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, reversalAmount, reversalDuration, isBuff);
                 case PASSIVE_SUMMON_HEALTH:
                     float healthAmount = jsonObject.get("amount").getAsFloat();
                     int duration = jsonObject.get("time").getAsInt();
@@ -61,6 +63,15 @@ public abstract class AffinityPerk {
                     float manipManaCost = jsonObject.get("manaCost").getAsFloat();
                     int manipCooldown = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, manipManaCost, manipCooldown, 0.0f, 0, 0.0f, isBuff);
+                case PASSIVE_UNSTABLE_SUMMONING:
+                    float chance = jsonObject.get("chance").getAsFloat();
+                    java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
+                    return new UnstableSummoningPerk(perkType, chance, possibleEntities, isBuff);
+                case PASSIVE_GHOST_STEP:
+                    float healAmount = jsonObject.get("amount").getAsFloat();
+                    int invisibilityTime = jsonObject.get("time").getAsInt();
+                    int cooldownTime = jsonObject.get("cooldown").getAsInt();
+                    return new GhostStepPerk(perkType, healAmount, invisibilityTime, cooldownTime, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -137,4 +148,28 @@ public abstract class AffinityPerk {
             this.radius = radius;
         }
     }
-} 
+
+    public static class UnstableSummoningPerk extends AffinityPerk {
+        public float chance;
+        public java.util.List<String> entities;
+
+        public UnstableSummoningPerk(AffinityPerkType perk, float chance, java.util.List<String> entities, boolean isBuff) {
+            super(perk, isBuff);
+            this.chance = chance;
+            this.entities = entities;
+        }
+    }
+
+    public static class GhostStepPerk extends AffinityPerk {
+        public float amount;
+        public int time;
+        public int cooldown;
+
+        public GhostStepPerk(AffinityPerkType perk, float amount, int time, int cooldown, boolean isBuff) {
+            super(perk, isBuff);
+            this.amount = amount;
+            this.time = time;
+            this.cooldown = cooldown;
+        }
+    }
+}

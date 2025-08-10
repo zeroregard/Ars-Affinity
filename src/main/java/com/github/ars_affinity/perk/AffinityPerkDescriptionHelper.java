@@ -22,6 +22,7 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_MANA_TAP:
             case PASSIVE_FIRE_THORNS:
             case PASSIVE_HEALING_AMPLIFICATION:
+            case PASSIVE_BLIGHTED:
             case PASSIVE_FREE_JUMP:
             case PASSIVE_REVERBERATION:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
@@ -33,7 +34,7 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
-            case PASSIVE_BUBBLE_GUARD:
+            case PASSIVE_DEFLECTION:
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
                     return Component.translatable(translationKey, durationPerk.time / 20);
                 }
@@ -43,6 +44,11 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, lichPerk.health, lichPerk.hunger);
                 }
                 return Component.translatable(translationKey, 0, 0);
+            case PASSIVE_GHOST_STEP:
+                if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
+                    return Component.translatable(translationKey, (int)(ghostStepPerk.amount * 100), ghostStepPerk.time, ghostStepPerk.cooldown);
+                }
+                return Component.translatable(translationKey, 0, 0, 0);
             case PASSIVE_MOB_PACIFICATION:
                 if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
                     if (entityPerk.entities != null && !entityPerk.entities.isEmpty()) {
@@ -63,6 +69,16 @@ public class AffinityPerkDescriptionHelper {
                     return Component.translatable(translationKey, activePerk.manaCost * 100, activePerk.cooldown / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
+            case PASSIVE_UNSTABLE_SUMMONING:
+                if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
+                    if (unstablePerk.entities != null && !unstablePerk.entities.isEmpty()) {
+                        String entityNames = getEntityNames(unstablePerk.entities);
+                        return Component.translatable(translationKey, (int)(unstablePerk.chance * 100), entityNames);
+                    } else {
+                        return Component.translatable(translationKey, (int)(unstablePerk.chance * 100), "unknown entities");
+                    }
+                }
+                return Component.translatable(translationKey, 0, "unknown entities");
             default:
                 return Component.translatable(translationKey, 0);
         }

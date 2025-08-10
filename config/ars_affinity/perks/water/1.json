@@ -13,5 +13,10 @@
     "damage": 4.0,
     "freezeTime": 60,
     "radius": 3.0
+  },
+  {
+    "perk": "PASSIVE_DEHYDRATED",
+    "amount": 0.3,
+    "isBuff": false
   }
 ]

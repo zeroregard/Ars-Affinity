@@ -9,5 +9,22 @@
     "isBuff": true,
     "manaCost": 0.25,
     "cooldown": 300
+  },
+  {
+    "perk": "PASSIVE_DEFLECTION",
+    "isBuff": true,
+    "amount": 100,
+    "time": 120
+  },
+  {	 
+    "perk": "PASSIVE_UNSTABLE_SUMMONING",	 
+    "chance": 0.66,	  
+    "entities": [	  
+      "minecraft:chicken",	  
+      "minecraft:sheep",	
+      "minecraft:zombie",	
+      "minecraft:skeleton"	
+    ],	
+    "isBuff": false	
   }
 ] 

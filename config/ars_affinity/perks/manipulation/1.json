@@ -9,5 +9,14 @@
     "isBuff": true,
     "manaCost": 0.25,
     "cooldown": 400
+  },
+  {
+    "perk": "PASSIVE_UNSTABLE_SUMMONING",
+    "chance": 0.33,
+    "entities": [
+      "minecraft:chicken",
+      "minecraft:sheep"
+    ],
+    "isBuff": false
   }
 ] 
