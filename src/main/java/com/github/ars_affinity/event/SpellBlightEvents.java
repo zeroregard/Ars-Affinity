@@ -78,12 +78,11 @@ public class SpellBlightEvents {
                 double currentAmp = event.spellStats.getAmpMultiplier();
                 // Reduce healing effectiveness - negative amplification
                 double newAmp = currentAmp - blightReduction;
-                // Ensure we don't go below 0 (completely negating healing)
-                newAmp = Math.max(0, newAmp);
+                // Allow negative values for -100% healing effectiveness and even damage
                 event.spellStats.setAmpMultiplier(newAmp);
                 
-                ArsAffinity.LOGGER.info("Applied {}% blight reduction to EffectHeal for player {}", 
-                    (int)(blightReduction * 100), player.getName().getString());
+                ArsAffinity.LOGGER.info("Applied {}% blight reduction to EffectHeal for player {} (new amp: {})", 
+                    (int)(blightReduction * 100), player.getName().getString(), newAmp);
             }
         }
     }
