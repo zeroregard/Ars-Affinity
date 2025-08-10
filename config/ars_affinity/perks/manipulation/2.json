@@ -3,5 +3,11 @@
     "perk": "PASSIVE_MANA_TAP",
     "amount": 2.0,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_PROJECTILE_REVERSAL",
+    "isBuff": true,
+    "amount": 100,
+    "time": 120
   }
 ] 
