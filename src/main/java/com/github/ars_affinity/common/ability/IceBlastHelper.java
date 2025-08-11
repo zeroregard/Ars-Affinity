@@ -35,6 +35,22 @@ public class IceBlastHelper {
         ArsAffinity.LOGGER.info("ICE BLAST: Starting execution for player {} with perk: damage={}, freezeTime={}, radius={}, cooldown={}", 
             player.getName().getString(), perk.damage, perk.freezeTime, perk.radius, perk.cooldown);
         
+        IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
+        if (manaCap == null) {
+            ArsAffinity.LOGGER.info("ICE BLAST: Player {} has no mana capability", player.getName().getString());
+            return;
+        }
+        
+        double currentMana = manaCap.getCurrentMana();
+        double maxMana = manaCap.getMaxMana();
+        double requiredMana = perk.manaCost * maxMana;
+        
+        if (currentMana < requiredMana) {
+            ArsAffinity.LOGGER.info("ICE BLAST: Player {} doesn't have enough mana. Required: {}, Current: {}", 
+                player.getName().getString(), requiredMana, currentMana);
+            return;
+        }
+        
         if (isPlayerOnCooldown(player)) {
             return;
         }
@@ -57,7 +73,7 @@ public class IceBlastHelper {
         spawnParticleEffects(player);
         playSoundEffects(player);
         
-        
+        consumeMana(player, perk);
     }
     
     private static boolean isPlayerOnCooldown(ServerPlayer player) {
@@ -209,7 +225,9 @@ public class IceBlastHelper {
         
         player.level().playSound(
             null,
-            BlockPos.containing(playerPos),
+            playerPos.x,
+            playerPos.y,
+            playerPos.z,
             SoundEvents.GLASS_FALL,
             SoundSource.BLOCKS,
             0.8f,
@@ -297,5 +315,15 @@ public class IceBlastHelper {
         }
 
 
+    }
+    
+    private static void consumeMana(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
+        IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
+        if (manaCap != null) {
+            double currentMana = manaCap.getCurrentMana();
+            double maxMana = manaCap.getMaxMana();
+            double requiredMana = perk.manaCost * maxMana;
+            manaCap.removeMana((int)requiredMana);
+        }
     }
 } 

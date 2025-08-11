@@ -8,7 +8,7 @@
   {
     "perk": "ACTIVE_ICE_BLAST",
     "isBuff": true,
-    "manaCost": 0.3,
+    "manaCost": 0.2,
     "cooldown": 40,
     "damage": 8.0,
     "freezeTime": 100,

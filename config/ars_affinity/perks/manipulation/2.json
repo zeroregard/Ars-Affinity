@@ -5,12 +5,6 @@
     "isBuff": true
   },
   {
-    "perk": "ACTIVE_SWAP_ABILITY",
-    "isBuff": true,
-    "manaCost": 0.25,
-    "cooldown": 300
-  },
-  {
     "perk": "PASSIVE_DEFLECTION",
     "isBuff": true,
     "amount": 100,
@@ -25,6 +19,6 @@
       "minecraft:zombie",	
       "minecraft:skeleton"	
     ],	
-    "isBuff": false	
+    "isBuff": false	  
   }
 ] 

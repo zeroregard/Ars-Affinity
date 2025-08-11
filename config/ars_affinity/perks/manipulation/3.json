@@ -7,7 +7,7 @@
   {
     "perk": "ACTIVE_SWAP_ABILITY",
     "isBuff": true,
-    "manaCost": 0.25,
+    "manaCost": 30,
     "cooldown": 200
   },
   {
@@ -21,15 +21,15 @@
     "chance": 1.0,	  
     "entities": [	  
       "minecraft:chicken",	  
-      "minecraft:creeper",	
-      "minecraft:sheep",	
-      "minecraft:zombie",	
-      "minecraft:skeleton",	
-      "minecraft:ghast",	
-      "minecraft:blaze",	
-      "minecraft:magma_cube",	
+      "minecraft:creeper",	  
+      "minecraft:sheep",	  
+      "minecraft:zombie",	  
+      "minecraft:skeleton",	  
+      "minecraft:ghast",	  
+      "minecraft:blaze",	  
+      "minecraft:magma_cube",	  
       "minecraft:wither_skeleton"
     ],	
-    "isBuff": false	
+    "isBuff": false	  
   }
 ] 

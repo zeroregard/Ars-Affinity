@@ -61,12 +61,12 @@ public class AffinityPerkDescriptionHelper {
                 return Component.translatable(translationKey, "unknown entities");
             case ACTIVE_ICE_BLAST:
                 if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-                    return Component.translatable(translationKey, activePerk.cooldown / 20);
+                    return Component.translatable(translationKey, (int)(activePerk.manaCost * 100), activePerk.cooldown / 20);
                 }
-                return Component.translatable(translationKey, 0);
+                return Component.translatable(translationKey, 0, 0);
             case ACTIVE_SWAP_ABILITY:
                 if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-                    return Component.translatable(translationKey, activePerk.manaCost * 100, activePerk.cooldown / 20);
+                    return Component.translatable(translationKey, (int)activePerk.manaCost, activePerk.cooldown / 20);
                 }
                 return Component.translatable(translationKey, 0, 0);
             case PASSIVE_UNSTABLE_SUMMONING:

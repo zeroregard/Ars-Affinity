@@ -5,12 +5,6 @@
     "isBuff": true
   },
   {
-    "perk": "ACTIVE_SWAP_ABILITY",
-    "isBuff": true,
-    "manaCost": 0.25,
-    "cooldown": 400
-  },
-  {
     "perk": "PASSIVE_UNSTABLE_SUMMONING",
     "chance": 0.33,
     "entities": [

@@ -5,8 +5,6 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
-import com.hollingsworth.arsnouveau.api.mana.IManaCap;
-import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,30 +57,13 @@ public class ActiveAbilityManager {
 
         AffinityPerk.ActiveAbilityPerk abilityPerk = (AffinityPerk.ActiveAbilityPerk) activePerk;
         
-        // Check mana cost
-        IManaCap mana = CapabilityRegistry.getMana(player);
-        if (mana == null) {
-            return;
-        }
-
-        float manaCost = abilityPerk.manaCost;
-        double currentMana = mana.getCurrentMana();
-        double requiredMana = currentMana * manaCost;
-        
-        if (currentMana < requiredMana) {
-            return;
-        }
-
-        // Consume mana
-        mana.removeMana(requiredMana);
-
         // Route to the appropriate ability helper
         switch (abilityPerk.perk) {
             case ACTIVE_ICE_BLAST:
                 IceBlastHelper.executeAbility(player, abilityPerk);
                 break;
             case ACTIVE_SWAP_ABILITY:
-                SwapAbilityHelper.executeAbility(player, abilityPerk, (int)requiredMana, (int)currentMana);
+                SwapAbilityHelper.executeAbility(player, abilityPerk);
                 break;
             default:
                 ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);
