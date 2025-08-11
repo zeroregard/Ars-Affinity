@@ -2,6 +2,7 @@ package com.github.ars_affinity.client;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.client.screen.AffinityScreen;
+import com.github.ars_affinity.common.ability.ActiveAbilityPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -23,6 +24,14 @@ public class ArsAffinityClient {
         )
     );
     
+    public static final Lazy<net.minecraft.client.KeyMapping> ABILITY_KEY = Lazy.of(() -> 
+        new net.minecraft.client.KeyMapping(
+            "key.ars_affinity.ability", 
+            GLFW.GLFW_KEY_F, // Default to F key
+            "key.categories.ars_affinity"
+        )
+    );
+    
     public static void init(IEventBus modEventBus) {
         ArsAffinity.LOGGER.info("Initializing Ars Affinity client...");
         
@@ -38,6 +47,7 @@ public class ArsAffinityClient {
     
     private static void registerKeybindings(final RegisterKeyMappingsEvent event) {
         event.register(AFFINITY_UI_KEY.get());
+        event.register(ABILITY_KEY.get());
         ArsAffinity.LOGGER.info("Ars Affinity keybindings registered!");
     }
     
@@ -51,6 +61,11 @@ public class ArsAffinityClient {
         if (AFFINITY_UI_KEY.get().consumeClick()) {
             LocalPlayer player = minecraft.player;
             minecraft.setScreen(new AffinityScreen(player));
+        }
+        
+        if (ABILITY_KEY.get().consumeClick()) {
+            // Send packet to server to trigger active ability
+            ActiveAbilityPacket.sendToServer();
         }
     }
 } 

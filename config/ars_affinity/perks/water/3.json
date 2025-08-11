@@ -4,5 +4,14 @@
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
     "entities": ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"]
+  },
+  {
+    "perk": "ACTIVE_ICE_BLAST",
+    "isBuff": true,
+    "manaCost": 0.2,
+    "cooldown": 40,
+    "damage": 8.0,
+    "freezeTime": 100,
+    "radius": 6.0
   }
 ]

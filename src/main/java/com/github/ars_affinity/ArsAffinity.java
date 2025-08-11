@@ -69,6 +69,7 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
 
         AffinityPerkManager.loadConfig();
+        
     }
     
     private void registerCapabilities(RegisterCapabilitiesEvent event) {

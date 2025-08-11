@@ -1,7 +1,7 @@
 [
   {
     "perk": "PASSIVE_MANA_TAP",
-    "amount": 2.0,
+    "amount": 1.0,
     "isBuff": true
   },
   {
@@ -19,6 +19,6 @@
       "minecraft:zombie",	
       "minecraft:skeleton"	
     ],	
-    "isBuff": false	
+    "isBuff": false	  
   }
 ] 

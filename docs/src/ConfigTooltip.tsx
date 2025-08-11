@@ -70,7 +70,7 @@ function ConfigTooltip({
             }}>
                 <div style={{
                     width: '400px',
-                    height: '250px',
+                    height: '300px',
                     backgroundColor: 'rgba(30, 15, 30, 0.9)',
                     border: '7px solid transparent',
                     borderImage: 'url(/tooltip.png) 3',
