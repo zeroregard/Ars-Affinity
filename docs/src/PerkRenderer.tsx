@@ -42,16 +42,13 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     // Handle active abilities
     if (perk.manaCost !== undefined && perk.cooldown !== undefined) {
         if (perkId === 'ACTIVE_SWAP_ABILITY') {
-            // Flat mana cost
+            // Only cooldown now
             formattedMessage = formattedMessage
-                .replace(/%d/g, perk.manaCost.toString())
                 .replace(/%d/g, (perk.cooldown / 20).toString())
                 .replace('§bF§r', 'KEYBIND')
         } else if (perkId === 'ACTIVE_ICE_BLAST') {
-            // Percentage mana cost
-            const manaPercentage = perk.manaCost * 100
+            // Only cooldown now
             formattedMessage = formattedMessage
-                .replace(/%d%%/g, `${manaPercentage}%`)
                 .replace(/%d/g, (perk.cooldown / 20).toString())
                 .replace('§bF§r', 'KEYBIND')
         }

@@ -8,7 +8,7 @@
     "perk": "ACTIVE_SWAP_ABILITY",
     "isBuff": true,
     "manaCost": 30,
-    "cooldown": 200
+    "cooldown": 60
   },
   {
     "perk": "PASSIVE_DEFLECTION",
