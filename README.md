@@ -6,35 +6,9 @@ A progression system for Ars Nouveau that tracks player affinity with different 
 
 Ars Affinity adds a visual affinity screen showing your progress in each spell school. As you cast spells, you gain affinity with that school, eventually reaching tiers 1-3. Each tier provides passive perks that can be buffs or debuffs depending on the situation.
 
-## Buffs and Debuffs
+See https://ars-affinity.vercel.app/ for different perks/abilities.
 
-### Fire School
-- **PASSIVE_DOUSED**: Reduces mana regeneration by % when in water or rain (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
-- **PASSIVE_FIRE_THORNS**: Has % chance to ignite enemies when attacked (Tier 2: 50%, Tier 3: 100%)
-- **PASSIVE_MOB_PACIFICATION**: Mobs Blaze and Magma Cube ignore you (Tier 3)
 
-### Water School
-- **PASSIVE_DEHYDRATED**: Reduces mana regeneration by % when in the Nether or on fire (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
-
-### Earth School
-- **PASSIVE_GROUNDED**: Reduces mana regeneration by % when not touching the ground (Tier 1: 30%, Tier 2: 60%, Tier 3: 90%)
-- **PASSIVE_MOB_PACIFICATION**: Mobs Spider, Cave Spider, and Silverfish ignore you (Tier 3)
-
-### Air School
-- TBD
-
-### Abjuration School
-- TBD
-
-### Conjuration School
-- **PASSIVE_SUMMON_HEALTH**: Grants summoned creatures health boost for a duration (Tier 1: 10% for 25s, Tier 2: 20% for 50s, Tier 3: 30% for 75s)
-
-### Necromancy School
-- **PASSIVE_LICH_FEAST**: Restores health and hunger when killing non-undead enemies (Tier 3: 0.5 health, 0.5 hunger)
-- **PASSIVE_MOB_PACIFICATION**: Undead mobs ignore you (Tier 3)
-
-### Manipulation School
-- **PASSIVE_MANA_TAP**: Restores mana based on spell damage dealt (Tier 1: 10%, Tier 2: 20%, Tier 3: 30%)
 
 ## Commands (OP Only)
 
