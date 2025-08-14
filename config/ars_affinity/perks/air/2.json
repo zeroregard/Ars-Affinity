@@ -8,13 +8,5 @@
         "perk": "PASSIVE_FREE_JUMP",
         "amount": 1.0,
         "isBuff": true
-    },
-    {
-        "perk": "ACTIVE_AIR_DASH",
-        "manaCost": 0.22,
-        "cooldown": 110,
-        "dashLength": 7.5,
-        "dashDuration": 0.35,
-        "isBuff": true
     }
 ]
