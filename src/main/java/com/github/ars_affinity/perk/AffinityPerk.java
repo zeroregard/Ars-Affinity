@@ -33,18 +33,15 @@ public abstract class AffinityPerk {
                 case PASSIVE_HEALING_AMPLIFICATION:
                 case PASSIVE_BLIGHTED:
                 case PASSIVE_FREE_JUMP:
-                case PASSIVE_REVERBERATION:
                 case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_DEFLECTION:
-                    float reversalAmount = jsonObject.get("amount").getAsFloat();
-                    int reversalDuration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, reversalAmount, reversalDuration, isBuff);
                 case PASSIVE_SUMMON_HEALTH:
-                    float healthAmount = jsonObject.get("amount").getAsFloat();
-                    int duration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, healthAmount, duration, isBuff);
+                case PASSIVE_STONE_SKIN:
+                    float durationAmount = jsonObject.get("amount").getAsFloat();
+                    int durationTime = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, durationAmount, durationTime, isBuff);
                 case PASSIVE_LICH_FEAST:
                     float healthRestore = jsonObject.get("health").getAsFloat();
                     float hungerRestore = jsonObject.get("hunger").getAsFloat();

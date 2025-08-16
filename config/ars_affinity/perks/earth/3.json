@@ -10,8 +10,9 @@
     "entities": ["minecraft:spider", "minecraft:cave_spider", "minecraft:silverfish"]
   },
   {
-    "perk": "PASSIVE_REVERBERATION",
-    "amount": 0.2,
-    "isBuff": true
+    "perk": "PASSIVE_STONE_SKIN",
+    "isBuff": true,
+    "amount": 100,
+    "time": 40
   }
 ]

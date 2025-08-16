@@ -24,7 +24,6 @@ public class AffinityPerkDescriptionHelper {
             case PASSIVE_HEALING_AMPLIFICATION:
             case PASSIVE_BLIGHTED:
             case PASSIVE_FREE_JUMP:
-            case PASSIVE_REVERBERATION:
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
                 }
@@ -35,6 +34,7 @@ public class AffinityPerkDescriptionHelper {
                 }
                 return Component.translatable(translationKey, 0, 0);
             case PASSIVE_DEFLECTION:
+            case PASSIVE_STONE_SKIN:
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
                     return Component.translatable(translationKey, durationPerk.time / 20);
                 }
