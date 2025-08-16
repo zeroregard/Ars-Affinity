@@ -8,5 +8,11 @@
     "perk": "PASSIVE_GROUNDED",
     "amount": 0.6,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_STONE_SKIN",
+    "isBuff": true,
+    "amount": 100,
+    "time": 80
   }
 ] 
