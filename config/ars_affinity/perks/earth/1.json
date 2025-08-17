@@ -1,13 +1,12 @@
 [
   {
+    "perk": "PASSIVE_MOB_PACIFICATION",
+    "isBuff": true,
+    "entities": ["minecraft:silverfish"]
+  },
+  {
     "perk": "PASSIVE_GROUNDED",
     "amount": 0.3,
     "isBuff": false
-  },
-  {
-    "perk": "PASSIVE_STONE_SKIN",
-    "isBuff": true,
-    "amount": 100,
-    "time": 120
   }
 ] 

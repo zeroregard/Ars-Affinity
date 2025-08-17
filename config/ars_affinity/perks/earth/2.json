@@ -13,6 +13,6 @@
     "perk": "PASSIVE_STONE_SKIN",
     "isBuff": true,
     "amount": 100,
-    "time": 80
+    "time": 400
   }
 ] 
