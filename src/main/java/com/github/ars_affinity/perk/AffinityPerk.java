@@ -60,9 +60,10 @@ public abstract class AffinityPerk {
                     float radius = jsonObject.get("radius").getAsFloat();
                     return new ActiveAbilityPerk(perkType, manaCost, cooldown, damage, freezeTime, radius, isBuff);
                 case ACTIVE_SWAP_ABILITY:
-                    float swapManaCost = jsonObject.get("manaCost").getAsFloat();
-                    int swapCooldown = jsonObject.get("cooldown").getAsInt();
-                    return new ActiveAbilityPerk(perkType, swapManaCost, swapCooldown, 0.0f, 0, 0.0f, isBuff);
+                case ACTIVE_EARTH_SLAM:
+                    float activeManaCost = jsonObject.get("manaCost").getAsFloat();
+                    int activeCooldown = jsonObject.get("cooldown").getAsInt();
+                    return new ActiveAbilityPerk(perkType, activeManaCost, activeCooldown, 0.0f, 0, 0.0f, isBuff);
                 case PASSIVE_UNSTABLE_SUMMONING:
                     float chance = jsonObject.get("chance").getAsFloat();
                     java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);

@@ -19,6 +19,7 @@ public class ActiveAbilityManager {
     
     static {
         SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_EARTH_SLAM);
         SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
         // Add more schools and their abilities here as they are implemented
     }
