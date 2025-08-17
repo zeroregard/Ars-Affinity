@@ -20,5 +20,6 @@ public enum AffinityPerkType {
     PASSIVE_GHOST_STEP,
     ACTIVE_ICE_BLAST,
     ACTIVE_SWAP_ABILITY,
+    ACTIVE_GROUND_SLAM,
     ACTIVE_AIR_DASH
 } 

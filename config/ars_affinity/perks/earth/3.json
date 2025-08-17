@@ -10,6 +10,12 @@
     "entities": ["minecraft:spider", "minecraft:cave_spider", "minecraft:silverfish"]
   },
   {
+    "perk": "ACTIVE_GROUND_SLAM",
+    "isBuff": true,
+    "manaCost": 0.2,
+    "cooldown": 200
+  },
+  {
     "perk": "PASSIVE_STONE_SKIN",
     "isBuff": true,
     "amount": 100,
