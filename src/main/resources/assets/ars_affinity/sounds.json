@@ -1,0 +1,16 @@
+{
+	"ground_slam": {
+		"sounds": [
+			{
+				"name": "ars_affinity:ground_slam",
+			}
+		]
+	},
+	"dash": {
+		"sounds": [
+			{
+				"name": "ars_affinity:dash"
+			}
+		]
+	}
+}

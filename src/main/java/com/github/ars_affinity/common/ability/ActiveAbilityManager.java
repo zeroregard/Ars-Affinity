@@ -13,65 +13,73 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ActiveAbilityManager {
-    
-    // Map of school to active ability perk type
-    private static final Map<SpellSchool, AffinityPerkType> SCHOOL_ABILITY_MAP = new HashMap<>();
-    
-    static {
-        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
-        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_GROUND_SLAM);
-        SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
-        // Add more schools and their abilities here as they are implemented
-    }
-    
-    public static void triggerActiveAbility(ServerPlayer player) {
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            return;
-        }
+	private static final Map<SpellSchool, AffinityPerkType> SCHOOL_ABILITY_MAP = new HashMap<>();
 
-        // Find the first school with an active ability
-        AffinityPerk activePerk = null;
-        
-        for (Map.Entry<SpellSchool, AffinityPerkType> entry : SCHOOL_ABILITY_MAP.entrySet()) {
-            SpellSchool school = entry.getKey();
-            AffinityPerkType perkType = entry.getValue();
-            
-            int tier = progress.getTier(school);
-            if (tier > 0) {
-                // Check if player has this perk
-                final AffinityPerk[] foundPerk = {null};
-                AffinityPerkHelper.applyHighestTierPerk(progress, tier, school, perkType, perk -> {
-                    foundPerk[0] = perk;
-                });
-                
-                if (foundPerk[0] != null) {
-                    activePerk = foundPerk[0];
-                    break;
-                }
-            }
-        }
-        
-        if (activePerk == null || !(activePerk instanceof AffinityPerk.ActiveAbilityPerk)) {
-            return;
-        }
+	static {
+		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_GROUND_SLAM);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_AIR, AffinityPerkType.ACTIVE_AIR_DASH);
+	}
 
-        AffinityPerk.ActiveAbilityPerk abilityPerk = (AffinityPerk.ActiveAbilityPerk) activePerk;
-        
-        // Route to the appropriate ability helper
-        switch (abilityPerk.perk) {
-            case ACTIVE_ICE_BLAST:
-                IceBlastHelper.executeAbility(player, abilityPerk);
-                break;
-            case ACTIVE_SWAP_ABILITY:
-                SwapAbilityHelper.executeAbility(player, abilityPerk);
-                break;
-            case ACTIVE_GROUND_SLAM:
-                GroundSlamHelper.executeAbility(player, abilityPerk);
-                break;
-            default:
-                ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);
-                break;
-        }
-    }
-} 
+	public static void triggerActiveAbility(ServerPlayer player) {
+		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Trigger requested by {}", player.getName().getString());
+		var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+		if (progress == null) {
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No progress capability for {}", player.getName().getString());
+			return;
+		}
+
+		AffinityPerk activePerk = null;
+
+		for (Map.Entry<SpellSchool, AffinityPerkType> entry : SCHOOL_ABILITY_MAP.entrySet()) {
+			SpellSchool school = entry.getKey();
+			AffinityPerkType perkType = entry.getValue();
+
+			int tier = progress.getTier(school);
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: Tier for {} is {}", school.getId(), tier);
+			if (tier > 0) {
+				final AffinityPerk[] foundPerk = {null};
+				AffinityPerkHelper.applyHighestTierPerk(progress, tier, school, perkType, perk -> {
+					foundPerk[0] = perk;
+				});
+
+				if (foundPerk[0] != null) {
+					activePerk = foundPerk[0];
+					ArsAffinity.LOGGER.info("ACTIVE ABILITY: Selected perk {} for school {}", ((AffinityPerk.ActiveAbilityPerk) activePerk).perk, school.getId());
+					break;
+				}
+			}
+		}
+
+		if (activePerk == null || !(activePerk instanceof AffinityPerk.ActiveAbilityPerk)) {
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability perk available for {}", player.getName().getString());
+			return;
+		}
+
+		AffinityPerk.ActiveAbilityPerk abilityPerk = (AffinityPerk.ActiveAbilityPerk) activePerk;
+		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Executing {} for {}", abilityPerk.perk, player.getName().getString());
+
+		switch (abilityPerk.perk) {
+			case ACTIVE_ICE_BLAST:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch ICE BLAST");
+				IceBlastHelper.executeAbility(player, abilityPerk);
+				break;
+			case ACTIVE_SWAP_ABILITY:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SWAP ABILITY");
+				SwapAbilityHelper.executeAbility(player, abilityPerk);
+				break;
+			case ACTIVE_GROUND_SLAM:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch GROUND SLAM");
+				GroundSlamHelper.executeAbility(player, abilityPerk);
+				break;
+			case ACTIVE_AIR_DASH:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch AIR DASH");
+				AirDashHelper.executeAbility(player, abilityPerk);
+				break;
+			default:
+				ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);
+				break;
+		}
+	}
+}

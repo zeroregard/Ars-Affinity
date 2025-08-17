@@ -82,7 +82,7 @@ public class IceBlastHelper {
     
     private static void applyCooldown(ServerPlayer player, int cooldownTicks) {
 
-        player.addEffect(new MobEffectInstance(ModPotions.ICE_BLAST_COOLDOWN_EFFECT, cooldownTicks, 0, false, false, false));
+        player.addEffect(new MobEffectInstance(ModPotions.ICE_BLAST_COOLDOWN_EFFECT, cooldownTicks, 0, false, true, true));
     }
     
     private static float calculateManaScaling(ServerPlayer player, float baseValue) {

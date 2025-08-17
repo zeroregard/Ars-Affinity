@@ -33,18 +33,15 @@ public abstract class AffinityPerk {
                 case PASSIVE_HEALING_AMPLIFICATION:
                 case PASSIVE_BLIGHTED:
                 case PASSIVE_FREE_JUMP:
-                case PASSIVE_REVERBERATION:
                 case PASSIVE_PACIFIST:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_DEFLECTION:
-                    float reversalAmount = jsonObject.get("amount").getAsFloat();
-                    int reversalDuration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, reversalAmount, reversalDuration, isBuff);
                 case PASSIVE_SUMMON_HEALTH:
-                    float healthAmount = jsonObject.get("amount").getAsFloat();
-                    int duration = jsonObject.get("time").getAsInt();
-                    return new DurationBasedPerk(perkType, healthAmount, duration, isBuff);
+                case PASSIVE_STONE_SKIN:
+                    float durationAmount = jsonObject.get("amount").getAsFloat();
+                    int durationTime = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, durationAmount, durationTime, isBuff);
                 case PASSIVE_LICH_FEAST:
                     float healthRestore = jsonObject.get("health").getAsFloat();
                     float hungerRestore = jsonObject.get("hunger").getAsFloat();
@@ -60,10 +57,19 @@ public abstract class AffinityPerk {
                     float radius = jsonObject.get("radius").getAsFloat();
                     return new ActiveAbilityPerk(perkType, manaCost, cooldown, damage, freezeTime, radius, isBuff);
                 case ACTIVE_SWAP_ABILITY:
+                    float swapManaCost = jsonObject.get("manaCost").getAsFloat();
+                    int swapCooldown = jsonObject.get("cooldown").getAsInt();
+                    return new ActiveAbilityPerk(perkType, swapManaCost, swapCooldown, 0.0f, 0, 0.0f, isBuff);
                 case ACTIVE_GROUND_SLAM:
                     float activeManaCost = jsonObject.get("manaCost").getAsFloat();
                     int activeCooldown = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, activeManaCost, activeCooldown, 0.0f, 0, 0.0f, isBuff);
+                case ACTIVE_AIR_DASH:
+                    float dashManaCost = jsonObject.get("manaCost").getAsFloat();
+                    int dashCooldown = jsonObject.get("cooldown").getAsInt();
+                    float dashLength = jsonObject.get("dashLength").getAsFloat();
+                    float dashDuration = jsonObject.get("dashDuration").getAsFloat();
+                    return new ActiveAbilityPerk(perkType, dashManaCost, dashCooldown, 0.0f, 0, 0.0f, dashLength, dashDuration, isBuff);
                 case PASSIVE_UNSTABLE_SUMMONING:
                     float chance = jsonObject.get("chance").getAsFloat();
                     java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
@@ -139,6 +145,8 @@ public abstract class AffinityPerk {
         public float damage;
         public int freezeTime;
         public float radius;
+        public float dashLength;
+        public float dashDuration;
 
         public ActiveAbilityPerk(AffinityPerkType perk, float manaCost, int cooldown, float damage, int freezeTime, float radius, boolean isBuff) {
             super(perk, isBuff);
@@ -147,6 +155,19 @@ public abstract class AffinityPerk {
             this.damage = damage;
             this.freezeTime = freezeTime;
             this.radius = radius;
+            this.dashLength = 0.0f;
+            this.dashDuration = 0.0f;
+        }
+
+        public ActiveAbilityPerk(AffinityPerkType perk, float manaCost, int cooldown, float damage, int freezeTime, float radius, float dashLength, float dashDuration, boolean isBuff) {
+            super(perk, isBuff);
+            this.manaCost = manaCost;
+            this.cooldown = cooldown;
+            this.damage = damage;
+            this.freezeTime = freezeTime;
+            this.radius = radius;
+            this.dashLength = dashLength;
+            this.dashDuration = dashDuration;
         }
     }
 
