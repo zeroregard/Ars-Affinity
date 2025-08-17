@@ -85,7 +85,7 @@ public class DeflectionEvents {
 
             AffinityPerkHelper.applyHighestTierPerk(progress, manipulationTier, com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION, AffinityPerkType.PASSIVE_DEFLECTION, perk -> {
                 if (perk instanceof AffinityPerk.DurationBasedPerk reversalPerk) {
-                    player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, reversalPerk.time));
+                    player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, reversalPerk.time, 0, false, true, true));
                 }
             });
 

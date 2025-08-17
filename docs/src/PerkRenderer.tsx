@@ -51,6 +51,10 @@ function PerkRenderer({ perk }: PerkRendererProps) {
             formattedMessage = formattedMessage
                 .replace(/%d/g, (perk.cooldown / 20).toString())
                 .replace('§bF§r', 'KEYBIND')
+        } else if (perkId === 'ACTIVE_AIR_DASH') {
+            formattedMessage = formattedMessage
+                .replace(/%d/g, (perk.cooldown / 20).toString())
+                .replace('§bF§r', 'KEYBIND')
         }
     }
     // Handle passive perks with time and amount
