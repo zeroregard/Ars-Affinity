@@ -13,5 +13,11 @@
     "perk": "PASSIVE_REVERBERATION",
     "amount": 0.2,
     "isBuff": true
+  },
+  {
+    "perk": "ACTIVE_GROUND_SLAM",
+    "isBuff": true,
+    "manaCost": 100,
+    "cooldown": 200
   }
 ]

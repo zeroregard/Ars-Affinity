@@ -19,7 +19,7 @@ public class ActiveAbilityManager {
     
     static {
         SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
-        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_EARTH_SLAM);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_GROUND_SLAM);
         SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
         // Add more schools and their abilities here as they are implemented
     }
@@ -65,6 +65,9 @@ public class ActiveAbilityManager {
                 break;
             case ACTIVE_SWAP_ABILITY:
                 SwapAbilityHelper.executeAbility(player, abilityPerk);
+                break;
+            case ACTIVE_GROUND_SLAM:
+                GroundSlamHelper.executeAbility(player, abilityPerk);
                 break;
             default:
                 ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);

@@ -60,7 +60,7 @@ public abstract class AffinityPerk {
                     float radius = jsonObject.get("radius").getAsFloat();
                     return new ActiveAbilityPerk(perkType, manaCost, cooldown, damage, freezeTime, radius, isBuff);
                 case ACTIVE_SWAP_ABILITY:
-                case ACTIVE_EARTH_SLAM:
+                case ACTIVE_GROUND_SLAM:
                     float activeManaCost = jsonObject.get("manaCost").getAsFloat();
                     int activeCooldown = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, activeManaCost, activeCooldown, 0.0f, 0, 0.0f, isBuff);

@@ -16,6 +16,8 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue ICE_BLAST_DEFAULT_DAMAGE;
     public static ModConfigSpec.IntValue ICE_BLAST_DEFAULT_FREEZE_TIME;
     public static ModConfigSpec.DoubleValue ICE_BLAST_DEFAULT_RADIUS;
+    public static ModConfigSpec.DoubleValue GROUND_SLAM_MAX_DROP_DISTANCE;
+    public static ModConfigSpec.DoubleValue GROUND_SLAM_MAX_RADIUS;
     
     static {
         ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
@@ -54,6 +56,15 @@ public class ArsAffinityConfig {
         ICE_BLAST_DEFAULT_RADIUS = SERVER_BUILDER
             .comment("Default radius for ICE BLAST ability")
             .defineInRange("defaultRadius", 6.0, 2.0, 15.0);
+        SERVER_BUILDER.pop();
+        
+        SERVER_BUILDER.comment("GROUND SLAM Configuration").push("ground_slam");
+        GROUND_SLAM_MAX_DROP_DISTANCE = SERVER_BUILDER
+            .comment("Max drop distance used for logarithmic scaling (blocks)")
+            .defineInRange("maxDropDistance", 10.0, 1.0, 64.0);
+        GROUND_SLAM_MAX_RADIUS = SERVER_BUILDER
+            .comment("Max affect radius (blocks)")
+            .defineInRange("maxRadius", 5.0, 1.0, 16.0);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();
