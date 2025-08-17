@@ -116,7 +116,7 @@ public class GroundSlamHelper {
 
         int cooldown = player.getPersistentData().getInt("ars_affinity_ground_slam_cooldown");
         if (cooldown > 0) {
-            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModPotions.GROUND_SLAM_COOLDOWN_EFFECT, cooldown));
+            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(ModPotions.GROUND_SLAM_COOLDOWN_EFFECT, cooldown, 0, false, true, true));
         }
     }
 }
