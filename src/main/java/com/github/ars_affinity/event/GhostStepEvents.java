@@ -75,7 +75,7 @@ public class GhostStepEvents {
                 player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, ghostStepPerk.time * 20)); // Convert seconds to ticks
                 
                 // Apply cooldown effect
-                player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, ghostStepPerk.cooldown * 20)); // Convert seconds to ticks
+                player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, ghostStepPerk.cooldown * 20, 0, false, true, true)); // Convert seconds to ticks
                 
                 ArsAffinity.LOGGER.info("Player {} activated Ghost Step - healed for {} health, invisible for {} seconds", 
                     player.getName().getString(), healAmount, ghostStepPerk.time);

@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class KnockbackImmunityEffect extends MobEffect {
     public KnockbackImmunityEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0x8B4513); // Brown color for earth effect
+        super(MobEffectCategory.NEUTRAL, 0x8B4513); // Brown color for earth effect
     }
 
     @Override

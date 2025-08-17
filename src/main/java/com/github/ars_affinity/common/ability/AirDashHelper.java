@@ -4,12 +4,6 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.registry.ModPotions;
 import com.hollingsworth.arsnouveau.api.mana.IManaCap;
-import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
-import com.hollingsworth.arsnouveau.api.spell.Spell;
-import com.hollingsworth.arsnouveau.api.spell.SpellContext;
-import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectColdSnap;
-import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,17 +12,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
+import com.github.ars_affinity.registry.ModSounds;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.entity.projectile.windcharge.WindCharge;
+import net.minecraft.util.Mth;
 
 import java.util.List;
+
 
 public class AirDashHelper {
     
     public static void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
         ArsAffinity.LOGGER.info("AIR DASH: Starting execution for player {} with perk: manaCost={}, cooldown={}, dashLength={}, dashDuration={}", 
-            player.getName().getString(), perk.manaCost, perk.cooldown, perk.dashLength, perk.dashDuration);
+            "air dash was triggered");
         
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap == null) {
@@ -59,7 +55,6 @@ public class AirDashHelper {
         // Execute the dash
         performDash(player, dashLength, dashDuration);
         
-        // Check for enemies in the dash path and apply effects
         damageEntitiesInDashPath(player, dashLength);
         
         // Spawn particle effects
@@ -77,33 +72,23 @@ public class AirDashHelper {
     }
     
     private static void applyCooldown(ServerPlayer player, int cooldownTicks) {
-        player.addEffect(new MobEffectInstance(ModPotions.AIR_DASH_COOLDOWN_EFFECT, cooldownTicks, 0, false, false, false));
+        player.addEffect(new MobEffectInstance(ModPotions.AIR_DASH_COOLDOWN_EFFECT, cooldownTicks, 0, false, true, true));
     }
     
     private static void performDash(ServerPlayer player, float dashLength, float dashDuration) {
-        // Get the direction the player is facing
         Vec3 lookDirection = player.getLookAngle();
-        
-        // Calculate the dash velocity (distance / time)
         double dashSpeed = dashLength / dashDuration;
         Vec3 dashVelocity = lookDirection.scale(dashSpeed);
-        
-        // Apply the dash velocity to the player
         player.setDeltaMovement(dashVelocity);
-        
-        // Set the player's velocity to prevent immediate cancellation
         player.hurtMarked = true;
-        
-        // Schedule velocity reset after dash duration
         player.level().getServer().tell(new net.minecraft.server.TickTask(
             (int) (player.level().getServer().getTickCount() + (dashDuration * 20)), 
             () -> {
                 if (player.isAlive()) {
-                    // Reset velocity to normal after dash
                     Vec3 currentVel = player.getDeltaMovement();
-                    Vec3 horizontalVel = new Vec3(currentVel.x, 0, currentVel.z);
+                    Vec3 horizontalVel = new Vec3(currentVel.x, currentVel.y, currentVel.z);
                     if (horizontalVel.lengthSqr() > 0.01) {
-                        player.setDeltaMovement(horizontalVel.scale(0.1)); // Reduce horizontal velocity
+                        player.setDeltaMovement(horizontalVel.scale(0.1));
                     }
                 }
             }
@@ -114,54 +99,96 @@ public class AirDashHelper {
         Vec3 startPos = player.position();
         Vec3 lookDirection = player.getLookAngle();
         Vec3 endPos = startPos.add(lookDirection.scale(dashLength));
-        
-        // Create AABB for the dash path
-        AABB dashPath = new AABB(
-            Math.min(startPos.x, endPos.x) - 0.5, startPos.y - 0.5, Math.min(startPos.z, endPos.z) - 0.5,
-            Math.max(startPos.x, endPos.x) + 0.5, startPos.y + 1.5, Math.max(startPos.z, endPos.z) + 0.5
-        );
-        
-        // Find entities in the dash path
-        List<Entity> entitiesInPath = player.level().getEntities(player, dashPath, entity -> 
+        double radius = 3.0;
+
+        AABB queryBox = new AABB(
+            Math.min(startPos.x, endPos.x), Math.min(startPos.y, endPos.y), Math.min(startPos.z, endPos.z),
+            Math.max(startPos.x, endPos.x), Math.max(startPos.y, endPos.y), Math.max(startPos.z, endPos.z)
+        ).inflate(radius + 0.5);
+
+        List<Entity> candidates = player.level().getEntities(player, queryBox, entity ->
             entity instanceof LivingEntity && entity != player && !entity.isAlliedTo(player));
-        
-        ArsAffinity.LOGGER.info("AIR DASH: Found {} entities in dash path", entitiesInPath.size());
-        
-        // Apply effects to entities in the path
-        for (Entity entity : entitiesInPath) {
-            if (entity instanceof LivingEntity livingEntity) {
-                applyEntityEffects(livingEntity);
-            }
+
+        int hits = 0;
+		int index = 0;
+		for (Entity entity : candidates) {
+			if (entity instanceof LivingEntity livingEntity) {
+				if (isEntityWithinCapsule(livingEntity, startPos, endPos, radius)) {
+					scheduleWindCharge(player, livingEntity, startPos, endPos, lookDirection, index);
+					hits++;
+					index++;
+				}
+			}
+		}
+ 
+		ArsAffinity.LOGGER.info("AIR DASH: Found {} entities in dash path ({} within radius)", candidates.size(), hits);
+    }
+
+    private static boolean isEntityWithinCapsule(LivingEntity entity, Vec3 start, Vec3 end, double radius) {
+        Vec3 center = entity.getBoundingBox().getCenter();
+        double effectiveRadius = radius + (entity.getBbWidth() * 0.5);
+        double distance = distancePointToSegment(center, start, end);
+        return distance <= effectiveRadius;
+    }
+
+    private static double distancePointToSegment(Vec3 point, Vec3 a, Vec3 b) {
+        Vec3 ab = b.subtract(a);
+        Vec3 ap = point.subtract(a);
+        double abLenSqr = ab.lengthSqr();
+        if (abLenSqr <= 1.0E-7) {
+            return point.distanceTo(a);
         }
+        double t = ap.dot(ab) / abLenSqr;
+        t = Mth.clamp(t, 0.0, 1.0);
+        Vec3 closest = a.add(ab.scale(t));
+        return point.distanceTo(closest);
     }
     
-    private static void applyEntityEffects(LivingEntity entity) {
-        // Create a spell with EffectColdSnap (as requested, using this instead of EffectHarm)
-        Spell spell = new Spell();
-        spell = spell.add(MethodTouch.INSTANCE);
-        spell = spell.add(EffectColdSnap.INSTANCE);
-        
-        SpellContext context = SpellContext.fromEntity(spell, entity, entity.getMainHandItem());
-        SpellResolver resolver = new SpellResolver(context);
-        
-        resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
-        
-        ArsAffinity.LOGGER.info("AIR DASH: Applied effects to entity {}", entity.getName().getString());
-    }
+    private static void scheduleWindCharge(ServerPlayer player, LivingEntity target, Vec3 startPos, Vec3 endPos, Vec3 dashDir, int index) {
+		var server = player.level().getServer();
+		if (server == null) return;
+		int delay = Math.min(6, index) * 2;
+		server.tell(new net.minecraft.server.TickTask(server.getTickCount() + delay, () -> {
+			if (!player.isAlive() || !target.isAlive()) return;
+			spawnWindCharge(player, target, startPos, endPos, dashDir, index);
+		}));
+	}
+
+	private static void spawnWindCharge(ServerPlayer player, LivingEntity target, Vec3 startPos, Vec3 endPos, Vec3 dashDir, int index) {
+		var level = player.level();
+		if (level.isClientSide()) return;
+		Vec3 segment = endPos.subtract(startPos);
+		double lenSqr = segment.lengthSqr();
+		double t = 0.0;
+		if (lenSqr > 1.0E-7) {
+			t = Mth.clamp(target.getBoundingBox().getCenter().subtract(startPos).dot(segment) / lenSqr, 0.0, 1.0);
+		}
+		Vec3 base = startPos.add(segment.scale(t));
+		Vec3 lateral = dashDir.cross(new Vec3(0, 1, 0));
+		if (lateral.lengthSqr() < 1.0E-6) {
+			lateral = dashDir.cross(new Vec3(1, 0, 0));
+		}
+		lateral = lateral.normalize().scale(((index & 1) == 0 ? 1.0 : -1.0) * 0.5);
+		Vec3 from = base.add(lateral).add(dashDir.normalize().scale(0.25));
+		Vec3 to = target.getEyePosition();
+		Vec3 dir = to.subtract(from).normalize();
+		WindCharge wind = new WindCharge(level, from.x, from.y, from.z, dir);
+		wind.setOwner(player);
+		wind.setDeltaMovement(dir.scale(3.0));
+		level.addFreshEntity(wind);
+	}
     
     private static void spawnParticleEffects(ServerPlayer player) {
         Vec3 playerPos = player.position();
         
         if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-            // Spawn air/wind particles along the dash path
             Vec3 lookDirection = player.getLookAngle();
-            float dashLength = 10.0f; // Default dash length for particle effects
+            float dashLength = 10.0f;
             
             for (int i = 0; i < 30; i++) {
                 double progress = (double) i / 30.0;
                 Vec3 particlePos = playerPos.add(lookDirection.scale(dashLength * progress));
                 
-                // Add some randomness to the particle positions
                 double offsetX = (Math.random() - 0.5) * 0.5;
                 double offsetY = (Math.random() - 0.5) * 0.5;
                 double offsetZ = (Math.random() - 0.5) * 0.5;
@@ -175,7 +202,6 @@ public class AirDashHelper {
                 );
             }
             
-            // Spawn some sparkle particles for visual effect
             for (int i = 0; i < 15; i++) {
                 double offsetX = (Math.random() - 0.5) * 2.0;
                 double offsetY = Math.random() * 2.0;
@@ -194,48 +220,25 @@ public class AirDashHelper {
     
     private static void playSoundEffects(ServerPlayer player) {
         Vec3 playerPos = player.position();
-        
-        // Play whoosh sound for the dash
         player.level().playSound(
             null,
             playerPos.x,
             playerPos.y,
             playerPos.z,
-            SoundEvents.ELYTRA_FLYING,
+            ModSounds.DASH.get(),
             SoundSource.PLAYERS,
-            0.8f,
-            1.2f
+            0.7f,
+            1.3f
         );
-        
-        // Play a second sound for impact
-        player.level().getServer().tell(new net.minecraft.server.TickTask(
-            player.level().getServer().getTickCount() + 6, 
-            () -> {
-                if (player.isAlive()) {
-                    player.level().playSound(
-                        null,
-                        playerPos.x,
-                        playerPos.y,
-                        playerPos.z,
-                        SoundEvents.PLAYER_ATTACK_SWEEP,
-                        SoundSource.PLAYERS,
-                        0.6f,
-                        1.0f
-                    );
-                }
-            }
-        ));
     }
     
     private static void consumeMana(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap != null) {
-            double currentMana = manaCap.getCurrentMana();
             double maxMana = manaCap.getMaxMana();
             double requiredMana = perk.manaCost * maxMana;
             manaCap.removeMana((int)requiredMana);
             
-            ArsAffinity.LOGGER.info("AIR DASH: Consumed {} mana from player {}", requiredMana, player.getName().getString());
         }
     }
 }

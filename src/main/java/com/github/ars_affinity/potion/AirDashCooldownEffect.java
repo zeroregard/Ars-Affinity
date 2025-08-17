@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class AirDashCooldownEffect extends MobEffect {
     public AirDashCooldownEffect() {
-        super(MobEffectCategory.NEUTRAL, 0x87CEEB); // Light blue color
+        super(MobEffectCategory.HARMFUL, 0x87CEEB); // Light blue color
     }
 
     @Override

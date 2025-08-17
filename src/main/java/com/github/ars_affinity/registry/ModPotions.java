@@ -19,4 +19,5 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, GhostStepCooldownEffect> GHOST_STEP_COOLDOWN_EFFECT = EFFECTS.register("ghost_step_cooldown", GhostStepCooldownEffect::new);
     public static final DeferredHolder<MobEffect, KnockbackImmunityEffect> KNOCKBACK_IMMUNITY_EFFECT = EFFECTS.register("knockback_immunity", KnockbackImmunityEffect::new);
     public static final DeferredHolder<MobEffect, AirDashCooldownEffect> AIR_DASH_COOLDOWN_EFFECT = EFFECTS.register("air_dash_cooldown", AirDashCooldownEffect::new);
+    
 } 
