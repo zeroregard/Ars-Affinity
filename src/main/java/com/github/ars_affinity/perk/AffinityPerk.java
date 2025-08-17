@@ -61,6 +61,7 @@ public abstract class AffinityPerk {
                     int swapCooldown = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, swapManaCost, swapCooldown, 0.0f, 0, 0.0f, isBuff);
                 case ACTIVE_AIR_DASH:
+                case ACTIVE_FIRE_DASH:
                     float dashManaCost = jsonObject.get("manaCost").getAsFloat();
                     int dashCooldown = jsonObject.get("cooldown").getAsInt();
                     float dashLength = jsonObject.get("dashLength").getAsFloat();

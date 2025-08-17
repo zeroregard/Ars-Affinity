@@ -24,6 +24,8 @@
   "effect.ars_affinity.ghost_step_cooldown": "Ghost Step Cooldown",
   "effect.ars_affinity.stone_skin_cooldown": "Stone Skin Cooldown",
   "effect.ars_affinity.air_dash_cooldown": "Air Dash Cooldown",
+  "effect.ars_affinity.fire_dash_cooldown": "Fire Dash Cooldown",
+  "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
   "key.ars_affinity.ability": "Active Ability",
   "key.categories.ars_affinity": "Ars Affinity",
   "ars_affinity.screen.affinity.title": "Affinities",

@@ -21,6 +21,7 @@ public class ActiveAbilityManager {
         SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
         SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
         SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_AIR, AffinityPerkType.ACTIVE_AIR_DASH);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.ACTIVE_FIRE_DASH);
         // Add more schools and their abilities here as they are implemented
     }
     
@@ -67,7 +68,10 @@ public class ActiveAbilityManager {
                 SwapAbilityHelper.executeAbility(player, abilityPerk);
                 break;
             case ACTIVE_AIR_DASH:
-                AirDashHelper.executeAbility(player, abilityPerk);
+                AirDashHelper.triggerAbility(player, abilityPerk);
+                break;
+            case ACTIVE_FIRE_DASH:
+                FireDashHelper.triggerAbility(player, abilityPerk);
                 break;
             default:
                 ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);
