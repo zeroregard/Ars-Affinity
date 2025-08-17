@@ -33,8 +33,7 @@ public class AirDashHelper {
         }
         
         double currentMana = manaCap.getCurrentMana();
-        double maxMana = manaCap.getMaxMana();
-        double requiredMana = perk.manaCost * maxMana;
+        double requiredMana = perk.manaCost;
         
         if (currentMana < requiredMana) {
             ArsAffinity.LOGGER.info("AIR DASH: Player {} doesn't have enough mana. Required: {}, Current: {}", 
@@ -235,9 +234,8 @@ public class AirDashHelper {
     private static void consumeMana(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap != null) {
-            double maxMana = manaCap.getMaxMana();
-            double requiredMana = perk.manaCost * maxMana;
-            manaCap.removeMana((int)requiredMana);
+            int manaToConsume = (int)perk.manaCost;
+            manaCap.removeMana(manaToConsume);
             
         }
     }

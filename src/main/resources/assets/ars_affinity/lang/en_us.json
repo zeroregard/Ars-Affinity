@@ -16,7 +16,7 @@
   "ars_affinity.perk.PASSIVE_REVERBERATION": "While crouching, reflect melee knockback - stronger with more mana (%d%% cost)",
   "ars_affinity.perk.ACTIVE_ICE_BLAST": "Blast your surroundings with ice. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWAP_ABILITY": "Swap positions with entities. Press §bF§r to activate. %d second cooldown",
-  "ars_affinity.perk.ACTIVE_AIR_DASH": "Dash forward in the direction you're looking. Press §bF§r to activate. %d second cooldown",
+  "ars_affinity.perk.ACTIVE_AIR_DASH": "Dash forward in the direction you're looking, shooting Wind Charges at entities in your path. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.PASSIVE_GHOST_STEP": "On death, cancel death and heal %d%% health, become invisible for %d seconds, create decoy (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_UNSTABLE_SUMMONING": "%d%% chance to transform summons into random creatures",
   "effect.ars_affinity.bubble_guard_cooldown": "Bubble Guard Cooldown",
