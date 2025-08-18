@@ -17,6 +17,10 @@ public class CurseFieldHelper extends AbstractFieldAbility {
 		super(player, DEFAULT_HALf_EXTENT, DEFAULT_MANA_PERCENT_PER_TICK, DEFAULT_COOLDOWN_TICKS);
 	}
 
+	public static void toggleOrStart(ServerPlayer player, com.github.ars_affinity.perk.AffinityPerk.ActiveAbilityPerk perk) {
+		ActiveFieldRegistry.toggleOrStart(player, () -> new CurseFieldHelper(player));
+	}
+
 	@Override
 	public void onTick() {
 		for (LivingEntity e : getLivingEntitiesInField()) {
@@ -51,4 +55,3 @@ public class CurseFieldHelper extends AbstractFieldAbility {
 		}
 	}
 }
-

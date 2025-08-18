@@ -74,6 +74,10 @@ public abstract class AffinityPerk {
                     float sanctMana = jsonObject.get("manaCost").getAsFloat();
                     int sanctCd = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, sanctMana, sanctCd, 0.0f, 0, 0.0f, isBuff);
+                case ACTIVE_CURSE_FIELD:
+                    float curseMana = jsonObject.get("manaCost").getAsFloat();
+                    int curseCd = jsonObject.get("cooldown").getAsInt();
+                    return new ActiveAbilityPerk(perkType, curseMana, curseCd, 0.0f, 0, 0.0f, isBuff);
                 case PASSIVE_UNSTABLE_SUMMONING:
                     float chance = jsonObject.get("chance").getAsFloat();
                     java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
