@@ -68,6 +68,11 @@ public class AffinityPerkDescriptionHelper {
 					return Component.translatable(translationKey, (int)activePerk.manaCost, activePerk.cooldown / 20);
 				}
 				return Component.translatable(translationKey, 0, 0);
+			case ACTIVE_SANCTUARY:
+				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+					return Component.translatable(translationKey, activePerk.cooldown / 20);
+				}
+				return Component.translatable(translationKey, 0);
 			case PASSIVE_UNSTABLE_SUMMONING:
 				if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
 					if (unstablePerk.entities != null && !unstablePerk.entities.isEmpty()) {

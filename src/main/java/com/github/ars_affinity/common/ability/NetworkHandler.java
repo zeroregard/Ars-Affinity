@@ -22,6 +22,12 @@ public class NetworkHandler {
                 ActiveAbilityPacket.STREAM_CODEC,
                 ActiveAbilityPacket::handleData
         );
+
+        registrar.playToServer(
+                com.github.ars_affinity.event.SanctuaryKeyReleasePacket.TYPE,
+                com.github.ars_affinity.event.SanctuaryKeyReleasePacket.STREAM_CODEC,
+                com.github.ars_affinity.event.SanctuaryKeyReleasePacket::handleData
+        );
     }
 
     public static void sendToServer(CustomPacketPayload msg) {

@@ -67,5 +67,9 @@ public class ArsAffinityClient {
             // Send packet to server to trigger active ability
             ActiveAbilityPacket.sendToServer();
         }
+        
+        if (event.getAction() == GLFW.GLFW_RELEASE && event.getKey() == ABILITY_KEY.get().getKey().getValue()) {
+            com.github.ars_affinity.event.SanctuaryKeyReleasePacket.sendToServer();
+        }
     }
 } 
