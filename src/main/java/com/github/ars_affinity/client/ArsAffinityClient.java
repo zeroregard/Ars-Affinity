@@ -2,7 +2,9 @@ package com.github.ars_affinity.client;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.client.screen.AffinityScreen;
-import com.github.ars_affinity.common.ability.ActiveAbilityPacket;
+import com.github.ars_affinity.common.ability.ActiveAbilityPressDownPacket;
+import com.github.ars_affinity.common.ability.ActiveAbilityReleasePacket;
+import com.github.ars_affinity.common.ability.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -63,9 +65,14 @@ public class ArsAffinityClient {
             minecraft.setScreen(new AffinityScreen(player));
         }
         
-        if (ABILITY_KEY.get().consumeClick()) {
-            // Send packet to server to trigger active ability
-            ActiveAbilityPacket.sendToServer();
+        if (event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ABILITY_KEY.get().getKey().getValue()) {
+            ActiveAbilityPressDownPacket msg = new ActiveAbilityPressDownPacket();
+            NetworkHandler.sendToServer(msg);
+        }
+
+        if (event.getAction() == GLFW.GLFW_RELEASE && event.getKey() == ABILITY_KEY.get().getKey().getValue()) {
+            ActiveAbilityReleasePacket msg = new ActiveAbilityReleasePacket();
+            NetworkHandler.sendToServer(msg);
         }
     }
 } 

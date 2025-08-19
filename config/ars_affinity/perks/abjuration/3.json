@@ -15,5 +15,11 @@
     "time": 10,
     "cooldown": 300,
     "isBuff": true
+  },
+  {
+    "perk": "ACTIVE_SANCTUARY",
+    "manaCost": 1,
+    "cooldown": 100,
+    "isBuff": true
   }
 ]
