@@ -1,6 +1,7 @@
 package com.github.ars_affinity.common.ability.field;
 
 import com.github.ars_affinity.registry.ModPotions;
+import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -25,8 +26,7 @@ public class SanctuaryHelper extends AbstractFieldAbility {
 	}
 
 	public static void toggleOrStart(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
-		if (player.hasEffect(com.github.ars_affinity.registry.ModPotions.SANCTUARY_COOLDOWN_EFFECT)) return;
-		com.github.ars_affinity.ArsAffinity.LOGGER.info("SANCTUARY start: manaCostPerTick={} cooldownTicks={}", perk.manaCost, perk.cooldown);
+		if (player.hasEffect(ModPotions.SANCTUARY_COOLDOWN_EFFECT)) return;
 		ActiveFieldRegistry.toggleOrStart(player, () -> new SanctuaryHelper(player, perk.manaCost, perk.cooldown));
 	}
 
