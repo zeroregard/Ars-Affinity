@@ -31,34 +31,31 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     }
     
     const messageKey = `ars_affinity.perk.${perkId}`
-    const message = intl.formatMessage({ id: messageKey })
-    
+    let message = intl.formatMessage({ id: messageKey })
+
     if (message === messageKey) {
-        return <span style={{ color: '#ff6b6b' }}>Unknown perk: {perkId}</span>
+        const activeFallbacks: Record<string, string> = {
+            'ACTIVE_GROUND_SLAM': 'Slam the ground. Press KEYBIND to activate. %d second cooldown',
+            'ACTIVE_SANCTUARY': 'Hold KEYBIND to project a protective field. %d second cooldown',
+            'ACTIVE_CURSE_FIELD': 'Hold KEYBIND to project a cursed field that damages and silences foes. %d second cooldown'
+        }
+        if (perk.manaCost !== undefined && perk.cooldown !== undefined && activeFallbacks[perkId]) {
+            message = activeFallbacks[perkId]
+        } else {
+            return <span style={{ color: '#ff6b6b' }}>Unknown perk: {perkId}</span>
+        }
     }
 
     let formattedMessage = message
 
     // Handle active abilities
     if (perk.manaCost !== undefined && perk.cooldown !== undefined) {
-        if (perkId === 'ACTIVE_SWAP_ABILITY') {
-            // Only cooldown now
-            formattedMessage = formattedMessage
-                .replace(/%d/g, (perk.cooldown / 20).toString())
-                .replace('§bF§r', 'KEYBIND')
-        } else if (perkId === 'ACTIVE_ICE_BLAST') {
-            // Only cooldown now
-            formattedMessage = formattedMessage
-                .replace(/%d/g, (perk.cooldown / 20).toString())
-                .replace('§bF§r', 'KEYBIND')
-        } else if (perkId === 'ACTIVE_AIR_DASH') {
-            formattedMessage = formattedMessage
-                .replace(/%d/g, (perk.cooldown / 20).toString())
-                .replace('§bF§r', 'KEYBIND')
-        }
+        formattedMessage = formattedMessage
+            .replace(/%d/g, (perk.cooldown / 20).toString())
+            .replace('§bF§r', 'KEYBIND')
     }
     // Handle passive perks with time and amount
-    else if (perk.time && perk.amount) {
+    else if (perk.time && perk.amount !== undefined) {
         formattedMessage = formattedMessage
             .replace(/%s/g, perk.amount.toString())
             .replace(/%d/g, (perk.time/20).toString())
