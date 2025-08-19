@@ -18,9 +18,15 @@ public class NetworkHandler {
         final PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
 
         registrar.playToServer(
-                ActiveAbilityPacket.TYPE,
-                ActiveAbilityPacket.STREAM_CODEC,
-                ActiveAbilityPacket::handleData
+                ActiveAbilityPressDownPacket.TYPE,
+                ActiveAbilityPressDownPacket.STREAM_CODEC,
+                ActiveAbilityPressDownPacket::handleData
+        );
+
+        registrar.playToServer(
+                ActiveAbilityReleasePacket.TYPE,
+                ActiveAbilityReleasePacket.STREAM_CODEC,
+                ActiveAbilityReleasePacket::handleData
         );
     }
 

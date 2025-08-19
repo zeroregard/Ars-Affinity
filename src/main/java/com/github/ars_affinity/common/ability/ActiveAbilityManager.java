@@ -2,6 +2,8 @@ package com.github.ars_affinity.common.ability;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.common.ability.field.SanctuaryHelper;
+import com.github.ars_affinity.common.ability.field.CurseFieldHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -20,6 +22,8 @@ public class ActiveAbilityManager {
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_GROUND_SLAM);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_AIR, AffinityPerkType.ACTIVE_AIR_DASH);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.ABJURATION, AffinityPerkType.ACTIVE_SANCTUARY);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.NECROMANCY, AffinityPerkType.ACTIVE_CURSE_FIELD);
 	}
 
 	public static void triggerActiveAbility(ServerPlayer player) {
@@ -76,6 +80,14 @@ public class ActiveAbilityManager {
 			case ACTIVE_AIR_DASH:
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch AIR DASH");
 				AirDashHelper.executeAbility(player, abilityPerk);
+				break;
+			case ACTIVE_SANCTUARY:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SANCTUARY");
+				SanctuaryHelper.toggleOrStart(player, abilityPerk);
+				break;
+			case ACTIVE_CURSE_FIELD:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch CURSE FIELD");
+				CurseFieldHelper.toggleOrStart(player, abilityPerk);
 				break;
 			default:
 				ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);

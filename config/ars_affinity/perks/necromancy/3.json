@@ -14,5 +14,11 @@
     "perk": "PASSIVE_MOB_PACIFICATION",
     "isBuff": true,
     "entities": ["minecraft:skeleton", "minecraft:zombie", "minecraft:zombie_pigman", "minecraft:zombie_villager", "minecraft:drowned", "minecraft:husk", "minecraft:stray"]
+  },
+  {
+    "perk": "ACTIVE_CURSE_FIELD",
+    "manaCost": 1,
+    "cooldown": 100,
+    "isBuff": true
   }
 ]
