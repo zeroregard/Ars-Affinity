@@ -12,7 +12,6 @@ public class ActiveFieldRegistry {
 	public static void toggleOrStart(ServerPlayer player, java.util.function.Supplier<AbstractFieldAbility> supplier) {
 		UUID id = player.getUUID();
 		if (ACTIVE.containsKey(id)) {
-			stop(player);
 			return;
 		}
 		ACTIVE.put(id, supplier.get());
@@ -33,7 +32,6 @@ public class ActiveFieldRegistry {
 		boolean keep = ability.tick();
 		if (!keep) {
 			ACTIVE.remove(id);
-			ability.onRelease();
 		}
 	}
 }

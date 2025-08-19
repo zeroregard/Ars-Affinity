@@ -18,15 +18,15 @@ public class NetworkHandler {
         final PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
 
         registrar.playToServer(
-                ActiveAbilityPacket.TYPE,
-                ActiveAbilityPacket.STREAM_CODEC,
-                ActiveAbilityPacket::handleData
+                ActiveAbilityPressDownPacket.TYPE,
+                ActiveAbilityPressDownPacket.STREAM_CODEC,
+                ActiveAbilityPressDownPacket::handleData
         );
 
         registrar.playToServer(
-                com.github.ars_affinity.event.SanctuaryKeyReleasePacket.TYPE,
-                com.github.ars_affinity.event.SanctuaryKeyReleasePacket.STREAM_CODEC,
-                com.github.ars_affinity.event.SanctuaryKeyReleasePacket::handleData
+                ActiveAbilityReleasePacket.TYPE,
+                ActiveAbilityReleasePacket.STREAM_CODEC,
+                ActiveAbilityReleasePacket::handleData
         );
     }
 

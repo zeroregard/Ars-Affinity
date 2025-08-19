@@ -10,23 +10,31 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class SanctuaryHelper extends AbstractFieldAbility {
 
-	public static final int DEFAULT_HALf_EXTENT = 1; // 3x3x3
-	public static final double DEFAULT_MANA_PERCENT_PER_TICK = 0.001; // 0.1%
+	public static final int DEFAULT_HALF_EXTENT_X = 1;
+	public static final int DEFAULT_HALF_EXTENT_Y = 1;
+	public static final int DEFAULT_HALF_EXTENT_Z = 1;
+	public static final double DEFAULT_MANA_COST_PER_TICK = 1.0; // flat mana per tick
 	public static final int DEFAULT_COOLDOWN_TICKS = 20 * 5; // 5 seconds
 
 	public SanctuaryHelper(ServerPlayer player) {
-		super(player, DEFAULT_HALf_EXTENT, DEFAULT_MANA_PERCENT_PER_TICK, DEFAULT_COOLDOWN_TICKS);
+		super(player, DEFAULT_HALF_EXTENT_X, DEFAULT_HALF_EXTENT_Y, DEFAULT_HALF_EXTENT_Z, DEFAULT_MANA_COST_PER_TICK, DEFAULT_COOLDOWN_TICKS);
+	}
+
+	public SanctuaryHelper(ServerPlayer player, double manaCostPerTick, int cooldownTicks) {
+		super(player, DEFAULT_HALF_EXTENT_X, DEFAULT_HALF_EXTENT_Y, DEFAULT_HALF_EXTENT_Z, manaCostPerTick, cooldownTicks);
 	}
 
 	public static void toggleOrStart(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
-		ActiveFieldRegistry.toggleOrStart(player, () -> new SanctuaryHelper(player));
+		if (player.hasEffect(com.github.ars_affinity.registry.ModPotions.SANCTUARY_COOLDOWN_EFFECT)) return;
+		com.github.ars_affinity.ArsAffinity.LOGGER.info("SANCTUARY start: manaCostPerTick={} cooldownTicks={}", perk.manaCost, perk.cooldown);
+		ActiveFieldRegistry.toggleOrStart(player, () -> new SanctuaryHelper(player, perk.manaCost, perk.cooldown));
 	}
 
 	@Override
 	public void onTick() {
 		for (LivingEntity e : getLivingEntitiesInField()) {
 			// Apply sanctuary every tick so it persists
-			e.addEffect(new MobEffectInstance(ModPotions.SANCTUARY_EFFECT, 10, 0, false, false, false));
+			e.addEffect(new MobEffectInstance(ModPotions.SANCTUARY_EFFECT, 10, 0, false, true, true));
 		}
 	}
 

@@ -50,6 +50,7 @@ public class ArsAffinity {
         modEventBus.addListener(this::registerCapabilities);
 
         ModPotions.EFFECTS.register(modEventBus);
+        ModPotions.POTIONS.register(modEventBus);
 
         ModItems.ITEMS.register(modEventBus);
         ModDataComponents.DATA.register(modEventBus);

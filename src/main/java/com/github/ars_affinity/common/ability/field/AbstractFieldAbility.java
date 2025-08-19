@@ -12,14 +12,18 @@ import java.util.List;
 
 public abstract class AbstractFieldAbility {
 	protected final ServerPlayer player;
-	protected final int halfExtent; // radius in blocks in each direction (1 => 3x3x3)
-	protected final double manaPercentPerTick; // 0.001 == 0.1%
+	protected final int halfExtentX;
+	protected final int halfExtentY;
+	protected final int halfExtentZ;
+	protected final double manaCostPerTick;
 	protected final int cooldownTicks;
 
-	protected AbstractFieldAbility(ServerPlayer player, int halfExtent, double manaPercentPerTick, int cooldownTicks) {
+	protected AbstractFieldAbility(ServerPlayer player, int halfExtentX, int halfExtentY, int halfExtentZ, double manaCostPerTick, int cooldownTicks) {
 		this.player = player;
-		this.halfExtent = halfExtent;
-		this.manaPercentPerTick = manaPercentPerTick;
+		this.halfExtentX = halfExtentX;
+		this.halfExtentY = halfExtentY;
+		this.halfExtentZ = halfExtentZ;
+		this.manaCostPerTick = manaCostPerTick;
 		this.cooldownTicks = cooldownTicks;
 	}
 
@@ -30,8 +34,8 @@ public abstract class AbstractFieldAbility {
 	public AABB getFieldAABB() {
 		Vec3 p = player.position();
 		return new AABB(
-			p.x - halfExtent, p.y - halfExtent, p.z - halfExtent,
-			p.x + halfExtent, p.y + halfExtent, p.z + halfExtent
+			p.x - halfExtentX, p.y - halfExtentY, p.z - halfExtentZ,
+			p.x + halfExtentX, p.y + halfExtentY, p.z + halfExtentZ
 		);
 	}
 
@@ -40,10 +44,9 @@ public abstract class AbstractFieldAbility {
 	}
 
 	protected boolean tryConsumeManaTick() {
-		IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
+		IManaCap manaCap = CapabilityRegistry.getMana(player);
 		if (manaCap == null) return false;
-		double maxMana = manaCap.getMaxMana();
-		double cost = Math.max(1.0, Math.floor(maxMana * manaPercentPerTick));
+		double cost = Math.max(1.0, Math.floor(manaCostPerTick));
 		if (manaCap.getCurrentMana() < cost) return false;
 		manaCap.removeMana((int) cost);
 		return true;

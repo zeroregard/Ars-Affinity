@@ -63,13 +63,14 @@ public class ArsAffinityClient {
             minecraft.setScreen(new AffinityScreen(player));
         }
         
-        if (ABILITY_KEY.get().consumeClick()) {
-            // Send packet to server to trigger active ability
-            ActiveAbilityPacket.sendToServer();
+        if (event.getAction() == GLFW.GLFW_PRESS && event.getKey() == ABILITY_KEY.get().getKey().getValue()) {
+            com.github.ars_affinity.common.ability.ActiveAbilityPressDownPacket msg = new com.github.ars_affinity.common.ability.ActiveAbilityPressDownPacket();
+            com.github.ars_affinity.common.ability.NetworkHandler.sendToServer(msg);
         }
-        
+
         if (event.getAction() == GLFW.GLFW_RELEASE && event.getKey() == ABILITY_KEY.get().getKey().getValue()) {
-            com.github.ars_affinity.event.SanctuaryKeyReleasePacket.sendToServer();
+            com.github.ars_affinity.common.ability.ActiveAbilityReleasePacket msg = new com.github.ars_affinity.common.ability.ActiveAbilityReleasePacket();
+            com.github.ars_affinity.common.ability.NetworkHandler.sendToServer(msg);
         }
     }
 } 
