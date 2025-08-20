@@ -34,16 +34,7 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     let message = intl.formatMessage({ id: messageKey })
 
     if (message === messageKey) {
-        const activeFallbacks: Record<string, string> = {
-            'ACTIVE_GROUND_SLAM': 'Slam the ground. Press KEYBIND to activate. %d second cooldown',
-            'ACTIVE_SANCTUARY': 'Hold KEYBIND to project a protective field. %d second cooldown',
-            'ACTIVE_CURSE_FIELD': 'Hold KEYBIND to project a cursed field that damages and silences foes. %d second cooldown'
-        }
-        if (perk.manaCost !== undefined && perk.cooldown !== undefined && activeFallbacks[perkId]) {
-            message = activeFallbacks[perkId]
-        } else {
-            return <span style={{ color: '#ff6b6b' }}>Unknown perk: {perkId}</span>
-        }
+        return <span style={{ color: '#ff6b6b' }}>Unknown perk: {perkId}</span>
     }
 
     let formattedMessage = message

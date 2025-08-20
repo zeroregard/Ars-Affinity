@@ -20,10 +20,12 @@ public class ActiveAbilityManager {
 	static {
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_WATER, AffinityPerkType.ACTIVE_ICE_BLAST);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.ACTIVE_GROUND_SLAM);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.ACTIVE_FIRE_DASH);
+        SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_AIR, AffinityPerkType.ACTIVE_AIR_DASH);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
-		SCHOOL_ABILITY_MAP.put(SpellSchools.ELEMENTAL_AIR, AffinityPerkType.ACTIVE_AIR_DASH);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ABJURATION, AffinityPerkType.ACTIVE_SANCTUARY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.NECROMANCY, AffinityPerkType.ACTIVE_CURSE_FIELD);
+   
 	}
 
 	public static void triggerActiveAbility(ServerPlayer player) {
@@ -79,8 +81,12 @@ public class ActiveAbilityManager {
 				break;
 			case ACTIVE_AIR_DASH:
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch AIR DASH");
-				AirDashHelper.executeAbility(player, abilityPerk);
+				AirDashHelper.triggerAbility(player, abilityPerk);
 				break;
+            case ACTIVE_FIRE_DASH:
+                ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch FIRE DASH");
+                FireDashHelper.triggerAbility(player, abilityPerk);
+                break;
 			case ACTIVE_SANCTUARY:
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SANCTUARY");
 				SanctuaryHelper.toggleOrStart(player, abilityPerk);
