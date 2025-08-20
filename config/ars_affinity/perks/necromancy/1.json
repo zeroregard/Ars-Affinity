@@ -3,5 +3,10 @@
     "perk": "PASSIVE_BLIGHTED",
     "amount": 0.25,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_SOULSPIKE",
+    "amount": 0.20,
+    "isBuff": true
   }
 ] 
