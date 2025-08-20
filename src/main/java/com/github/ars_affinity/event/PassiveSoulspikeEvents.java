@@ -11,8 +11,10 @@ import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import alexthw.ars_elemental.common.glyphs.EffectCharm;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.EntityHitResult;
@@ -24,7 +26,7 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import java.util.Random;
 
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class SoulspikeEvents {
+public class PassiveSoulspikeEvents {
 
     private static final Random RANDOM = new Random();
 
@@ -99,9 +101,9 @@ public class SoulspikeEvents {
         } else {
             try {
                 Spell charmSpell = new Spell(MethodTouch.INSTANCE, EffectCharm.INSTANCE);
-                SpellContext context = new SpellContext(player.level(), charmSpell, player, new com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster(player));
+                SpellContext context = new SpellContext(player.level(), charmSpell, player, new PlayerCaster(player));
                 SpellResolver resolver = new SpellResolver(context);
-                resolver.onCastOnEntity(player.getMainHandItem(), attacker, net.minecraft.world.InteractionHand.MAIN_HAND);
+                resolver.onCastOnEntity(player.getMainHandItem(), attacker, InteractionHand.MAIN_HAND);
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to apply EffectCharm to attacker", e);
             }
