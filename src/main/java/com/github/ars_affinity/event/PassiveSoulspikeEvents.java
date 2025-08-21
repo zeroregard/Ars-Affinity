@@ -12,16 +12,21 @@ import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import alexthw.ars_elemental.common.glyphs.EffectCharm;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
+import com.hollingsworth.arsnouveau.api.mana.IManaCap;
+import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
+import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 
 import java.util.Random;
 
@@ -40,6 +45,14 @@ public class PassiveSoulspikeEvents {
         
         if (attacker == null) return;
 
+        // Check if this is a melee attack (not a projectile)
+        DamageSource source = event.getSource();
+        boolean isMeleeAttack = !source.is(DamageTypeTags.IS_PROJECTILE);
+
+        if(!isMeleeAttack) {
+            return;
+        }
+
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress == null) return;
 
@@ -50,7 +63,7 @@ public class PassiveSoulspikeEvents {
                     if (RANDOM.nextFloat() < amountPerk.amount) {
                         applySoulspike(player, attacker, false);
                         
-                        ArsAffinity.LOGGER.info("Soulspike activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                        ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
                             player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
                     }
                 }
@@ -96,17 +109,44 @@ public class PassiveSoulspikeEvents {
     }
 
     private static void applySoulspike(Player player, LivingEntity attacker, boolean isRanged) {
+        // Calculate amplifier based on player's max mana (every 100 mana = +1 amplifier)
+        IManaCap playerMana = CapabilityRegistry.getMana(player);
+        int amplifier = 0;
+        if (playerMana != null) {
+            int maxMana = playerMana.getMaxMana();
+            amplifier = maxMana / 100;
+        }
+
         if (attacker instanceof Player) {
-            attacker.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 0, false, true, true));
+            attacker.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, amplifier, false, true, true));
         } else {
             try {
-                Spell charmSpell = new Spell(MethodTouch.INSTANCE, EffectCharm.INSTANCE);
-                SpellContext context = new SpellContext(player.level(), charmSpell, player, new PlayerCaster(player));
+                // Create SpellStats with the proper amplifier
+                SpellStats spellStats = new SpellStats.Builder()
+                    .setAmplification(amplifier)
+                    .build();
+
+                SpellContext context = new SpellContext(player.level(), new Spell(MethodTouch.INSTANCE, EffectCharm.INSTANCE), player, new PlayerCaster(player));
                 SpellResolver resolver = new SpellResolver(context);
-                resolver.onCastOnEntity(player.getMainHandItem(), attacker, InteractionHand.MAIN_HAND);
+                
+                // Apply the charm effect with proper stats
+                EffectCharm.INSTANCE.onResolveEntity(
+                    new EntityHitResult(attacker), 
+                    player.level(), 
+                    player, 
+                    spellStats, 
+                    context, 
+                    resolver
+                );
+                
+                ArsAffinity.LOGGER.info("Applied EffectCharm to attacker {} with amplifier {} (player max mana: {})", 
+                    attacker.getName().getString(), amplifier, playerMana != null ? playerMana.getMaxMana() : 0);
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to apply EffectCharm to attacker", e);
             }
         }
+        
+        ArsAffinity.LOGGER.info("Applied soulspike to attacker {} with amplifier {} (player max mana: {})", 
+            attacker.getName().getString(), amplifier, playerMana != null ? playerMana.getMaxMana() : 0);
     }
 }

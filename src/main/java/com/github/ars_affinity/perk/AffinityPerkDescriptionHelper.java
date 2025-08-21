@@ -23,6 +23,7 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_HEALING_AMPLIFICATION:
 			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
+			case PASSIVE_SOULSPIKE:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}
