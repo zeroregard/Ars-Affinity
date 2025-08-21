@@ -20,5 +20,10 @@
     "manaCost": 1,
     "cooldown": 100,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_SOULSPIKE",
+    "amount": 0.60,
+    "isBuff": true
   }
 ]

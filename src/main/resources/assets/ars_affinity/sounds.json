@@ -2,7 +2,7 @@
 	"ground_slam": {
 		"sounds": [
 			{
-				"name": "ars_affinity:ground_slam",
+				"name": "ars_affinity:ground_slam"
 			}
 		]
 	},

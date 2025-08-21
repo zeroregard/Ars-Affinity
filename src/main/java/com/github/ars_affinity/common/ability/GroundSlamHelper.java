@@ -85,7 +85,7 @@ public class GroundSlamHelper {
                 sl.sendParticles(ParticleTypes.POOF, pos.x + ox * 0.5, pos.y + 0.2, pos.z + oz * 0.5, 1, 0, 0, 0, 0.0);
             }
         }
-        level.playSound(null, pos.x, pos.y, pos.z, ModSounds.GROUND_SLAM.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+        level.playSound(null, pos.x, pos.y, pos.z, ModSounds.GROUND_SLAM.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 
         manaCap.removeMana((int) requiredMana);
     }

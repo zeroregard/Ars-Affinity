@@ -34,6 +34,7 @@ public abstract class AffinityPerk {
                 case PASSIVE_BLIGHTED:
                 case PASSIVE_FREE_JUMP:
                 case PASSIVE_PACIFIST:
+                case PASSIVE_SOULSPIKE:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_DEFLECTION:
