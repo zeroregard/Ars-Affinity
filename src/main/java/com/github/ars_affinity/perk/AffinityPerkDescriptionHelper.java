@@ -69,7 +69,28 @@ public class AffinityPerkDescriptionHelper {
 					return Component.translatable(translationKey, (int)activePerk.manaCost, activePerk.cooldown / 20);
 				}
 				return Component.translatable(translationKey, 0, 0);
+			case ACTIVE_GROUND_SLAM:
+				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+					return Component.translatable(translationKey, activePerk.cooldown / 20);
+				}
+				return Component.translatable(translationKey, 0);
+			case ACTIVE_AIR_DASH:
+			case ACTIVE_FIRE_DASH:
+				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+					return Component.translatable(translationKey, activePerk.cooldown / 20);
+				}
+				return Component.translatable(translationKey, 0);
 			case ACTIVE_SANCTUARY:
+				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+					return Component.translatable(translationKey, activePerk.cooldown / 20);
+				}
+				return Component.translatable(translationKey, 0);
+			case ACTIVE_SWARM:
+				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
+					return Component.translatable(translationKey, activePerk.cooldown / 20);
+				}
+				return Component.translatable(translationKey, 0);
+			case ACTIVE_CURSE_FIELD:
 				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
 					return Component.translatable(translationKey, activePerk.cooldown / 20);
 				}

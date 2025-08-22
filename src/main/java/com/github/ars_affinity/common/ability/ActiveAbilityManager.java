@@ -4,6 +4,7 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.common.ability.field.SanctuaryHelper;
 import com.github.ars_affinity.common.ability.field.CurseFieldHelper;
+import com.github.ars_affinity.common.ability.SwarmHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -25,6 +26,7 @@ public class ActiveAbilityManager {
 		SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ABJURATION, AffinityPerkType.ACTIVE_SANCTUARY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.NECROMANCY, AffinityPerkType.ACTIVE_CURSE_FIELD);
+		SCHOOL_ABILITY_MAP.put(SpellSchools.CONJURATION, AffinityPerkType.ACTIVE_SWARM);
    
 	}
 
@@ -94,6 +96,10 @@ public class ActiveAbilityManager {
 			case ACTIVE_CURSE_FIELD:
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch CURSE FIELD");
 				CurseFieldHelper.toggleOrStart(player, abilityPerk);
+				break;
+			case ACTIVE_SWARM:
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SWARM");
+				SwarmHelper.executeAbility(player, abilityPerk);
 				break;
 			default:
 				ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);

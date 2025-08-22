@@ -12,6 +12,7 @@ import com.github.ars_affinity.potion.GroundSlamCooldownEffect;
 import com.github.ars_affinity.potion.StoneSkinCooldownEffect;
 import com.github.ars_affinity.potion.AirDashCooldownEffect;
 import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
+import com.github.ars_affinity.potion.SwarmCooldownEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -36,6 +37,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SanctuaryCooldownEffect> SANCTUARY_COOLDOWN_EFFECT = EFFECTS.register("sanctuary_cooldown", SanctuaryCooldownEffect::new);
     public static final DeferredHolder<MobEffect, CurseFieldCooldownEffect> CURSE_FIELD_COOLDOWN_EFFECT = EFFECTS.register("curse_field_cooldown", CurseFieldCooldownEffect::new);
     public static final DeferredHolder<MobEffect, SilencedEffect> SILENCED_EFFECT = EFFECTS.register("silenced", SilencedEffect::new);
+    public static final DeferredHolder<MobEffect, SwarmCooldownEffect> SWARM_COOLDOWN_EFFECT = EFFECTS.register("swarm_cooldown", SwarmCooldownEffect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
 } 
