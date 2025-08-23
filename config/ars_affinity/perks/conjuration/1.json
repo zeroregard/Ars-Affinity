@@ -4,5 +4,17 @@
     "amount": 1,
     "time": 400,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_SUMMON_DEFENSE",
+    "amount": 1,
+    "time": 400,
+    "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_MANIPULATION_SICKNESS",
+    "duration": 200,
+    "hunger": 0,
+    "isBuff": false
   }
-] 
+]
