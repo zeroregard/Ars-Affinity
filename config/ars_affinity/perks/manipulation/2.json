@@ -20,5 +20,11 @@
       "minecraft:skeleton"	
     ],	
     "isBuff": false	  
+  },
+  {
+    "perk": "PASSIVE_MANIPULATION_SICKNESS",
+    "duration": 400,
+    "hunger": 1,
+    "isBuff": false
   }
 ] 

@@ -4,5 +4,11 @@
     "amount": 1,
     "time": 400,
     "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_SUMMON_DEFENSE",
+    "amount": 1,
+    "time": 400,
+    "isBuff": true
   }
-] 
+]

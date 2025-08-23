@@ -6,9 +6,15 @@
       "isBuff": true
     },
     {
-      "perk": "ACTIVE_SWARM",
-      "manaCost": 50,
-      "cooldown": 1200,
+      "perk": "PASSIVE_SUMMON_DEFENSE",
+      "amount": 3,
+      "time": 2400,
+      "isBuff": true
+    },
+    {
+      "perk": "PASSIVE_SUMMONING_POWER",
+      "amount": 1,
+      "time": 800,
       "isBuff": true
     }
-  ] 
+]

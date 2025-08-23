@@ -23,7 +23,6 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_HEALING_AMPLIFICATION:
 			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
-			case PASSIVE_SOULSPIKE:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}
@@ -31,6 +30,16 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_SUMMON_HEALTH:
 				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
 					return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
+				}
+				return Component.translatable(translationKey, 0, 0);
+			case PASSIVE_SUMMONING_POWER:
+				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
+				}
+				return Component.translatable(translationKey, 0, 0);
+			case PASSIVE_SUMMON_DEFENSE:
+				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
 				}
 				return Component.translatable(translationKey, 0, 0);
 			case PASSIVE_DEFLECTION:
@@ -69,28 +78,7 @@ public class AffinityPerkDescriptionHelper {
 					return Component.translatable(translationKey, (int)activePerk.manaCost, activePerk.cooldown / 20);
 				}
 				return Component.translatable(translationKey, 0, 0);
-			case ACTIVE_GROUND_SLAM:
-				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-					return Component.translatable(translationKey, activePerk.cooldown / 20);
-				}
-				return Component.translatable(translationKey, 0);
-			case ACTIVE_AIR_DASH:
-			case ACTIVE_FIRE_DASH:
-				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-					return Component.translatable(translationKey, activePerk.cooldown / 20);
-				}
-				return Component.translatable(translationKey, 0);
 			case ACTIVE_SANCTUARY:
-				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-					return Component.translatable(translationKey, activePerk.cooldown / 20);
-				}
-				return Component.translatable(translationKey, 0);
-			case ACTIVE_SWARM:
-				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
-					return Component.translatable(translationKey, activePerk.cooldown / 20);
-				}
-				return Component.translatable(translationKey, 0);
-			case ACTIVE_CURSE_FIELD:
 				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
 					return Component.translatable(translationKey, activePerk.cooldown / 20);
 				}

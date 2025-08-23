@@ -39,6 +39,8 @@ public abstract class AffinityPerk {
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_DEFLECTION:
                 case PASSIVE_SUMMON_HEALTH:
+                case PASSIVE_SUMMONING_POWER:
+                case PASSIVE_SUMMON_DEFENSE:
                 case PASSIVE_STONE_SKIN:
                     float durationAmount = jsonObject.get("amount").getAsFloat();
                     int durationTime = jsonObject.get("time").getAsInt();
@@ -67,6 +69,7 @@ public abstract class AffinityPerk {
                     return new ActiveAbilityPerk(perkType, activeManaCost, activeCooldown, 0.0f, 0, 0.0f, isBuff);
                 case ACTIVE_AIR_DASH:
                 case ACTIVE_FIRE_DASH:
+                case ACTIVE_GHOST_STEP:
                     float dashManaCost = jsonObject.get("manaCost").getAsFloat();
                     int dashCooldown = jsonObject.get("cooldown").getAsInt();
                     float dashLength = jsonObject.get("dashLength").getAsFloat();
@@ -93,6 +96,10 @@ public abstract class AffinityPerk {
                     int invisibilityTime = jsonObject.get("time").getAsInt();
                     int cooldownTime = jsonObject.get("cooldown").getAsInt();
                     return new GhostStepPerk(perkType, healAmount, invisibilityTime, cooldownTime, isBuff);
+                case PASSIVE_MANIPULATION_SICKNESS:
+                    int sicknessDuration = jsonObject.get("duration").getAsInt();
+                    int hungerAmount = jsonObject.get("hunger").getAsInt();
+                    return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -206,6 +213,17 @@ public abstract class AffinityPerk {
             this.amount = amount;
             this.time = time;
             this.cooldown = cooldown;
+        }
+    }
+
+    public static class ManipulationSicknessPerk extends AffinityPerk {
+        public int duration;
+        public int hunger;
+
+        public ManipulationSicknessPerk(AffinityPerkType perk, int duration, int hunger, boolean isBuff) {
+            super(perk, isBuff);
+            this.duration = duration;
+            this.hunger = hunger;
         }
     }
 }

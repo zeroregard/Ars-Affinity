@@ -31,5 +31,11 @@
       "minecraft:wither_skeleton"
     ],	
     "isBuff": false	  
+  },
+  {
+    "perk": "PASSIVE_MANIPULATION_SICKNESS",
+    "duration": 1200,
+    "hunger": 3,
+    "isBuff": false
   }
 ] 
