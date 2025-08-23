@@ -16,6 +16,7 @@ interface Perk {
     damage?: number
     freezeTime?: number
     radius?: number
+    duration?: number
 }
 
 interface PerkRendererProps {
@@ -53,9 +54,19 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     }
     // Handle passive perks with just amount
     else if (perk.amount !== undefined) {
-        const percentage = perk.amount * 100
-        formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
-        formattedMessage = formattedMessage.replace(/%%/g, '%')
+        // Special case for PASSIVE_SUMMONING_POWER - it's a direct value, not a percentage
+        if (perkId === 'PASSIVE_SUMMONING_POWER') {
+            formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+        }
+        // Check if the message contains %% to determine if it's a percentage
+        else if (message.includes('%%')) {
+            const percentage = perk.amount * 100
+            formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
+            formattedMessage = formattedMessage.replace(/%%/g, '%')
+        } else {
+            // Direct value, not a percentage
+            formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+        }
     }
     // Handle passive perks with chance
     else if (perk.chance !== undefined) {
@@ -66,6 +77,12 @@ function PerkRenderer({ perk }: PerkRendererProps) {
     // Handle lich feast perk
     else if(perk.health && perk.hunger) {
         formattedMessage = formattedMessage.replace(/%.1f/g, perk.health.toString()).replace(/%.2f/g, perk.hunger.toString())
+    }
+    // Handle manipulation sickness perk
+    else if(perk.duration !== undefined && perk.hunger !== undefined) {
+        formattedMessage = formattedMessage
+            .replace(/%d/g, (perk.duration / 20).toString())
+            .replace(/%d/g, perk.hunger.toString())
     }
     // Handle entity-based perks
     else if(perk.entities) {

@@ -25,11 +25,19 @@ public class PassiveManipulationSicknessEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
 
+        // Check if player already has manipulation sickness and is trying to cast a manipulation spell
+        if (player.hasEffect(ModPotions.MANIPULATION_SICKNESS_EFFECT) && containsManipulationGlyph(event.spell)) {
+            event.setCanceled(true);
+            ArsAffinity.LOGGER.info("Player {} attempted to cast manipulation spell while under manipulation sickness effect", 
+                player.getName().getString());
+            return;
+        }
+
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            int manipulationTier = progress.getTier(SpellSchools.MANIPULATION);
-            if (manipulationTier > 0) {
-                AffinityPerkHelper.applyHighestTierPerk(progress, manipulationTier, SpellSchools.MANIPULATION, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
+            int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
+            if (conjurationTier > 0) {
+                AffinityPerkHelper.applyHighestTierPerk(progress, conjurationTier, SpellSchools.CONJURATION, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
                     if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
                         if (containsManipulationGlyph(event.spell)) {
                             applyManipulationSickness(player, sicknessPerk.duration, sicknessPerk.hunger);
@@ -51,7 +59,7 @@ public class PassiveManipulationSicknessEvents {
     private static void applyManipulationSickness(Player player, int duration, int hunger) {
         if (player == null) return;
 
-        player.addEffect(new MobEffectInstance(ModPotions.MANIPULATION_SICKNESS_EFFECT, duration));
+        player.addEffect(new MobEffectInstance(ModPotions.MANIPULATION_SICKNESS_EFFECT, duration, 0, false, true, true));
         
         if (hunger > 0) {
             player.getFoodData().addExhaustion(hunger);

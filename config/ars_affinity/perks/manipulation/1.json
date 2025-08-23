@@ -12,11 +12,5 @@
       "minecraft:sheep"
     ],
     "isBuff": false
-  },
-  {
-    "perk": "PASSIVE_MANIPULATION_SICKNESS",
-    "duration": 200,
-    "hunger": 0,
-    "isBuff": false
   }
 ] 

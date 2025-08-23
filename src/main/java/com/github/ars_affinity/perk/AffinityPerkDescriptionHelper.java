@@ -93,6 +93,11 @@ public class AffinityPerkDescriptionHelper {
 					}
 				}
 				return Component.translatable(translationKey, 0, "unknown entities");
+			case PASSIVE_MANIPULATION_SICKNESS:
+				if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
+					return Component.translatable(translationKey, sicknessPerk.duration / 20, sicknessPerk.hunger);
+				}
+				return Component.translatable(translationKey, 0, 0);
 			default:
 				return Component.translatable(translationKey, 0);
 		}
