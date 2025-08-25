@@ -42,13 +42,12 @@
   "key.categories.ars_affinity": "Ars Affinity",
   "ars_affinity.screen.affinity.title": "Affinities",
   "item.ars_affinity.affinity_anchor_charm": "Affinity Anchor Charm",
-  "tooltip.ars_affinity.anchor_charm.desc": "Prevents affinity changes while worn",
-  "tooltip.ars_affinity.anchor_charm.charges": "Charges: %d/%d",
+  "tooltip.ars_affinity.affinity_anchor_charm": "Prevents affinity changes while worn",
   "tooltip.ars_affinity.anchor_charm.shift_info": "Costs one charge per spell cast",
   "chat.ars_affinity.anchor_charm.charging_started": "Started recharging %s",
   "tooltip.ars_affinity.anchor_charm.charging": "Recharging %s",
   "tooltip.ars_affinity.anchor_charm.charging_progress": "Charging... %d%%",
-  "ars_affinity.charm_charging": "Charm Charging",
+
   "ars_affinity.source_per_charge": "Source per charge: %d",
   "itemGroup.ars_affinity": "Ars Affinity"
 }
