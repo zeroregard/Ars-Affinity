@@ -100,11 +100,15 @@ public class ArsAffinity {
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         SchoolAffinityProgressProvider.savePlayerProgress(event.getEntity());
+        // Clean up water walking state
+        com.github.ars_affinity.event.PassiveWaterWalkingEvents.cleanupPlayerState(event.getEntity().getUUID());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
         SchoolAffinityProgressProvider.saveAllProgress();
         SchoolAffinityProgressProvider.clearCache();
+        // Clean up all water walking states
+        com.github.ars_affinity.event.PassiveWaterWalkingEvents.cleanupAllPlayerStates();
     }
 
     public static ResourceLocation prefix(String str) {
