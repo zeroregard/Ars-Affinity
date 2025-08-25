@@ -23,7 +23,6 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_HEALING_AMPLIFICATION:
 			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
-			case PASSIVE_SOULSPIKE:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}
@@ -31,6 +30,16 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_SUMMON_HEALTH:
 				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
 					return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
+				}
+				return Component.translatable(translationKey, 0, 0);
+			case PASSIVE_SUMMONING_POWER:
+				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
+				}
+				return Component.translatable(translationKey, 0, 0);
+			case PASSIVE_SUMMON_DEFENSE:
+				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
 				}
 				return Component.translatable(translationKey, 0, 0);
 			case PASSIVE_DEFLECTION:
@@ -84,6 +93,11 @@ public class AffinityPerkDescriptionHelper {
 					}
 				}
 				return Component.translatable(translationKey, 0, "unknown entities");
+			case PASSIVE_MANIPULATION_SICKNESS:
+				if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
+					return Component.translatable(translationKey, sicknessPerk.duration / 20, sicknessPerk.hunger);
+				}
+				return Component.translatable(translationKey, 0, 0);
 			default:
 				return Component.translatable(translationKey, 0);
 		}
