@@ -45,6 +45,7 @@ public class ActiveAbilityManager {
 			AffinityPerkType perkType = entry.getValue();
 
 			int tier = progress.getTier(school);
+
 			ArsAffinity.LOGGER.info("ACTIVE ABILITY: Tier for {} is {}", school.getId(), tier);
 			if (tier > 0) {
 				final AffinityPerk[] foundPerk = {null};

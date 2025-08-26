@@ -172,8 +172,8 @@ public class AffinityScreen extends Screen {
 
                 if (mouseX >= iconX && mouseX < iconX + ICON_SIZE &&
                     mouseY >= iconY && mouseY < iconY + ICON_SIZE) {
-                    // Open SchoolGlyphScreen with the clicked school
-                    this.minecraft.setScreen(new SchoolGlyphScreen(player, this, school));
+                    // Open SchoolGlyphScreen
+                    this.minecraft.setScreen(new SchoolGlyphScreen(this));
                     return true;
                 }
             }
