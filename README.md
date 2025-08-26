@@ -23,10 +23,16 @@ You can configure specific glyphs to be ignored for affinity progress tracking. 
 
 **Configuration File**: `config/ars_affinity-server.toml`
 
+**Default Blacklist**: The mod automatically blacklists `ars_nouveau:effect_break` by default.
+
 **Example**:
 ```toml
 [glyph_blacklist]
 blacklistedGlyphs = [
+    # The break effect is blacklisted by default
+    # "ars_nouveau:effect_break",
+    
+    # Additional custom blacklisted glyphs
     "ars_nouveau:effect_heal",
     "ars_nouveau:method_touch",
     "ars_elemental:effect_charm"

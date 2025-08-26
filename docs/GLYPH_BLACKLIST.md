@@ -10,6 +10,14 @@ When a glyph is blacklisted:
 - The spell effect still works as intended
 - Only the affinity tracking is disabled
 
+## Default Blacklist
+
+The mod comes with a default blacklist that includes commonly problematic glyphs:
+
+- `ars_nouveau:effect_break` - The break effect glyph (blacklisted by default)
+
+This default ensures that basic utility spells don't contribute to affinity progression without requiring manual configuration.
+
 ## Configuration
 
 ### In-Game Configuration
@@ -53,6 +61,10 @@ Use commands or tools that can inspect the game's registry.
 ```toml
 [glyph_blacklist]
 blacklistedGlyphs = [
+    # The break effect is blacklisted by default
+    # "ars_nouveau:effect_break",
+    
+    # Additional custom blacklisted glyphs
     "ars_nouveau:effect_heal",
     "ars_nouveau:method_touch",
     "ars_elemental:effect_charm"
@@ -76,6 +88,10 @@ If you want to prevent healing spells from contributing to affinity:
 ```toml
 [glyph_blacklist]
 blacklistedGlyphs = [
+    # Default blacklisted glyphs are automatically included
+    # "ars_nouveau:effect_break",
+    
+    # Additional custom blacklisted glyphs
     "ars_nouveau:effect_heal",
     "ars_nouveau:effect_heal_undead"
 ]
@@ -88,6 +104,7 @@ blacklistedGlyphs = [
 - The feature is server-side only (affects all players)
 - Changes require a server restart to take effect
 - Empty or invalid glyph IDs are safely ignored
+- Default blacklisted glyphs are automatically included
 
 ## Troubleshooting
 
@@ -97,6 +114,7 @@ blacklistedGlyphs = [
 2. Ensure the server has been restarted
 3. Verify the configuration file syntax
 4. Check server logs for any errors
+5. Remember that default blacklisted glyphs are automatically included
 
 ### Configuration Not Loading
 
@@ -112,4 +130,5 @@ If you encounter issues with the glyph blacklist feature:
 1. Check the server logs for error messages
 2. Verify your configuration syntax
 3. Ensure you're using the correct glyph IDs
-4. Report bugs with detailed information about your setup
+4. Remember that some glyphs are blacklisted by default
+5. Report bugs with detailed information about your setup

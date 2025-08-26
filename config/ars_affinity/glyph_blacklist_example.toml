@@ -14,12 +14,19 @@
 # - "ars_elemental:effect_charm" - Ars Elemental's charm effect
 #
 # Note: You can find glyph IDs by looking at the mod's registry or by checking the mod's documentation
+# 
+# Default blacklisted glyphs:
+# - "ars_nouveau:effect_break" - Ars Nouveau's break effect (blacklisted by default)
 
 [glyph_blacklist]
 # List of glyph IDs to ignore for affinity progress tracking
 # Add one glyph ID per line, without quotes
+# The break effect is blacklisted by default
 blacklistedGlyphs = [
-    # Example: Uncomment and modify these lines to blacklist specific glyphs
+    # Default blacklisted glyphs (these are automatically included)
+    # "ars_nouveau:effect_break",
+    
+    # Example: Uncomment and modify these lines to blacklist additional glyphs
     # "ars_nouveau:effect_heal",
     # "ars_nouveau:method_touch",
     # "ars_elemental:effect_charm"

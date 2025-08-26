@@ -104,7 +104,7 @@ public class ArsAffinityConfig {
         SERVER_BUILDER.comment("Glyph Blacklist Configuration").push("glyph_blacklist");
         GLYPH_BLACKLIST = SERVER_BUILDER
             .comment("List of glyph IDs to ignore for affinity progress tracking. Use format 'modid:glyph_name' (e.g., 'ars_nouveau:effect_heal')")
-            .defineList("blacklistedGlyphs", List.of(), o -> o instanceof String);
+            .defineList("blacklistedGlyphs", List.of("ars_nouveau:effect_break"), o -> o instanceof String);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();
