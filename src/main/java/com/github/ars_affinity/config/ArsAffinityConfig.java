@@ -1,6 +1,7 @@
 package com.github.ars_affinity.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
+import java.util.List;
 
 public class ArsAffinityConfig {
     
@@ -27,6 +28,9 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE;
     public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE;
     public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE;
+    
+    // Glyph Blacklist Configuration
+    public static ModConfigSpec.ConfigValue<List<? extends String>> GLYPH_BLACKLIST;
     
     static {
         ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
@@ -95,6 +99,12 @@ public class ArsAffinityConfig {
         SWARM_SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE = SERVER_BUILDER
             .comment("Distance at which summons teleport back to player when PASSIVE_SUMMONING_POWER is active (blocks)")
             .defineInRange("teleportDistance", 100.0, 75.0, 200.0);
+        SERVER_BUILDER.pop();
+        
+        SERVER_BUILDER.comment("Glyph Blacklist Configuration").push("glyph_blacklist");
+        GLYPH_BLACKLIST = SERVER_BUILDER
+            .comment("List of glyph IDs to ignore for affinity progress tracking. Use format 'modid:glyph_name' (e.g., 'ars_nouveau:effect_heal')")
+            .defineList("blacklistedGlyphs", List.of(), o -> o instanceof String);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();

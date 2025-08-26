@@ -1,0 +1,26 @@
+# Glyph Blacklist Configuration Example
+# This file shows how to configure glyphs that should be ignored for affinity progress tracking
+# 
+# To use this feature:
+# 1. Copy this file to your config directory
+# 2. Rename it to remove "_example" 
+# 3. Add the glyph IDs you want to blacklist
+# 4. Restart your server/client
+#
+# Glyph ID format: "modid:glyph_name"
+# Examples:
+# - "ars_nouveau:effect_heal" - Ars Nouveau's heal effect
+# - "ars_nouveau:method_touch" - Ars Nouveau's touch cast method
+# - "ars_elemental:effect_charm" - Ars Elemental's charm effect
+#
+# Note: You can find glyph IDs by looking at the mod's registry or by checking the mod's documentation
+
+[glyph_blacklist]
+# List of glyph IDs to ignore for affinity progress tracking
+# Add one glyph ID per line, without quotes
+blacklistedGlyphs = [
+    # Example: Uncomment and modify these lines to blacklist specific glyphs
+    # "ars_nouveau:effect_heal",
+    # "ars_nouveau:method_touch",
+    # "ars_elemental:effect_charm"
+]
