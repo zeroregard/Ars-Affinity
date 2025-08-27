@@ -3,13 +3,14 @@ package com.github.ars_affinity.perk;
 import com.github.ars_affinity.capability.SchoolAffinityProgress;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 
-import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Helper class for efficient O(1) perk lookups and operations.
+ * This replaces the old O(n) system that required looping through schools and tiers.
+ */
 public class AffinityPerkHelper {
 
-    // ===== NEW O(1) METHODS =====
-    
     /**
      * Get the active perk for a specific perk type.
      * This provides O(1) access to the highest tier perk of the given type.
@@ -84,32 +85,4 @@ public class AffinityPerkHelper {
             perkConsumer.accept(perk);
         }
     }
-    
-    // ===== LEGACY METHODS (for backward compatibility) =====
-
-    public static void applyHighestTierPerk(SchoolAffinityProgress progress, int tier, SpellSchool school, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
-        if (tier <= 0) {
-            return;
-        }
-
-        List<AffinityPerk> levelPerks = AffinityPerkManager.getPerksForCurrentLevel(school, tier);
-        if (levelPerks != null) {
-            for (AffinityPerk perk : levelPerks) {
-                if (perk.perk == perkType) {
-                    perkConsumer.accept(perk);
-                    return;
-                }
-            }
-        }
-    }
-    
-    public static void applyAllHighestTierPerks(SchoolAffinityProgress progress, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
-        for (SpellSchool school : com.github.ars_affinity.school.SchoolRelationshipHelper.ALL_SCHOOLS) {
-            int tier = progress.getTier(school);
-            if (tier > 0) {
-                applyHighestTierPerk(progress, tier, school, perkType, perkConsumer);
-            }
-        }
-    }
-
 } 

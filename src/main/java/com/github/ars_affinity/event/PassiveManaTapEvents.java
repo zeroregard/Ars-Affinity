@@ -17,7 +17,8 @@ public class PassiveManaTapEvents {
     
     @SubscribeEvent
     public static void onSpellDamage(SpellDamageEvent.Post event) {
-        if (!(event.caster instanceof Player player)) return;
+        if (!(event.context.getCaster() instanceof com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster playerCaster)) return;
+        var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
         // Only trigger if damage was actually dealt

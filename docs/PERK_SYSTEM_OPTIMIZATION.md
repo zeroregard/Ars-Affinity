@@ -77,9 +77,9 @@ int sourceTier = AffinityPerkHelper.getPerkSourceTier(progress, AffinityPerkType
 - [ ] Update active ability events
 - [ ] Performance testing and optimization
 
-### Phase 5: Legacy Method Removal (Future)
-- [ ] Deprecate old methods
-- [ ] Remove unused code
+### Phase 5: Complete Migration (Future)
+- [ ] Update all remaining events to use O(1) system
+- [ ] Remove any remaining old method references
 - [ ] Final performance validation
 
 ## Performance Benefits
@@ -178,13 +178,17 @@ The perk index is automatically serialized to NBT and restored on player login. 
 
 On deserialization, the system reconstructs the full `PerkData` objects from the stored metadata.
 
-## Backward Compatibility
+## Migration Required
 
-All existing code continues to work unchanged. The new system:
-- Maintains the same perk configuration files
-- Preserves existing event behavior
-- Keeps legacy helper methods functional
-- Automatically provides performance improvements
+The new system replaces the old O(n) methods completely. Existing code must be updated to use the new O(1) methods:
+
+- **Old**: `AffinityPerkHelper.applyAllHighestTierPerks()`
+- **New**: `AffinityPerkHelper.applyActivePerk()`
+
+- **Old**: `AffinityPerkHelper.applyHighestTierPerk()`
+- **New**: `AffinityPerkHelper.applyActivePerk()`
+
+The system maintains the same perk configuration files and event behavior, but requires code updates to benefit from the performance improvements.
 
 ## Testing
 

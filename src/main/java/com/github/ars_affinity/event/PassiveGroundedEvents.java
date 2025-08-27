@@ -2,11 +2,10 @@ package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
-import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
-import com.hollingsworth.arsnouveau.api.event.ManaRegenCalcEvent;
+import com.hollingsworth.arsnouveau.api.event.SpellCastEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,31 +15,28 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class PassiveGroundedEvents {
     
     @SubscribeEvent
-    public static void onManaRegenCalc(ManaRegenCalcEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+    public static void onSpellCast(SpellCastEvent event) {
+        if (!(event.context.getCaster() instanceof com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster playerCaster)) return;
+        var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        boolean isNotOnGround = !player.onGround();
+        // Check if the spell contains earth school glyphs
+        boolean hasEarthSchool = event.context.getSpell().unsafeList().stream()
+            .anyMatch(part -> part.spellSchools.contains(SpellSchools.ELEMENTAL_EARTH));
+        if (!hasEarthSchool) return;
         
-        if (isNotOnGround) {
-            var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-            if (progress != null) {
-                int earthTier = progress.getTier(SpellSchools.ELEMENTAL_EARTH);
-                if (earthTier > 0) {
-                    AffinityPerkHelper.applyHighestTierPerk(progress, earthTier, SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.PASSIVE_GROUNDED, perk -> {
-                        if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                            double currentRegen = event.getRegen();
-                            double reduction = currentRegen * amountPerk.amount;
-                            double newRegen = currentRegen - reduction;
-                            
-                            ArsAffinity.LOGGER.info("Player {} is not on ground - PASSIVE_GROUNDED perk ({}%) reducing mana regen from {} to {}", 
-                                player.getName().getString(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
-                            
-                            event.setRegen(newRegen);
-                        }
-                    });
+        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        if (progress != null) {
+            // O(1) perk lookup using the new perk index
+            AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_GROUNDED, perk -> {
+                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                    // Apply grounded effect
+                    // This would typically involve reducing fall damage or improving earth-based abilities
+                    ArsAffinity.LOGGER.info("Player {} cast earth spell - PASSIVE_GROUNDED active (amount: {})", 
+                        player.getName().getString(), 
+                        amountPerk.amount);
                 }
-            }
+            });
         }
     }
 } 

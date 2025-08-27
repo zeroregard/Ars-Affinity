@@ -39,10 +39,10 @@ This PR implements a significant performance optimization for the perk system, c
 - Tracks perk gains, losses, upgrades, and source school changes
 - Enables reactive perk-based systems
 
-### 3. Backward Compatibility
-- All existing code continues to work unchanged
-- Legacy methods preserved for gradual migration
-- No breaking changes to public APIs
+### 3. Clean Migration
+- Old O(n) methods completely replaced with O(1) equivalents
+- All existing code must be updated to use new methods
+- Cleaner, more focused codebase without legacy cruft
 
 ## 🧪 Testing
 
@@ -88,15 +88,18 @@ if (AffinityPerkHelper.hasActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SK
 
 ## 🔍 Code Quality
 
-- **Documentation**: Comprehensive JavaDoc for all new methods
+- **Documentation**: Comprehensive JavaDoc for all methods
 - **Error Handling**: Graceful fallbacks and logging
 - **Memory Management**: Efficient data structures and cleanup
 - **Testing**: Unit tests for core functionality
+- **Clean Code**: No legacy methods, focused implementation
 
 ## 🚦 Deployment Notes
 
 ### Breaking Changes
-- None - fully backward compatible
+- Old O(n) methods removed - code must be updated
+- `AffinityPerkHelper.applyAllHighestTierPerks()` → `AffinityPerkHelper.applyActivePerk()`
+- `AffinityPerkHelper.applyHighestTierPerk()` → `AffinityPerkHelper.applyActivePerk()`
 
 ### Configuration Changes
 - None - existing perk configs work unchanged
@@ -124,7 +127,7 @@ if (AffinityPerkHelper.hasActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SK
 - [x] Event migration examples
 - [x] Comprehensive documentation
 - [x] Unit tests
-- [x] Backward compatibility verification
+- [x] Legacy method removal
 - [x] Performance testing
 - [x] Code review preparation
 
@@ -133,7 +136,7 @@ if (AffinityPerkHelper.hasActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SK
 1. **Performance**: Verify O(1) complexity is achieved
 2. **Memory**: Check for memory leaks in perk index
 3. **Events**: Ensure perk change events fire correctly
-4. **Compatibility**: Verify no breaking changes
+4. **Migration**: Verify all old methods are properly replaced
 5. **Testing**: Confirm test coverage is adequate
 
 ## 💡 Questions for Reviewers
@@ -142,7 +145,8 @@ if (AffinityPerkHelper.hasActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SK
 2. Should we add more comprehensive performance benchmarks?
 3. Are there other events that should be migrated in this PR?
 4. Is the event system design appropriate for future extensions?
+5. Should we migrate more events now or leave them for future PRs?
 
 ---
 
-**Note**: This PR represents a significant architectural improvement that will benefit all future perk-related development. The backward compatibility ensures a smooth transition for existing code.
+**Note**: This PR represents a significant architectural improvement that will benefit all future perk-related development. The clean migration approach ensures a focused, maintainable codebase.

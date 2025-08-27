@@ -70,18 +70,15 @@ public class PerkSystemTest {
     }
     
     @Test
-    void testBackwardCompatibility() {
-        // Verify that legacy methods still exist and work
-        // We can't easily test the full functionality without mocking AffinityPerkManager,
-        // but we can verify the methods exist and don't crash
-        assertDoesNotThrow(() -> {
-            AffinityPerkHelper.applyHighestTierPerk(progress, 1, SpellSchools.ELEMENTAL_FIRE, 
-                AffinityPerkType.PASSIVE_MANA_TAP, perk -> {});
+    void testApplyActivePerk() {
+        // Test the applyActivePerk method with a consumer
+        // Since no perks are active initially, the consumer should not be called
+        boolean[] consumerCalled = {false};
+        
+        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANA_TAP, perk -> {
+            consumerCalled[0] = true;
         });
         
-        assertDoesNotThrow(() -> {
-            AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_MANA_TAP, 
-                perk -> {});
-        });
+        assertFalse(consumerCalled[0], "Consumer should not be called when no perk is active");
     }
 }
