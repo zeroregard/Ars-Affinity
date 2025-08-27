@@ -1,6 +1,7 @@
 package com.github.ars_affinity.registry;
 
 import com.github.ars_affinity.ArsAffinity;
+
 import com.github.ars_affinity.potion.IceBlastCooldownEffect;
 import com.github.ars_affinity.potion.SanctuaryCooldownEffect;
 import com.github.ars_affinity.potion.SanctuaryEffect;

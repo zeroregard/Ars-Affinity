@@ -3,5 +3,10 @@
     "perk": "PASSIVE_DEHYDRATED",
     "amount": 0.3,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_AQUA_FREEDOM",
+    "amount": 0,
+    "isBuff": true
   }
 ]
