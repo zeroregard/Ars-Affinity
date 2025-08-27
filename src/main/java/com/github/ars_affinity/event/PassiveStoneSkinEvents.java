@@ -38,22 +38,16 @@ public class PassiveStoneSkinEvents {
 		// Cooldown check
 		if (player.hasEffect(ModPotions.STONE_SKIN_COOLDOWN_EFFECT)) return;
 
-		// Check if player has earth affinity and the perk
+		// Check if player has the stone skin perk using O(1) lookup
 		var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
 		if (progress == null) return;
-		int earthTier = progress.getTier(SpellSchools.ELEMENTAL_EARTH);
-		if (earthTier <= 0) return;
-
-		final boolean[] hasPerk = {false};
-		AffinityPerkHelper.applyHighestTierPerk(progress, earthTier, SpellSchools.ELEMENTAL_EARTH, AffinityPerkType.PASSIVE_STONE_SKIN, perk -> {
+		
+		// O(1) perk lookup using the new perk index
+		AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SKIN, perk -> {
 			if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-				hasPerk[0] = true;
-
 				event.setCanceled(true);
 
-
 				player.addEffect(new MobEffectInstance(ModPotions.STONE_SKIN_COOLDOWN_EFFECT, durationPerk.time, 0, false, true, true));
-
 
 				Vec3 pos = player.position();
 				player.level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0f, 0.9f);
@@ -84,8 +78,6 @@ public class PassiveStoneSkinEvents {
 				}
 			}
 		});
-
-		if (!hasPerk[0]) return;
 	}
 }
 

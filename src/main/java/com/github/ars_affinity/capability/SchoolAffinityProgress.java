@@ -1,7 +1,12 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.event.PerkChangeEvent;
 import com.github.ars_affinity.event.TierChangeEvent;
+import com.github.ars_affinity.perk.AffinityPerk;
+import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.perk.AffinityPerkType;
+import com.github.ars_affinity.perk.PerkData;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
@@ -13,12 +18,14 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     private final Map<SpellSchool, Float> schoolAffinities = new HashMap<>();
     private final Map<SpellSchool, Integer> schoolTiers = new HashMap<>();
+    private final Map<AffinityPerkType, PerkData> activePerks = new HashMap<>();
     private Player player; // Reference to the player for event firing
     
     public SchoolAffinityProgress() {
@@ -56,6 +63,8 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         // Fire event if tier changed
         if (oldTier != newTier && player != null) {
             NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+            // Rebuild perk index after tier change
+            rebuildPerkIndex();
         }
     }
     
@@ -82,6 +91,7 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         }
         
         if (total > 0.0f) {
+            boolean tiersChanged = false;
             for (SpellSchool school : schoolAffinities.keySet()) {
                 float normalized = schoolAffinities.get(school) / total;
                 int oldTier = getTier(school);
@@ -92,7 +102,13 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
                 // Fire event if tier changed during normalization
                 if (oldTier != newTier && player != null) {
                     NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+                    tiersChanged = true;
                 }
+            }
+            
+            // Rebuild perk index if any tiers changed during normalization
+            if (tiersChanged) {
+                rebuildPerkIndex();
             }
         }
     }
@@ -119,6 +135,105 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         return primary;
     }
     
+    /**
+     * Get the active perk data for a specific perk type.
+     * This provides O(1) access to the highest tier perk of the given type.
+     * 
+     * @param perkType The type of perk to look up
+     * @return The perk data, or null if no perk of this type is active
+     */
+    public PerkData getActivePerk(AffinityPerkType perkType) {
+        return activePerks.get(perkType);
+    }
+    
+    /**
+     * Check if a specific perk type is currently active.
+     * 
+     * @param perkType The type of perk to check
+     * @return True if the perk is active, false otherwise
+     */
+    public boolean hasActivePerk(AffinityPerkType perkType) {
+        return activePerks.containsKey(perkType);
+    }
+    
+    /**
+     * Get all currently active perks.
+     * 
+     * @return A map of perk types to their active perk data
+     */
+    public Map<AffinityPerkType, PerkData> getAllActivePerks() {
+        return new HashMap<>(activePerks);
+    }
+    
+    /**
+     * Rebuild the perk index after tier changes.
+     * This method automatically determines which perks should be active
+     * based on the current tier levels and perk configurations.
+     */
+    private void rebuildPerkIndex() {
+        Map<AffinityPerkType, PerkData> oldPerks = new HashMap<>(activePerks);
+        activePerks.clear();
+        
+        // For each perk type, find the best (highest tier) perk available
+        for (AffinityPerkType perkType : AffinityPerkType.values()) {
+            PerkData bestPerk = findBestPerkForType(perkType);
+            if (bestPerk != null) {
+                activePerks.put(perkType, bestPerk);
+            }
+        }
+        
+        // Fire events for any perks that changed
+        firePerkChangeEvents(oldPerks);
+    }
+    
+    /**
+     * Find the best (highest tier) perk for a specific perk type.
+     * 
+     * @param perkType The type of perk to find
+     * @return The best perk data, or null if no perk of this type is available
+     */
+    private PerkData findBestPerkForType(AffinityPerkType perkType) {
+        PerkData best = null;
+        
+        for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
+            int tier = getTier(school);
+            if (tier > 0) {
+                List<AffinityPerk> tierPerks = AffinityPerkManager.getPerksForCurrentLevel(school, tier);
+                for (AffinityPerk perk : tierPerks) {
+                    if (perk.perk == perkType) {
+                        // Found a perk of this type - check if it's the highest tier
+                        if (best == null || tier > best.sourceTier) {
+                            best = new PerkData(perk, school, tier);
+                        }
+                        break; // Found the highest tier perk for this school
+                    }
+                }
+            }
+        }
+        
+        return best;
+    }
+    
+    /**
+     * Fire perk change events for any perks that changed during the rebuild.
+     * 
+     * @param oldPerks The previous perk state
+     */
+    private void firePerkChangeEvents(Map<AffinityPerkType, PerkData> oldPerks) {
+        if (player == null) return;
+        
+        // Check for perks that were added, removed, or changed
+        for (AffinityPerkType perkType : AffinityPerkType.values()) {
+            PerkData oldPerk = oldPerks.get(perkType);
+            PerkData newPerk = activePerks.get(perkType);
+            
+            // Only fire event if something actually changed
+            if (oldPerk != newPerk) {
+                NeoForge.EVENT_BUS.post(new PerkChangeEvent(player, perkType, oldPerk, newPerk));
+            }
+        }
+    }
+    
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
@@ -135,6 +250,17 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         }
         tag.put("schoolTiers", tiersTag);
         
+        // Serialize active perks index
+        CompoundTag perksTag = new CompoundTag();
+        for (Map.Entry<AffinityPerkType, PerkData> entry : activePerks.entrySet()) {
+            CompoundTag perkTag = new CompoundTag();
+            perkTag.putString("perkType", entry.getKey().name());
+            perkTag.putString("sourceSchool", entry.getValue().sourceSchool.getId());
+            perkTag.putInt("sourceTier", entry.getValue().sourceTier);
+            perksTag.put(entry.getKey().name(), perkTag);
+        }
+        tag.put("activePerks", perksTag);
+        
         return tag;
     }
     
@@ -142,6 +268,7 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         schoolAffinities.clear();
         schoolTiers.clear();
+        activePerks.clear();
         
         if (tag.contains("schoolAffinities", Tag.TAG_COMPOUND)) {
             CompoundTag affinitiesTag = tag.getCompound("schoolAffinities");
@@ -164,6 +291,33 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
                 if (school != null) {
                     int tier = tiersTag.getInt(key);
                     schoolTiers.put(school, tier);
+                }
+            }
+        }
+        
+        // Deserialize active perks index if available
+        if (tag.contains("activePerks", Tag.TAG_COMPOUND)) {
+            CompoundTag perksTag = tag.getCompound("activePerks");
+            for (String perkTypeName : perksTag.getAllKeys()) {
+                try {
+                    AffinityPerkType perkType = AffinityPerkType.valueOf(perkTypeName);
+                    CompoundTag perkTag = perksTag.getCompound(perkTypeName);
+                    String schoolName = perkTag.getString("sourceSchool");
+                    int tier = perkTag.getInt("sourceTier");
+                    
+                    SpellSchool school = getSpellSchoolFromString(schoolName);
+                    if (school != null && tier > 0) {
+                        // Reconstruct the perk data from the stored school and tier
+                        List<AffinityPerk> tierPerks = AffinityPerkManager.getPerksForCurrentLevel(school, tier);
+                        for (AffinityPerk perk : tierPerks) {
+                            if (perk.perk == perkType) {
+                                activePerks.put(perkType, new PerkData(perk, school, tier));
+                                break;
+                            }
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    ArsAffinity.LOGGER.warn("Unknown perk type in NBT: {}", perkTypeName);
                 }
             }
         }
