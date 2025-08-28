@@ -20,18 +20,14 @@ public class PassiveManipulationSicknessEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the manipulation school
         boolean hasManipulationSchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.MANIPULATION));
         if (!hasManipulationSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
                 if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
-                    // Apply manipulation sickness effect
-                    // This would typically involve adding negative effects after manipulation spells
                     ArsAffinity.LOGGER.info("Player {} cast manipulation spell - PASSIVE_MANIPULATION_SICKNESS active (duration: {}s, hunger: {})", 
                         player.getName().getString(), 
                         sicknessPerk.duration / 20, 

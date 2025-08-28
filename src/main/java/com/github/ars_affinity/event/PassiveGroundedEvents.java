@@ -27,11 +27,8 @@ public class PassiveGroundedEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_GROUNDED, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply grounded effect
-                    // This would typically involve reducing fall damage or improving earth-based abilities
                     ArsAffinity.LOGGER.info("Player {} cast earth spell - PASSIVE_GROUNDED active (amount: {})", 
                         player.getName().getString(), 
                         amountPerk.amount);

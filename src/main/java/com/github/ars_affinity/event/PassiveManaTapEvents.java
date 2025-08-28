@@ -26,7 +26,6 @@ public class PassiveManaTapEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANA_TAP, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     double manaRestore = event.damage * amountPerk.amount;

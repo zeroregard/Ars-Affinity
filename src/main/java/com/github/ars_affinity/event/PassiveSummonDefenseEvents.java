@@ -27,11 +27,8 @@ public class PassiveSummonDefenseEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_SUMMON_DEFENSE, perk -> {
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                    // Apply summon defense effect
-                    // This would typically involve buffing summoned entities' defense
                     ArsAffinity.LOGGER.info("Player {} cast conjuration spell - PASSIVE_SUMMON_DEFENSE active (amount: {}, time: {}s)", 
                         player.getName().getString(), 
                         durationPerk.amount, 

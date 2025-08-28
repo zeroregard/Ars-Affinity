@@ -22,11 +22,8 @@ public class PassivePacifistEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_PACIFIST, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply pacifist effect
-                    // This would typically involve preventing damage to peaceful mobs
                     ArsAffinity.LOGGER.info("Player {} cast spell - PASSIVE_PACIFIST active (damage reduction: {}%)", 
                         player.getName().getString(), 
                         (int)(amountPerk.amount * 100));

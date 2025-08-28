@@ -27,11 +27,8 @@ public class DeflectionEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_DEFLECTION, perk -> {
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                    // Apply deflection effect
-                    // This would typically involve redirecting projectiles
                     ArsAffinity.LOGGER.info("Player {} cast manipulation spell - PASSIVE_DEFLECTION active (amount: {}, time: {}s)", 
                         player.getName().getString(), 
                         durationPerk.amount, 

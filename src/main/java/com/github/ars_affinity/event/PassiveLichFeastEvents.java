@@ -20,18 +20,14 @@ public class PassiveLichFeastEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the necromancy school
         boolean hasNecromancySchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.NECROMANCY));
         if (!hasNecromancySchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_LICH_FEAST, perk -> {
                 if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
-                    // Apply lich feast effect
-                    // This would typically involve healing and hunger restoration
                     ArsAffinity.LOGGER.info("Player {} cast necromancy spell - PASSIVE_LICH_FEAST active (health: {}, hunger: {})", 
                         player.getName().getString(), 
                         lichPerk.health, 

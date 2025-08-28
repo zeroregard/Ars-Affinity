@@ -27,11 +27,8 @@ public class GhostStepEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_GHOST_STEP, perk -> {
                 if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
-                    // Apply ghost step effect
-                    // This would typically involve invisibility and healing
                     ArsAffinity.LOGGER.info("Player {} cast abjuration spell - PASSIVE_GHOST_STEP active (heal: {}, invis: {}s, cd: {}s)", 
                         player.getName().getString(), 
                         ghostStepPerk.amount, 

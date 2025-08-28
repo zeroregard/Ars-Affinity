@@ -21,18 +21,14 @@ public class PassiveBuriedEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the elemental air school
         boolean hasAirSchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.ELEMENTAL_AIR));
         if (!hasAirSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_BURIED, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply buried effect
-                    // This would typically involve reducing air-based abilities or adding earth resistance
                     ArsAffinity.LOGGER.info("Player {} cast air spell - PASSIVE_BURIED active (amount: {})", 
                         player.getName().getString(), 
                         amountPerk.amount);

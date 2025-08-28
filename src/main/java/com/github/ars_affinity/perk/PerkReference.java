@@ -6,10 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
-/**
- * Minimal reference to a player's active perk.
- * Stores only the essential information needed to look up the full PerkData from the registry.
- */
 public class PerkReference {
     private final AffinityPerkType perkType;
     private final SpellSchool sourceSchool;
@@ -33,10 +29,6 @@ public class PerkReference {
         return sourceTier;
     }
     
-    /**
-     * Generate the registry key for this perk reference.
-     * @return The key to look up in PerkRegistry
-     */
     public String getRegistryKey() {
         return String.format("%s_%s_%d", 
             sourceSchool.getId().toString().toUpperCase().replace(":", "_"), 
@@ -44,18 +36,10 @@ public class PerkReference {
             sourceTier);
     }
     
-    /**
-     * Get the full PerkData from the registry.
-     * @return The PerkData, or null if not found
-     */
     public PerkData getPerkData() {
         return PerkRegistry.getPerk(getRegistryKey());
     }
     
-    /**
-     * Check if this perk reference is valid (exists in registry).
-     * @return true if the perk exists in the registry
-     */
     public boolean isValid() {
         return PerkRegistry.hasPerk(getRegistryKey());
     }
@@ -85,9 +69,6 @@ public class PerkReference {
             perkType, sourceSchool.getId().toString().replace(":", "_"), sourceTier);
     }
     
-    /**
-     * Serialize to NBT for saving.
-     */
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("perkType", perkType.name());
@@ -96,9 +77,6 @@ public class PerkReference {
         return tag;
     }
     
-    /**
-     * Deserialize from NBT for loading.
-     */
     public static PerkReference deserializeNBT(CompoundTag tag) {
         AffinityPerkType perkType = AffinityPerkType.valueOf(tag.getString("perkType"));
         String schoolId = tag.getString("sourceSchool");
@@ -107,9 +85,6 @@ public class PerkReference {
         return new PerkReference(perkType, sourceSchool, sourceTier);
     }
     
-    /**
-     * Helper method to get SpellSchool from string ID.
-     */
     private static SpellSchool getSpellSchoolFromId(String id) {
         return switch (id) {
             case "ars_nouveau:elemental_fire" -> SpellSchools.ELEMENTAL_FIRE;
@@ -120,7 +95,7 @@ public class PerkReference {
             case "ars_nouveau:necromancy" -> SpellSchools.NECROMANCY;
             case "ars_nouveau:conjuration" -> SpellSchools.CONJURATION;
             case "ars_nouveau:manipulation" -> SpellSchools.MANIPULATION;
-            default -> SpellSchools.ELEMENTAL_FIRE; // fallback
+            default -> SpellSchools.ELEMENTAL_FIRE;
         };
     }
 }

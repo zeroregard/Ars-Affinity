@@ -27,11 +27,8 @@ public class PassiveDousedEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_DOUSED, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply doused effect
-                    // This would typically involve reducing fire damage or adding water resistance
                     ArsAffinity.LOGGER.info("Player {} cast fire spell - PASSIVE_DOUSED active (amount: {})", 
                         player.getName().getString(), 
                         amountPerk.amount);

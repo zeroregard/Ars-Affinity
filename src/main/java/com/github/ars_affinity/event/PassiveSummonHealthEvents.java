@@ -20,18 +20,14 @@ public class PassiveSummonHealthEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the conjuration school
         boolean hasConjurationSchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.CONJURATION));
         if (!hasConjurationSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_SUMMON_HEALTH, perk -> {
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                    // Apply summon health effect
-                    // This would typically involve buffing summoned entities' health
                     ArsAffinity.LOGGER.info("Player {} cast conjuration spell - PASSIVE_SUMMON_HEALTH active (amount: {}, time: {}s)", 
                         player.getName().getString(), 
                         durationPerk.amount, 

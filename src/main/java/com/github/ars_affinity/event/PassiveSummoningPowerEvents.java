@@ -27,11 +27,8 @@ public class PassiveSummoningPowerEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_SUMMONING_POWER, perk -> {
                 if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                    // Apply summoning power effect
-                    // This would typically involve buffing summoned entities
                     ArsAffinity.LOGGER.info("Player {} cast conjuration spell - PASSIVE_SUMMONING_POWER active ({}%)", 
                         player.getName().getString(), (int)(durationPerk.amount * 100));
                 }

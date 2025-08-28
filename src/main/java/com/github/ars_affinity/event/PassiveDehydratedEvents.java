@@ -22,17 +22,14 @@ public class PassiveDehydratedEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the Elemental Water school
         boolean hasWaterSchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.ELEMENTAL_WATER));
         if (!hasWaterSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_DEHYDRATED, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply dehydration effect
                     player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, (int)(20 * amountPerk.amount), 0));
                     
                     ArsAffinity.LOGGER.info("Player {} cast Elemental Water spell - PASSIVE_DEHYDRATED applied confusion for {} seconds", 

@@ -22,11 +22,8 @@ public class SpellAmplificationEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply healing amplification effect
-                    // This would typically involve increasing healing spell effectiveness
                     ArsAffinity.LOGGER.info("Player {} cast spell - PASSIVE_HEALING_AMPLIFICATION active (amplification: {}%)", 
                         player.getName().getString(), 
                         (int)(amountPerk.amount * 100));

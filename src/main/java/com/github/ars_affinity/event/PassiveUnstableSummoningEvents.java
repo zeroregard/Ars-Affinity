@@ -20,18 +20,14 @@ public class PassiveUnstableSummoningEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
-        // Check if the spell is from the manipulation school
         boolean hasManipulationSchool = event.context.getSpell().unsafeList().stream()
             .anyMatch(part -> part.spellSchools.contains(SpellSchools.MANIPULATION));
         if (!hasManipulationSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING, perk -> {
                 if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
-                    // Apply unstable summoning effect
-                    // This would typically involve random entity spawning or chaotic effects
                     ArsAffinity.LOGGER.info("Player {} cast manipulation spell - PASSIVE_UNSTABLE_SUMMONING active (chance: {}, entities: {})", 
                         player.getName().getString(), 
                         unstablePerk.chance, 

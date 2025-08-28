@@ -27,11 +27,8 @@ public class PassiveFreeJumpEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_FREE_JUMP, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply free jump effect
-                    // This would typically involve allowing double jumps or reducing fall damage
                     ArsAffinity.LOGGER.info("Player {} cast air spell - PASSIVE_FREE_JUMP active (amount: {})", 
                         player.getName().getString(), 
                         amountPerk.amount);

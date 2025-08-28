@@ -25,11 +25,8 @@ public class SpellBlightEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_BLIGHTED, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Apply blight effect
-                    // This would typically involve adding negative effects to spells
                     ArsAffinity.LOGGER.info("Player {} cast spell - PASSIVE_BLIGHTED active (amount: {})", 
                         player.getName().getString(), 
                         amountPerk.amount);

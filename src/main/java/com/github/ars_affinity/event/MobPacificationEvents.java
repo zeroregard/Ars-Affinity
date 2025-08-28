@@ -26,15 +26,12 @@ public class MobPacificationEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            // O(1) perk lookup using the new perk index
             AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MOB_PACIFICATION, perk -> {
                 if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
                     // Check if the target entity is in the pacification list
                     if (event.target instanceof LivingEntity targetEntity) {
                         String targetId = targetEntity.getType().toString();
                         if (entityPerk.entities.contains(targetId)) {
-                            // Apply pacification effect
-                            // This would typically involve reducing the target's aggression
                             ArsAffinity.LOGGER.info("Player {} dealt {} damage to {} - PASSIVE_MOB_PACIFICATION active", 
                                 player.getName().getString(), event.damage, targetId);
                         }

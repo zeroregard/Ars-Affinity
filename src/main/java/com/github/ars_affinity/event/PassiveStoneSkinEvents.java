@@ -42,7 +42,6 @@ public class PassiveStoneSkinEvents {
 		var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
 		if (progress == null) return;
 		
-		// O(1) perk lookup using the new perk index
 		AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_STONE_SKIN, perk -> {
 			if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
 				event.setCanceled(true);
