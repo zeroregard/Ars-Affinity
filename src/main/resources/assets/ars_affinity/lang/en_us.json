@@ -27,6 +27,7 @@
   "ars_affinity.perk.ACTIVE_SANCTUARY": "Hold §bF§r to project a protective field. %d second cooldown",
   "ars_affinity.perk.ACTIVE_CURSE_FIELD": " Hold §bF§r to project a cursed field that damages and silences foes. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWARM": "Press §bF§r to instruct all minions to attack target. %d second cooldown",
+  "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.PASSIVE_GHOST_STEP": "On death, cancel death and heal %d%% health, become invisible for %d seconds, create decoy (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_UNSTABLE_SUMMONING": "%d%% chance to transform summons into random creatures",
   "effect.ars_affinity.bubble_guard_cooldown": "Bubble Guard Cooldown",
@@ -35,7 +36,7 @@
   "effect.ars_affinity.stone_skin_cooldown": "Stone Skin Cooldown",
   "effect.ars_affinity.air_dash_cooldown": "Air Dash Cooldown",
   "effect.ars_affinity.fire_dash_cooldown": "Fire Dash Cooldown",
-  "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
+  "effect.ars_affinity.skyflow": "Skyflow",
   "effect.ars_affinity.sanctuary": "Sanctuary",
   "effect.ars_affinity.sanctuary_cooldown": "Sanctuary Cooldown",
   "effect.ars_affinity.curse_field_cooldown": "Curse Field Cooldown",
@@ -59,6 +60,6 @@
   "tooltip.ars_affinity.anchor_charm.charging_progress": "Charging... %d%%",
 
   "ars_affinity.source_per_charge": "Source per charge: %d",
-  "effect.ars_affinity.skyflow": "Skyflow",
+
   "itemGroup.ars_affinity": "Ars Affinity"
 }
