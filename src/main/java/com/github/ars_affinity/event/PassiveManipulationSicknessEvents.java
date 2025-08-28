@@ -5,9 +5,12 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
+import com.github.ars_affinity.registry.ModPotions;
 import com.hollingsworth.arsnouveau.api.event.SpellCastEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
@@ -25,15 +28,24 @@ public class PassiveManipulationSicknessEvents {
         if (!hasManipulationSchool) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
-                if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
-                    ArsAffinity.LOGGER.info("Player {} cast manipulation spell - PASSIVE_MANIPULATION_SICKNESS active (duration: {}s, hunger: {})", 
-                        player.getName().getString(), 
-                        sicknessPerk.duration / 20, 
-                        sicknessPerk.hunger);
-                }
-            });
-        }
+        if (progress == null) return;
+        
+        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
+            if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
+                // Apply sickness effect
+                player.addEffect(new MobEffectInstance(ModPotions.MANIPULATION_SICKNESS_EFFECT, sicknessPerk.duration, 0, false, true, true));
+                
+                // Apply hunger cost
+                FoodData foodData = player.getFoodData();
+                int currentFood = foodData.getFoodLevel();
+                int newFood = Math.max(0, currentFood - sicknessPerk.hunger);
+                foodData.setFoodLevel(newFood);
+                
+                ArsAffinity.LOGGER.debug("Player {} cast manipulation spell - PASSIVE_MANIPULATION_SICKNESS applied (duration: {}s, hunger cost: {})", 
+                    player.getName().getString(), 
+                    sicknessPerk.duration / 20, 
+                    sicknessPerk.hunger);
+            }
+        });
     }
 }
