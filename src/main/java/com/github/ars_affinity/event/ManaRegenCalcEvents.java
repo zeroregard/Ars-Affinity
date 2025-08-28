@@ -24,7 +24,20 @@ public class ManaRegenCalcEvents {
         // Check if player is wet (in water, rain, etc.)
         boolean isWet = player.isInWater() || player.isInWaterRainOrBubble();
         
-        if (player.isInWater() || player.isInWaterRainOrBubble()) {
+        if (isWet) {
+            MobEffectInstance skyflowEffect = player.getEffect(ModPotions.SKYFLOW_EFFECT);
+            if (skyflowEffect != null) {
+                // SkyflowEffect increases mana regen when wet based on amplifier
+                double currentRegen = event.getRegen();
+                double boost = currentRegen * (0.2 * (skyflowEffect.getAmplifier() + 1)); // 20% per amplifier level
+                double newRegen = currentRegen + boost;
+                
+                ArsAffinity.LOGGER.info("Player {} has SkyflowEffect (amplifier {}) - increasing mana regen from {} to {} when wet", 
+                    player.getName().getString(), skyflowEffect.getAmplifier(), currentRegen, newRegen);
+                
+                event.setRegen(newRegen);
+                return; // Skip the Doused penalty if SkyflowEffect is active
+            }
             // Get player's affinity progress for Doused penalty
             var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
             if (progress != null) {
@@ -43,22 +56,8 @@ public class ManaRegenCalcEvents {
                         }
                     });
                 }
-                return;
             }    
-            
-            MobEffectInstance skyflowEffect = player.getEffect(ModPotions.SKYFLOW_EFFECT);
-            if (skyflowEffect != null) {
-                // SkyflowEffect increases mana regen when wet based on amplifier
-                double currentRegen = event.getRegen();
-                double boost = currentRegen * (0.2 * (skyflowEffect.getAmplifier() + 1)); // 20% per amplifier level
-                double newRegen = currentRegen + boost;
-                
-                ArsAffinity.LOGGER.info("Player {} has SkyflowEffect (amplifier {}) - increasing mana regen from {} to {} when wet", 
-                    player.getName().getString(), skyflowEffect.getAmplifier(), currentRegen, newRegen);
-                
-                event.setRegen(newRegen);
-                return; // Skip the Doused penalty if SkyflowEffect is active
-            }
+
         }
 
          

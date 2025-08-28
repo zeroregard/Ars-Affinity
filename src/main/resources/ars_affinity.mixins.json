@@ -6,7 +6,8 @@
   "refmap": "ars_affinity.refmap.json",
   "mixins": [
     "SpellTrackingMixin",
-    "PlayerFrictionMixin"
+    "PlayerFrictionMixin",
+    "PlayerPowderedSnowMixin"
   ],
   "client": [
   ],

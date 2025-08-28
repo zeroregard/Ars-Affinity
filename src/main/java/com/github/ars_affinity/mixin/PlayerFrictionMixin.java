@@ -17,14 +17,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.List;
+import java.util.Set;
 
 @Mixin(LivingEntity.class)
 public abstract class PlayerFrictionMixin {
 
-    /**
-     * Overrides the block friction when a player has COLD_WALKER and is standing on ice,
-     * using the perk amount to calculate friction reduction for faster movement.
-     */
+    private static final Set<BlockState> COLD_WALKER_BLOCKS = Set.of(
+        Blocks.ICE.defaultBlockState(),
+        Blocks.BLUE_ICE.defaultBlockState(),
+        Blocks.PACKED_ICE.defaultBlockState(),
+        Blocks.SNOW.defaultBlockState(),
+        Blocks.SNOW_BLOCK.defaultBlockState(),
+        Blocks.POWDER_SNOW.defaultBlockState()
+    );
+
+
     @ModifyVariable(
             method = "travel(Lnet/minecraft/world/phys/Vec3;)V",
             at = @At("STORE"),
@@ -44,7 +51,11 @@ public abstract class PlayerFrictionMixin {
         BlockPos groundPos = player.blockPosition().below();
         BlockState groundState = player.level().getBlockState(groundPos);
         
-        if (groundState.is(Blocks.ICE) || groundState.is(Blocks.BLUE_ICE) || groundState.is(Blocks.PACKED_ICE)) {
+        // Also check for thin snow above the player
+        BlockPos abovePos = player.blockPosition();
+        BlockState aboveState = player.level().getBlockState(abovePos);
+        
+        if (COLD_WALKER_BLOCKS.contains(groundState) || COLD_WALKER_BLOCKS.contains(aboveState)) {
             var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
             if (progress != null) {
                 int waterTier = progress.getTier(SpellSchools.ELEMENTAL_WATER);
@@ -56,7 +67,7 @@ public abstract class PlayerFrictionMixin {
                             if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                                 float newFriction = 0.6F - (amountPerk.amount * 0.6F);
                                 ArsAffinity.LOGGER.debug(
-                                        "Player {} has COLD_WALKER perk with amount {} - overriding ice friction from {} to {}",
+                                        "Player {} has COLD_WALKER perk with amount {} - overriding ice/snow/powdered snow friction from {} to {}",
                                         player.getName().getString(),
                                         amountPerk.amount,
                                         friction,
