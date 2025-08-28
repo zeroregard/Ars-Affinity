@@ -15,7 +15,8 @@
   "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.perk.PASSIVE_BLIGHTED": "Healing spells are %d%% less effective and add nausea",
   "ars_affinity.perk.PASSIVE_FREE_JUMP": "Jumping costs -%d%% hunger",
-  "ars_affinity.perk.PASSIVE_AQUA_FREEDOM": "Negates slipperiness on ice completely",
+  "ars_affinity.perk.PASSIVE_COLD_WALKER": "%d%% friction reduction on ice.",
+  "ars_affinity.perk.PASSIVE_SKYFLOW": "Increases mana regeneration by %d%% when wet",
   "ars_affinity.perk.PASSIVE_DEFLECTION": "Incoming projectiles reverse direction and velocity (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_STONE_SKIN": "Melee attacks against you are negated (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_MANIPULATION_SICKNESS": "Casting manipulation spells applies sickness for %d seconds and costs hunger",
@@ -58,5 +59,6 @@
   "tooltip.ars_affinity.anchor_charm.charging_progress": "Charging... %d%%",
 
   "ars_affinity.source_per_charge": "Source per charge: %d",
+  "effect.ars_affinity.weather_movement": "Weather Movement",
   "itemGroup.ars_affinity": "Ars Affinity"
 }

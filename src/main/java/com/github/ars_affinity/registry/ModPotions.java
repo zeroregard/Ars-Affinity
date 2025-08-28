@@ -16,6 +16,7 @@ import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
 import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
+import com.github.ars_affinity.effect.SkyflowEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -43,6 +44,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SwarmCooldownEffect> SWARM_COOLDOWN_EFFECT = EFFECTS.register("swarm_cooldown", SwarmCooldownEffect::new);
     public static final DeferredHolder<MobEffect, SwarmingEffect> SWARMING_EFFECT = EFFECTS.register("swarming", SwarmingEffect::new);
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
+    public static final DeferredHolder<MobEffect, SkyflowEffect> SKYFLOW_EFFECT = EFFECTS.register("skyflow", SkyflowEffect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
 } 

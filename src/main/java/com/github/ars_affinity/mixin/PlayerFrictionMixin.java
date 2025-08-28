@@ -3,9 +3,9 @@ package com.github.ars_affinity.mixin;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
-import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkManager;
 import com.github.ars_affinity.perk.AffinityPerkType;
+
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class PlayerFrictionMixin {
 
     /**
-     * Overrides the block friction when a player has AQUA_FREEDOM and is standing on ice,
+     * Overrides the block friction when a player has COLD_WALKER and is standing on ice,
      * using the perk amount to calculate friction reduction for faster movement.
      */
     @ModifyVariable(
@@ -52,21 +52,20 @@ public abstract class PlayerFrictionMixin {
                     // Get the perk directly from the manager
                     List<AffinityPerk> perks = AffinityPerkManager.getPerksForCurrentLevel(SpellSchools.ELEMENTAL_WATER, waterTier);
                     for (AffinityPerk perk : perks) {
-                        if (perk.perk == AffinityPerkType.PASSIVE_AQUA_FREEDOM) {
+                        if (perk.perk == AffinityPerkType.PASSIVE_COLD_WALKER) {
                             if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                                 float newFriction = 0.6F - (amountPerk.amount * 0.6F);
                                 ArsAffinity.LOGGER.debug(
-                                        "Player {} has AQUA_FREEDOM perk with amount {} - overriding ice friction from {} to {}",
+                                        "Player {} has COLD_WALKER perk with amount {} - overriding ice friction from {} to {}",
                                         player.getName().getString(),
                                         amountPerk.amount,
                                         friction,
                                         newFriction
                                     );
-                                // Calculate friction based on perk amount: 0.6 - (amount * 0.6)
-                                // This means: amount 0.0 = 0.6F (normal ground), amount 1.0 = 0.0F (maximum speed)
+                                // Calculate friction based on iceAmplifier: 0.6 - (iceAmplifier * 0.6)
+                                // This means: iceAmplifier 0.0 = 0.6F (normal ground), iceAmplifier 1.0 = 0.0F (maximum speed)
                                 return newFriction;
                             }
-
                             break;
                         }
                     }

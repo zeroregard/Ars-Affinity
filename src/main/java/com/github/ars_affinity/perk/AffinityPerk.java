@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+
 public abstract class AffinityPerk {
     public AffinityPerkType perk;
     public boolean isBuff;
@@ -35,9 +36,12 @@ public abstract class AffinityPerk {
                 case PASSIVE_FREE_JUMP:
                 case PASSIVE_PACIFIST:
                 case PASSIVE_SOULSPIKE:
-                case PASSIVE_AQUA_FREEDOM:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
+                case PASSIVE_COLD_WALKER:
+                case PASSIVE_SKYFLOW:
+                    float perkAmount = jsonObject.get("amount").getAsFloat();
+                    return new AmountBasedPerk(perkType, perkAmount, isBuff);
                 case PASSIVE_DEFLECTION:
                 case PASSIVE_SUMMON_HEALTH:
                 case PASSIVE_SUMMONING_POWER:

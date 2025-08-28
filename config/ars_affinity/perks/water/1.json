@@ -5,8 +5,13 @@
     "isBuff": false
   },
   {
-    "perk": "PASSIVE_AQUA_FREEDOM",
-    "amount": 0,
+    "perk": "PASSIVE_COLD_WALKER",
+    "amount": 0.0,
+    "isBuff": true
+  },
+  {
+    "perk": "PASSIVE_SKYFLOW",
+    "amount": 0.2,
     "isBuff": true
   }
 ]

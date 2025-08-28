@@ -3,6 +3,7 @@ package com.github.ars_affinity.perk;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EntityType;
+import com.github.ars_affinity.perk.AffinityPerk;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,13 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_HEALING_AMPLIFICATION:
 			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
-			case PASSIVE_AQUA_FREEDOM:
+			case PASSIVE_COLD_WALKER:
+			case PASSIVE_SKYFLOW:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}
 				return Component.translatable(translationKey, 0);
-			case PASSIVE_SUMMON_HEALTH:
+        	case PASSIVE_SUMMON_HEALTH:
 				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
 					return Component.translatable(translationKey, (int)(durationPerk.amount * 4), durationPerk.time / 20);
 				}
