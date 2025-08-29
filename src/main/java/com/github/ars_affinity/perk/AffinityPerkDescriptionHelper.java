@@ -25,7 +25,6 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
 			case PASSIVE_COLD_WALKER:
-			case PASSIVE_SKYFLOW:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}

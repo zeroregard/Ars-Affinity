@@ -39,7 +39,6 @@ public abstract class AffinityPerk {
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_COLD_WALKER:
-                case PASSIVE_SKYFLOW:
                     float perkAmount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, perkAmount, isBuff);
                 case PASSIVE_DEFLECTION:
