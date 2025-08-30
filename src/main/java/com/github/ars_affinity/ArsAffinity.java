@@ -2,6 +2,8 @@ package com.github.ars_affinity;
 
 import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
+import com.github.ars_affinity.capability.WetTicksCapability;
+import com.github.ars_affinity.capability.WetTicks;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
@@ -81,7 +83,20 @@ public class ArsAffinity {
                 return null;
             }
         );
+        
+        event.registerEntity(
+            WetTicksCapability.WET_TICKS,
+            EntityType.PLAYER,
+            (entity, context) -> {
+                if (entity instanceof Player player) {
+                    return new WetTicks();
+                }
+                return null;
+            }
+        );
+        
         LOGGER.info("Registered SchoolAffinityProgress capability");
+        LOGGER.info("Registered WetTicks capability");
     }
     
     private void onRegisterCommands(RegisterCommandsEvent event) {

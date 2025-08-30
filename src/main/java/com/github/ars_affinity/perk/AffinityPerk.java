@@ -100,6 +100,8 @@ public abstract class AffinityPerk {
                     int sicknessDuration = jsonObject.get("duration").getAsInt();
                     int hungerAmount = jsonObject.get("hunger").getAsInt();
                     return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
+                case PASSIVE_HYDRATION:
+                    return new SimplePerk(perkType, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -224,6 +226,12 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.duration = duration;
             this.hunger = hunger;
+        }
+    }
+    
+    public static class SimplePerk extends AffinityPerk {
+        public SimplePerk(AffinityPerkType perk, boolean isBuff) {
+            super(perk, isBuff);
         }
     }
 }

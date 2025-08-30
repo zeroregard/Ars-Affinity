@@ -3,5 +3,9 @@
     "perk": "PASSIVE_DEHYDRATED",
     "amount": 0.6,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_HYDRATION",
+    "isBuff": true
   }
 ]
