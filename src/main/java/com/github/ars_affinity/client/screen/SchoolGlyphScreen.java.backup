@@ -1,0 +1,275 @@
+package com.github.ars_affinity.client.screen;
+
+import com.github.ars_affinity.ArsAffinity;
+import com.hollingsworth.arsnouveau.ArsNouveau;
+import com.hollingsworth.arsnouveau.api.documentation.DocAssets;
+import com.hollingsworth.arsnouveau.api.documentation.DocClientUtils;
+import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
+import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
+import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
+import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
+import com.hollingsworth.arsnouveau.client.gui.documentation.BaseDocScreen;
+import com.hollingsworth.arsnouveau.client.gui.documentation.DocEntryButton;
+import com.hollingsworth.arsnouveau.client.gui.documentation.EntriesScreen;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class SchoolGlyphScreen extends BaseDocScreen {
+
+    private static final int BACKGROUND_WIDTH = 290;
+    private static final int BACKGROUND_HEIGHT = 188;
+    private static final int TAB_HEIGHT = 24;
+    private static final int TAB_WIDTH = 24;
+    private static final int GLYPHS_PER_PAGE = 17;
+
+    private final Screen previousScreen;
+    private final List<SpellSchool> schools;
+    private SpellSchool selectedSchool;
+    private final List<DocEntryButton> buttons = new ArrayList<>();
+    private final List<AbstractSpellPart> currentSchoolGlyphs = new ArrayList<>();
+    private int page = 0;
+    private int maxPages = 0;
+
+    public SchoolGlyphScreen(Screen previousScreen) {
+        super();
+        this.previousScreen = previousScreen;
+        this.schools = List.of(
+                SpellSchools.ELEMENTAL_FIRE,
+                SpellSchools.ELEMENTAL_WATER,
+                SpellSchools.ELEMENTAL_EARTH,
+                SpellSchools.ELEMENTAL_AIR,
+                SpellSchools.ABJURATION,
+                SpellSchools.NECROMANCY,
+                SpellSchools.CONJURATION,
+                SpellSchools.MANIPULATION
+        );
+        this.selectedSchool = schools.get(0);
+        updateGlyphsForSchool();
+    }
+
+    private void updateGlyphsForSchool() {
+        currentSchoolGlyphs.clear();
+        currentSchoolGlyphs.addAll(
+                GlyphRegistry.getSpellpartMap().values().stream()
+                        .filter(part -> part.spellSchools.contains(selectedSchool))
+                        .sorted((a, b) -> {
+                            int tierCompare = Integer.compare(a.getConfigTier().value, b.getConfigTier().value);
+                            if (tierCompare != 0) return tierCompare;
+                            return a.getLocaleName().compareTo(b.getLocaleName());
+                        })
+                        .collect(Collectors.toList())
+        );
+        maxPages = (currentSchoolGlyphs.size() - 1) / GLYPHS_PER_PAGE;
+        page = 0;
+        layoutGlyphs();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        
+        int backButtonX = (this.width - BACKGROUND_WIDTH) / 2 + 6;
+        int backButtonY = (this.height - BACKGROUND_HEIGHT) / 2 + 6;
+        
+        this.addRenderableWidget(Button.builder(
+                Component.translatable("gui.back"),
+                button -> this.minecraft.setScreen(this.previousScreen)
+        ).pos(backButtonX, backButtonY).size(60, 20).build());
+        
+        layoutGlyphs();
+    }
+
+    private void layoutGlyphs() {
+        clearButtons(buttons);
+        
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int leftPageX = centerX - BACKGROUND_WIDTH / 2 + 19;
+        int rightPageX = centerX - BACKGROUND_WIDTH / 2 + 153;
+        int yStart = centerY - BACKGROUND_HEIGHT / 2 + 17;
+        
+        int startIndex = page * GLYPHS_PER_PAGE;
+        int endIndex = Math.min(startIndex + GLYPHS_PER_PAGE, currentSchoolGlyphs.size());
+        
+        List<AbstractSpellPart> pageGlyphs = currentSchoolGlyphs.subList(startIndex, endIndex);
+        
+        // Left page: first 8 glyphs
+        int leftPageEnd = Math.min(8, pageGlyphs.size());
+        for (int i = 0; i < leftPageEnd; i++) {
+            AbstractSpellPart glyph = pageGlyphs.get(i);
+            int y = yStart + 3 + (16 * i);
+            var button = new DocEntryButton(screenLeft + LEFT_PAGE_OFFSET, screenTop + PAGE_TOP_OFFSET + 3 + (16 * i) + (offset ? 16 : 0), entry, (b) -> {
+                transition(new PageHolderScreen(entry));
+            });
+            addRenderableWidget(button);
+            buttons.add(button);
+        }
+        
+        // Right page: remaining glyphs (up to 9)
+        if (pageGlyphs.size() > 8) {
+            for (int i = 8; i < pageGlyphs.size(); i++) {
+                AbstractSpellPart glyph = pageGlyphs.get(i);
+                int y = yStart + 3 + (16 * (i - 8));
+                var button = new DocEntryButton(screenLeft + RIGHT_PAGE_OFFSET, screenTop + PAGE_TOP_OFFSET + 3 + 16 * i, entry, (b) -> {
+                    transition(new PageHolderScreen(entry));
+                });
+                addRenderableWidget(button);
+                buttons.add(button);
+            }
+        }
+    }
+
+    private void clearButtons(List<DocEntryButton> buttons) {
+        for (DocEntryButton button : buttons) {
+            removeWidget(button);
+        }
+        buttons.clear();
+    }
+
+    private void onGlyphClick(DocEntryButton button) {
+        AbstractSpellPart glyph = button.getGlyph();
+        DocClientUtils.openToEntry(glyph.getRegistryName(), 0);
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+
+        renderBackground(guiGraphics, centerX, centerY);
+        renderSchoolTabs(guiGraphics, centerX, centerY, mouseX, mouseY);
+        renderSchoolTitle(guiGraphics, centerX, centerY);
+        renderPageNavigation(guiGraphics, centerX, centerY);
+    }
+
+    private void renderBackground(GuiGraphics guiGraphics, int centerX, int centerY) {
+        int x = centerX - BACKGROUND_WIDTH / 2;
+        int y = centerY - BACKGROUND_HEIGHT / 2;
+        
+        ResourceLocation backgroundTexture = ArsNouveau.prefix("textures/gui/spell_book_template.png");
+        guiGraphics.blit(
+                backgroundTexture,
+                x, y,
+                0, 0,
+                BACKGROUND_WIDTH, BACKGROUND_HEIGHT,
+                BACKGROUND_WIDTH, BACKGROUND_HEIGHT
+        );
+    }
+
+    private void renderSchoolTabs(GuiGraphics guiGraphics, int centerX, int centerY, int mouseX, int mouseY) {
+        int startX = centerX - (schools.size() * TAB_WIDTH) / 2;
+        int startY = centerY - BACKGROUND_HEIGHT / 2 - TAB_HEIGHT + 45;
+
+        for (int i = 0; i < schools.size(); i++) {
+            SpellSchool school = schools.get(i);
+            int tabX = startX + i * TAB_WIDTH;
+            int tabY = startY;
+            
+            boolean isSelected = school.equals(selectedSchool);
+            boolean isHovered = mouseX >= tabX && mouseX < tabX + TAB_WIDTH && 
+                               mouseY >= tabY && mouseY < tabY + TAB_HEIGHT;
+            
+            int tabColor = isSelected ? 0x4CAF50 : (isHovered ? 0x666666 : 0x333333);
+            
+            guiGraphics.fill(tabX, tabY, tabX + TAB_WIDTH, tabY + TAB_HEIGHT, tabColor);
+            guiGraphics.fill(tabX + 1, tabY + 1, tabX + TAB_WIDTH - 1, tabY + TAB_HEIGHT - 1, 0xFF000000);
+            
+            // Render school icon instead of text
+            ResourceLocation iconTexture = school.getTexturePath();
+            int iconSize = 16;
+            int iconX = tabX + (TAB_WIDTH - iconSize) / 2;
+            int iconY = tabY + (TAB_HEIGHT - iconSize) / 2;
+            
+            guiGraphics.blit(iconTexture, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+            
+            if (isHovered && !isSelected) {
+                Component schoolName = school.getTextComponent();
+                guiGraphics.renderTooltip(font, schoolName, mouseX, mouseY);
+            }
+        }
+    }
+
+    private void renderSchoolTitle(GuiGraphics guiGraphics, int centerX, int centerY) {
+        Component schoolName = selectedSchool.getTextComponent();
+        int titleX = centerX - font.width(schoolName) / 2;
+        int titleY = centerY - BACKGROUND_HEIGHT / 2 + 10;
+        
+        guiGraphics.drawString(font, schoolName, titleX, titleY, 0xFFFFFF, false);
+    }
+
+    private void renderPageNavigation(GuiGraphics guiGraphics, int centerX, int centerY) {
+        if (maxPages > 0) {
+            int navY = centerY + BACKGROUND_HEIGHT / 2 - 20;
+            
+            // Left arrow
+            if (page > 0) {
+                guiGraphics.fill(centerX - 30, navY, centerX - 20, navY + 10, 0xFFFFFFFF);
+                guiGraphics.drawString(font, "<", centerX - 28, navY + 1, 0x000000, false);
+            }
+            
+            // Page indicator
+            String pageText = (page + 1) + "/" + (maxPages + 1);
+            int pageTextX = centerX - font.width(pageText) / 2;
+            guiGraphics.drawString(font, pageText, pageTextX, navY + 1, 0xFFFFFF, false);
+            
+            // Right arrow
+            if (page < maxPages) {
+                guiGraphics.fill(centerX + 20, navY, centerX + 30, navY + 10, 0xFFFFFFFF);
+                guiGraphics.drawString(font, ">", centerX + 22, navY + 1, 0x000000, false);
+            }
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            int centerX = this.width / 2;
+            int centerY = this.height / 2;
+            int startX = centerX - (schools.size() * TAB_WIDTH) / 2;
+            int startY = centerY - BACKGROUND_HEIGHT / 2 - TAB_HEIGHT + 45;
+
+            // Check school tab clicks
+            for (int i = 0; i < schools.size(); i++) {
+                SpellSchool school = schools.get(i);
+                int tabX = startX + i * TAB_WIDTH;
+                int tabY = startY;
+                
+                if (mouseX >= tabX && mouseX < tabX + TAB_WIDTH && 
+                    mouseY >= tabY && mouseY < tabY + TAB_HEIGHT) {
+                    selectedSchool = school;
+                    updateGlyphsForSchool();
+                    return true;
+                }
+            }
+            
+            // Check page navigation clicks
+            int navY = centerY + BACKGROUND_HEIGHT / 2 - 20;
+            if (mouseY >= navY && mouseY < navY + 10) {
+                if (mouseX >= centerX - 30 && mouseX < centerX - 20 && page > 0) {
+                    page--;
+                    layoutGlyphs();
+                    return true;
+                } else if (mouseX >= centerX + 20 && mouseX < centerX + 30 && page < maxPages) {
+                    page++;
+                    layoutGlyphs();
+                    return true;
+                }
+            }
+        }
+        
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+}

@@ -5,6 +5,7 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkDescriptionHelper;
 import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.client.screen.SchoolGlyphScreen;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -150,6 +151,34 @@ public class AffinityScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) { // Left click
+            int centerX = this.width / 2;
+            int centerY = this.height / 2;
+            final int iconRadius = 60;
+            final int numSchools = schools.size();
+
+            for (int i = 0; i < numSchools; i++) {
+                SpellSchool school = schools.get(i);
+                double angleDeg = -45 + (i * 360.0 / numSchools);
+                double angleRad = Math.toRadians(angleDeg);
+
+                // Icon position
+                int iconX = (int) (centerX + iconRadius * Math.cos(angleRad)) - ICON_SIZE / 2;
+                int iconY = (int) ((centerY + iconRadius * Math.sin(angleRad)) - ICON_SIZE / 2) - 3;
+
+                if (mouseX >= iconX && mouseX < iconX + ICON_SIZE &&
+                    mouseY >= iconY && mouseY < iconY + ICON_SIZE) {
+                    // Open SchoolGlyphScreen
+                    this.minecraft.setScreen(new SchoolGlyphScreen(this));
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     // ---- Helpers you must define elsewhere ----

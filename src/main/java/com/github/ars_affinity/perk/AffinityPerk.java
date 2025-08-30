@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+
 public abstract class AffinityPerk {
     public AffinityPerkType perk;
     public boolean isBuff;
@@ -37,6 +38,9 @@ public abstract class AffinityPerk {
                 case PASSIVE_SOULSPIKE:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
+                case PASSIVE_COLD_WALKER:
+                    float perkAmount = jsonObject.get("amount").getAsFloat();
+                    return new AmountBasedPerk(perkType, perkAmount, isBuff);
                 case PASSIVE_DEFLECTION:
                 case PASSIVE_SUMMON_HEALTH:
                 case PASSIVE_SUMMONING_POWER:
@@ -100,6 +104,10 @@ public abstract class AffinityPerk {
                     int sicknessDuration = jsonObject.get("duration").getAsInt();
                     int hungerAmount = jsonObject.get("hunger").getAsInt();
                     return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
+                case PASSIVE_HYDRATION:
+                    float maxAmplification = jsonObject.get("amount").getAsFloat();
+                    int countdownTicks = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, maxAmplification, countdownTicks, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -226,4 +234,6 @@ public abstract class AffinityPerk {
             this.hunger = hunger;
         }
     }
+    
+
 }
