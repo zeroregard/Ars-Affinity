@@ -15,9 +15,11 @@
   "ars_affinity.perk.PASSIVE_HEALING_AMPLIFICATION": "Amplifies Heal by %d%% and reduces its food cost",
   "ars_affinity.perk.PASSIVE_BLIGHTED": "Healing spells are %d%% less effective and add nausea",
   "ars_affinity.perk.PASSIVE_FREE_JUMP": "Jumping costs -%d%% hunger",
+  "ars_affinity.perk.PASSIVE_COLD_WALKER": "Nullify friction and move %d%% faster on cold surfaces.",
   "ars_affinity.perk.PASSIVE_DEFLECTION": "Incoming projectiles reverse direction and velocity (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_STONE_SKIN": "Melee attacks against you are negated (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_MANIPULATION_SICKNESS": "Casting manipulation spells applies sickness for %d seconds and costs hunger",
+  "ars_affinity.perk.PASSIVE_HYDRATION": "Restore 1 hunger down to every %d seconds when wet",
   "ars_affinity.perk.ACTIVE_GROUND_SLAM": "Slam the ground, creating a shockwave that damages and knocks back nearby entities. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_ICE_BLAST": "Blast your surroundings with ice. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWAP_ABILITY": "Swap positions with entities. Press §bF§r to activate. %d second cooldown",
@@ -25,6 +27,7 @@
   "ars_affinity.perk.ACTIVE_SANCTUARY": "Hold §bF§r to project a protective field. %d second cooldown",
   "ars_affinity.perk.ACTIVE_CURSE_FIELD": " Hold §bF§r to project a cursed field that damages and silences foes. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWARM": "Press §bF§r to instruct all minions to attack target. %d second cooldown",
+  "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.PASSIVE_GHOST_STEP": "On death, cancel death and heal %d%% health, become invisible for %d seconds, create decoy (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_UNSTABLE_SUMMONING": "%d%% chance to transform summons into random creatures",
   "effect.ars_affinity.bubble_guard_cooldown": "Bubble Guard Cooldown",
@@ -33,7 +36,6 @@
   "effect.ars_affinity.stone_skin_cooldown": "Stone Skin Cooldown",
   "effect.ars_affinity.air_dash_cooldown": "Air Dash Cooldown",
   "effect.ars_affinity.fire_dash_cooldown": "Fire Dash Cooldown",
-  "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
   "effect.ars_affinity.sanctuary": "Sanctuary",
   "effect.ars_affinity.sanctuary_cooldown": "Sanctuary Cooldown",
   "effect.ars_affinity.curse_field_cooldown": "Curse Field Cooldown",
@@ -41,6 +43,11 @@
   "effect.ars_affinity.swarming": "Swarming",
   "effect.ars_affinity.silenced": "Silenced",
   "effect.ars_affinity.manipulation_sickness": "Manipulation Sickness",
+  "effect.ars_affinity.hydrated": "Hydrated",
+  "effect.ars_affinity.hydrated.description": "When wet, restores 1 hunger every %d seconds",
+  "effect.ars_affinity.hydrated.1": "Hydrated I",
+  "effect.ars_affinity.hydrated.2": "Hydrated II", 
+  "effect.ars_affinity.hydrated.3": "Hydrated III",
   "item.minecraft.potion.effect.ars_affinity.silenced": "Potion of Silence",
   "item.minecraft.splash_potion.effect.ars_affinity.silenced": "Splash Potion of Silence",
   "item.minecraft.lingering_potion.effect.ars_affinity.silenced": "Lingering Potion of Silence",
@@ -57,5 +64,6 @@
   "tooltip.ars_affinity.anchor_charm.charging_progress": "Charging... %d%%",
 
   "ars_affinity.source_per_charge": "Source per charge: %d",
+
   "itemGroup.ars_affinity": "Ars Affinity"
 }

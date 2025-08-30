@@ -3,5 +3,15 @@
     "perk": "PASSIVE_DEHYDRATED",
     "amount": 0.3,
     "isBuff": false
+  },
+  {
+    "perk": "PASSIVE_HYDRATION",
+    "amount": 0.0,
+    "isBuff": true,
+    "time": 600
+  }, {
+    "perk": "PASSIVE_COLD_WALKER",
+    "amount": 0.0,
+    "isBuff": true
   }
 ]

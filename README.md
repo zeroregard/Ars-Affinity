@@ -8,7 +8,40 @@ Ars Affinity adds a visual affinity screen showing your progress in each spell s
 
 See https://ars-affinity.vercel.app/ for different perks/abilities.
 
+## Features
 
+- **Affinity Progression**: Track your progress in each spell school through spell casting
+- **Passive Perks**: Unlock passive abilities and effects as you reach higher tiers
+- **Glyph Blacklist**: Configure specific glyphs to be ignored for affinity tracking
+- **Visual Interface**: Beautiful GUI showing your current progress and tiers
+
+## Configuration
+
+### Glyph Blacklist
+
+You can configure specific glyphs to be ignored for affinity progress tracking. This is useful for utility spells, transportation spells, or any glyphs that shouldn't contribute to magical training progression.
+
+**Configuration File**: `config/ars_affinity-server.toml`
+
+**Default Blacklist**: The mod automatically blacklists `ars_nouveau:effect_break` by default.
+
+**Example**:
+```toml
+[glyph_blacklist]
+blacklistedGlyphs = [
+    # The break effect is blacklisted by default
+    # "ars_nouveau:effect_break",
+    
+    # Additional custom blacklisted glyphs
+    "ars_nouveau:effect_heal",
+    "ars_nouveau:method_touch",
+    "ars_elemental:effect_charm"
+]
+```
+
+**Glyph ID Format**: `modid:glyph_name`
+
+For detailed configuration instructions, see [GLYPH_BLACKLIST.md](docs/GLYPH_BLACKLIST.md).
 
 ## Commands (OP Only)
 
@@ -18,9 +51,11 @@ For testing and debugging purposes, the following commands are available for ser
 - `/ars-affinity get <school>` - Get current affinity for a school
 - `/ars-affinity list` - List all current affinities
 - `/ars-affinity reset` - Reset all affinities to 0%
+- `/ars-affinity blacklist` - Show current glyph blacklist configuration
 
 **Examples:**
 - `/ars-affinity set fire 100` - Set fire affinity to 100% (Tier 3)
 - `/ars-affinity set water 50` - Set water affinity to 50% (Tier 2)
 - `/ars-affinity get fire` - Check current fire affinity
 - `/ars-affinity list` - See all affinities at once
+- `/ars-affinity blacklist` - View configured glyph blacklist
