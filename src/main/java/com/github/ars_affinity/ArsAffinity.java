@@ -4,6 +4,7 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
 import com.github.ars_affinity.capability.WetTicksCapability;
 import com.github.ars_affinity.capability.WetTicks;
+import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
@@ -89,7 +90,7 @@ public class ArsAffinity {
             EntityType.PLAYER,
             (entity, context) -> {
                 if (entity instanceof Player player) {
-                    return new WetTicks();
+                    return WetTicksProvider.getWetTicks(player);
                 }
                 return null;
             }
@@ -106,15 +107,18 @@ public class ArsAffinity {
     
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         SchoolAffinityProgressProvider.loadPlayerProgress(event.getEntity());
+        WetTicksProvider.loadPlayerWetTicks(event.getEntity());
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         SchoolAffinityProgressProvider.savePlayerProgress(event.getEntity());
+        WetTicksProvider.savePlayerWetTicks(event.getEntity());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
         SchoolAffinityProgressProvider.saveAllProgress();
         SchoolAffinityProgressProvider.clearCache();
+        WetTicksProvider.clearCache();
     }
 
     public static ResourceLocation prefix(String str) {

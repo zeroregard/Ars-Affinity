@@ -14,7 +14,7 @@ public class WetTicks {
     }
     
     public void addWetTicks(int amount) {
-        this.wetTicks += amount;
+        this.wetTicks = Math.max(0, this.wetTicks + amount);
     }
     
     public void resetWetTicks() {

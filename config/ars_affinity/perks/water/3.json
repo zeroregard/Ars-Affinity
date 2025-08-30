@@ -3,7 +3,8 @@
   {
     "perk": "PASSIVE_HYDRATION",
     "amount": 2.0,
-    "isBuff": true
+    "isBuff": true,
+    "time": 200
   },
   {
     "perk": "PASSIVE_MOB_PACIFICATION",
