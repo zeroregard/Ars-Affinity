@@ -1,5 +1,6 @@
 package com.github.ars_affinity.potion;
 
+import com.github.ars_affinity.ArsAffinity;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,22 +20,32 @@ public class HydratedEffect extends MobEffect {
             
             // At amplifier 0: hunger prevention is handled by HydratedHungerPreventionEvents
             if (amplifier == 0) {
+                ArsAffinity.LOGGER.debug("HYDRATION - Hydrated I effect tick for player: {} (hunger prevention active)", 
+                    player.getName().getString());
                 return true;
             }
             
             // At amplifier 1: satiate hunger (1 hunger per 40 ticks)
             if (amplifier == 1) {
                 if (foodData.getFoodLevel() < 20) {
+                    int oldFood = foodData.getFoodLevel();
                     foodData.setFoodLevel(foodData.getFoodLevel() + 1);
+                    ArsAffinity.LOGGER.debug("HYDRATION - Hydrated II effect tick for player: {} - restored hunger: {} -> {}", 
+                        player.getName().getString(), oldFood, foodData.getFoodLevel());
                 }
             }
             
             // At amplifier 2: TODO - will be implemented later
             if (amplifier == 2) {
+                ArsAffinity.LOGGER.debug("HYDRATION - Hydrated III effect tick for player: {} (placeholder for future features)", 
+                    player.getName().getString());
                 // TODO: Implement additional hydration benefits
                 // For now, also restore hunger like amplifier 1
                 if (foodData.getFoodLevel() < 20) {
+                    int oldFood = foodData.getFoodLevel();
                     foodData.setFoodLevel(foodData.getFoodLevel() + 1);
+                    ArsAffinity.LOGGER.debug("HYDRATION - Hydrated III effect tick for player: {} - restored hunger: {} -> {}", 
+                        player.getName().getString(), oldFood, foodData.getFoodLevel());
                 }
             }
         }
