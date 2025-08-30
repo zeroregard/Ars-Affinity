@@ -2,7 +2,9 @@ package com.github.ars_affinity.command;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
+import com.github.ars_affinity.util.GlyphBlacklistHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -17,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ArsAffinityCommands {
 
@@ -35,7 +38,9 @@ public class ArsAffinityCommands {
             .then(Commands.literal("reset")
                 .executes(ArsAffinityCommands::resetAllAffinities))
             .then(Commands.literal("list")
-                .executes(ArsAffinityCommands::listAllAffinities)));
+                .executes(ArsAffinityCommands::listAllAffinities))
+            .then(Commands.literal("blacklist")
+                .executes(ArsAffinityCommands::showGlyphBlacklist)));
     }
 
     private static int setAffinity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -138,6 +143,34 @@ public class ArsAffinityCommands {
                 school.getId(), percentage, tier)), false);
         }
 
+        return 1;
+    }
+
+    private static int showGlyphBlacklist(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        
+        try {
+            List<? extends String> blacklist = ArsAffinityConfig.GLYPH_BLACKLIST.get();
+            
+            if (blacklist == null || blacklist.isEmpty()) {
+                source.sendSuccess(() -> Component.literal("Glyph blacklist is empty - no glyphs are blacklisted"), false);
+            } else {
+                source.sendSuccess(() -> Component.literal("Glyph blacklist contains " + blacklist.size() + " entries:"), false);
+                
+                for (String glyphId : blacklist) {
+                    source.sendSuccess(() -> Component.literal("  - " + glyphId), false);
+                }
+            }
+            
+            // Also log to console for debugging
+            GlyphBlacklistHelper.logBlacklistConfiguration();
+            
+        } catch (Exception e) {
+            source.sendFailure(Component.literal("Error reading glyph blacklist configuration: " + e.getMessage()));
+            ArsAffinity.LOGGER.error("Error reading glyph blacklist configuration: {}", e.getMessage());
+            return 0;
+        }
+        
         return 1;
     }
 
