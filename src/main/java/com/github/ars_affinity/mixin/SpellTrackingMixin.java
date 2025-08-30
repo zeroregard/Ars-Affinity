@@ -123,7 +123,7 @@ public abstract class SpellTrackingMixin {
         
         // Check if the glyph is blacklisted
         if (GlyphBlacklistHelper.isGlyphBlacklisted(glyph)) {
-            ArsAffinity.LOGGER.debug("Glyph {} is blacklisted - skipping affinity progress tracking", 
+            ArsAffinity.LOGGER.info("Glyph {} is blacklisted - skipping affinity progress tracking", 
                 glyph.getRegistryName() != null ? glyph.getRegistryName().toString() : "unknown");
             return;
         }
