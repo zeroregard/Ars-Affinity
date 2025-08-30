@@ -6,6 +6,7 @@
   },
   {
     "perk": "PASSIVE_HYDRATION",
+    "amount": 0.0,
     "isBuff": true
   }
 ]

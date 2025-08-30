@@ -35,6 +35,8 @@ public class PassiveHydrationEvents {
         
         // Check if player has PASSIVE_HYDRATION perk
         AffinityPerkHelper.applyHighestTierPerk(progress, waterTier, SpellSchools.ELEMENTAL_WATER, AffinityPerkType.PASSIVE_HYDRATION, perk -> {
+            if (!(perk instanceof AffinityPerk.AmountBasedPerk amountPerk)) return;
+            
             // Get wet ticks capability
             WetTicks wetTicks = player.getCapability(WetTicksCapability.WET_TICKS);
             if (wetTicks == null) return;
@@ -53,8 +55,8 @@ public class PassiveHydrationEvents {
                 // Add 20 wet ticks
                 wetTicks.addWetTicks(20);
                 
-                // Apply or refresh Hydrated effect based on tier and wet ticks
-                applyHydratedEffect(player, waterTier, wetTicks.getWetTicks());
+                // Apply or refresh Hydrated effect based on perk amount and wet ticks
+                applyHydratedEffect(player, amountPerk.amount, wetTicks.getWetTicks());
                 
                 ArsAffinity.LOGGER.debug("Player {} is wet, wet ticks: {}", 
                     player.getName().getString(), wetTicks.getWetTicks());
@@ -75,19 +77,19 @@ public class PassiveHydrationEvents {
     // We'll check for fire in the tick event instead of damage event
     // since we want to check for being on fire, not just fire damage
     
-    private static void applyHydratedEffect(Player player, int waterTier, int wetTicks) {
-        // At 20 wet ticks and tier 1: Hydrated I (amplifier 0)
-        if (wetTicks >= 20 && waterTier >= 1) {
+    private static void applyHydratedEffect(Player player, float maxAmplification, int wetTicks) {
+        // At 20 wet ticks: Hydrated I (amplifier 0)
+        if (wetTicks >= 20) {
             player.addEffect(new MobEffectInstance(ModPotions.HYDRATED_EFFECT, 80, 0, false, false, true));
         }
         
-        // At 200 wet ticks, Hydrated I effect, and tier 2: Hydrated II (amplifier 1)
-        if (wetTicks >= 200 && waterTier >= 2 && player.hasEffect(ModPotions.HYDRATED_EFFECT)) {
+        // At 200 wet ticks and maxAmplification >= 1: Hydrated II (amplifier 1)
+        if (wetTicks >= 200 && maxAmplification >= 1.0f && player.hasEffect(ModPotions.HYDRATED_EFFECT)) {
             player.addEffect(new MobEffectInstance(ModPotions.HYDRATED_EFFECT, 80, 1, false, false, true));
         }
         
-        // At 400 wet ticks, Hydrated II effect, and tier 3: Hydrated III (amplifier 2)
-        if (wetTicks >= 400 && waterTier >= 3 && player.hasEffect(ModPotions.HYDRATED_EFFECT)) {
+        // At 400 wet ticks and maxAmplification >= 2: Hydrated III (amplifier 2)
+        if (wetTicks >= 400 && maxAmplification >= 2.0f && player.hasEffect(ModPotions.HYDRATED_EFFECT)) {
             player.addEffect(new MobEffectInstance(ModPotions.HYDRATED_EFFECT, 80, 2, false, false, true));
         }
     }
