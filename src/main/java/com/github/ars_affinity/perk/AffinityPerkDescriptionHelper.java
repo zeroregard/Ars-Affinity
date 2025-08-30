@@ -50,6 +50,11 @@ public class AffinityPerkDescriptionHelper {
 					return Component.translatable(translationKey, durationPerk.time / 20);
 				}
 				return Component.translatable(translationKey, 0);
+			case PASSIVE_HYDRATION:
+				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
+				}
+				return Component.translatable(translationKey, 0, 0);
 			case PASSIVE_LICH_FEAST:
 				if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
 					return Component.translatable(translationKey, lichPerk.health, lichPerk.hunger);

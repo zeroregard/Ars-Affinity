@@ -104,6 +104,10 @@ public abstract class AffinityPerk {
                     int sicknessDuration = jsonObject.get("duration").getAsInt();
                     int hungerAmount = jsonObject.get("hunger").getAsInt();
                     return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
+                case PASSIVE_HYDRATION:
+                    float maxAmplification = jsonObject.get("amount").getAsFloat();
+                    int countdownTicks = jsonObject.get("time").getAsInt();
+                    return new DurationBasedPerk(perkType, maxAmplification, countdownTicks, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -230,4 +234,6 @@ public abstract class AffinityPerk {
             this.hunger = hunger;
         }
     }
+    
+
 }

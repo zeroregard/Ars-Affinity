@@ -2,6 +2,9 @@ package com.github.ars_affinity;
 
 import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
+import com.github.ars_affinity.capability.WetTicksCapability;
+import com.github.ars_affinity.capability.WetTicks;
+import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
@@ -81,7 +84,20 @@ public class ArsAffinity {
                 return null;
             }
         );
+        
+        event.registerEntity(
+            WetTicksCapability.WET_TICKS,
+            EntityType.PLAYER,
+            (entity, context) -> {
+                if (entity instanceof Player player) {
+                    return WetTicksProvider.getWetTicks(player);
+                }
+                return null;
+            }
+        );
+        
         LOGGER.info("Registered SchoolAffinityProgress capability");
+        LOGGER.info("Registered WetTicks capability");
     }
     
     private void onRegisterCommands(RegisterCommandsEvent event) {
@@ -91,15 +107,18 @@ public class ArsAffinity {
     
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         SchoolAffinityProgressProvider.loadPlayerProgress(event.getEntity());
+        WetTicksProvider.loadPlayerWetTicks(event.getEntity());
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         SchoolAffinityProgressProvider.savePlayerProgress(event.getEntity());
+        WetTicksProvider.savePlayerWetTicks(event.getEntity());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
         SchoolAffinityProgressProvider.saveAllProgress();
         SchoolAffinityProgressProvider.clearCache();
+        WetTicksProvider.clearCache();
     }
 
     public static ResourceLocation prefix(String str) {

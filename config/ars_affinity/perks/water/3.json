@@ -1,6 +1,12 @@
 [
   {"perk": "PASSIVE_DEHYDRATED", "amount": 0.9, "isBuff": false},
   {
+    "perk": "PASSIVE_HYDRATION",
+    "amount": 2.0,
+    "isBuff": true,
+    "time": 200
+  },
+  {
     "perk": "PASSIVE_COLD_WALKER",
     "amount": 0.3,
     "isBuff": true
