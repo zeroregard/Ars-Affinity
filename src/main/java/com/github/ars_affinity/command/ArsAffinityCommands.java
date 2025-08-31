@@ -63,7 +63,7 @@ public class ArsAffinityCommands {
 
         // Convert percentage to affinity (0.0 to 1.0)
         float affinity = percentage / 100.0f;
-        progress.setAffinity(school, (int) affinity);
+        progress.setAffinity(school, affinity);
 
         source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (Tier %d)", 
             schoolName, percentage, SchoolRelationshipHelper.calculateTierFromAffinity(affinity))), true);
@@ -113,7 +113,7 @@ public class ArsAffinityCommands {
 
         // Reset all schools to 0%
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            progress.setAffinity(school, 0);
+            progress.setAffinity(school, 0.0f);
         }
 
         source.sendSuccess(() -> Component.literal("Reset all affinities to 0%"), true);

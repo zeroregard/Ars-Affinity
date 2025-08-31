@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
-    private final Map<SpellSchool, Integer> affinities = new HashMap<>();
+    private final Map<SpellSchool, Float> affinities = new HashMap<>();
     private final Map<AffinityPerkType, PerkReference> activePerks = new HashMap<>();
     
     private static final SpellSchool[] SUPPORTED_SCHOOLS = {
@@ -37,16 +37,16 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     public SchoolAffinityProgress() {
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
-            affinities.put(school, 0);
+            affinities.put(school, 0.0f);
         }
     }
     
-    public int getAffinity(SpellSchool school) {
-        return affinities.getOrDefault(school, 0);
+    public float getAffinity(SpellSchool school) {
+        return affinities.getOrDefault(school, 0.0f);
     }
     
-    public void setAffinity(SpellSchool school, int level) {
-        int oldLevel = affinities.getOrDefault(school, 0);
+    public void setAffinity(SpellSchool school, float level) {
+        float oldLevel = affinities.getOrDefault(school, 0.0f);
         affinities.put(school, level);
         
         rebuildPerkIndex();
@@ -55,15 +55,15 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
             school.getId().toString().replace(":", "_"), oldLevel, level);
     }
     
-    public Map<SpellSchool, Integer> getAllAffinities() {
+    public Map<SpellSchool, Float> getAllAffinities() {
         return new HashMap<>(affinities);
     }
     
-    public void normalizeAffinities(int maxTotal) {
-        int currentTotal = affinities.values().stream().mapToInt(Integer::intValue).sum();
+    public void normalizeAffinities(float maxTotal) {
+        float currentTotal = (float) affinities.values().stream().mapToDouble(Float::doubleValue).sum();
         if (currentTotal > maxTotal) {
-            double scale = (double) maxTotal / currentTotal;
-            affinities.replaceAll((school, level) -> (int) (level * scale));
+            double scale = maxTotal / currentTotal;
+            affinities.replaceAll((school, level) -> (float) (level * scale));
             
             rebuildPerkIndex();
         }
@@ -117,25 +117,24 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         PerkReference bestPerk = null;
         int bestTier = 0;
         
-        for (Map.Entry<SpellSchool, Integer> entry : affinities.entrySet()) {
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
             SpellSchool school = entry.getKey();
-            int affinity = entry.getValue();
+            float affinity = entry.getValue();
+            int tier = getTier(school);
             
-            for (int tier = 5; tier >= 1; tier--) {
-                if (affinity >= tier) {
-                    String key = String.format("%s_%s_%d", 
-                        school.getId().toString().toUpperCase().replace(":", "_"), 
-                        perkType.name(), 
-                        tier);
-                    
-                    if (PerkRegistry.hasPerk(key)) {
-                        PerkReference candidate = new PerkReference(perkType, school, tier);
-                        if (tier > bestTier) {
-                            bestPerk = candidate;
-                            bestTier = tier;
-                        }
-                        break;
+            if (tier > 0) {
+                String key = String.format("%s_%s_%d", 
+                    school.getId().toString().toUpperCase().replace(":", "_"), 
+                    perkType.name(), 
+                    tier);
+                
+                if (PerkRegistry.hasPerk(key)) {
+                    PerkReference candidate = new PerkReference(perkType, school, tier);
+                    if (tier > bestTier) {
+                        bestPerk = candidate;
+                        bestTier = tier;
                     }
+                    break;
                 }
             }
         }
@@ -144,15 +143,25 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     }
     
     public int getTier(SpellSchool school) {
-        int affinity = getAffinity(school);
-        return Math.min(5, Math.max(0, affinity));
+        float affinity = getAffinity(school);
+        float percentage = affinity * 100.0f;
+        
+        if (percentage >= 75.0f) {
+            return 3;
+        } else if (percentage >= 40.0f) {
+            return 2;
+        } else if (percentage >= 20.0f) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
     public SpellSchool getPrimarySchool() {
         SpellSchool primary = null;
-        int maxAffinity = 0;
+        float maxAffinity = 0.0f;
         
-        for (Map.Entry<SpellSchool, Integer> entry : affinities.entrySet()) {
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
             if (entry.getValue() > maxAffinity) {
                 maxAffinity = entry.getValue();
                 primary = entry.getKey();
@@ -166,16 +175,16 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
             SpellSchool school = entry.getKey();
             float change = entry.getValue();
-            int currentAffinity = getAffinity(school);
-            int newAffinity = Math.max(0, currentAffinity + (int) change);
+            float currentAffinity = getAffinity(school);
+            float newAffinity = Math.max(0.0f, currentAffinity + change);
             setAffinity(school, newAffinity);
         }
         
-        normalizeAffinities(100);
+        normalizeAffinities(100.0f);
     }
     
-    public int getTotalAffinity() {
-        return affinities.values().stream().mapToInt(Integer::intValue).sum();
+    public float getTotalAffinity() {
+        return (float) affinities.values().stream().mapToDouble(Float::doubleValue).sum();
     }
     
     @Override
@@ -183,8 +192,8 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         CompoundTag tag = new CompoundTag();
         
         CompoundTag affinitiesTag = new CompoundTag();
-        for (Map.Entry<SpellSchool, Integer> entry : affinities.entrySet()) {
-            affinitiesTag.putInt(entry.getKey().getId().toString(), entry.getValue());
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
+            affinitiesTag.putFloat(entry.getKey().getId().toString(), entry.getValue());
         }
         tag.put("affinities", affinitiesTag);
         
@@ -203,7 +212,7 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         affinities.clear();
         for (String key : affinitiesTag.getAllKeys()) {
             SpellSchool school = getSpellSchoolFromId(key);
-            int level = affinitiesTag.getInt(key);
+            float level = affinitiesTag.getFloat(key);
             affinities.put(school, level);
         }
         
