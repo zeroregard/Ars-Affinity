@@ -22,19 +22,31 @@ public class SchoolAffinityProgressProvider {
             SchoolAffinityProgress newProgress = new SchoolAffinityProgress();
             newProgress.setPlayer(player); // Set player reference for auto-saving
             
+            // Load from player persistent data
             CompoundTag playerData = player.getPersistentData();
-            if (playerData.contains(IDENTIFIER.toString())) {
-                CompoundTag affinityData = playerData.getCompound(IDENTIFIER.toString());
-                if (affinityData != null) {
-                    // Create a proper HolderLookup.Provider for deserialization
+            String dataKey = "ars_affinity:school_affinity_progress";
+            
+            if (playerData.contains(dataKey)) {
+                CompoundTag affinityData = playerData.getCompound(dataKey);
+                if (affinityData != null && !affinityData.isEmpty()) {
                     try {
                         newProgress.deserializeNBT(player.level().registryAccess(), affinityData);
+                        ArsAffinity.LOGGER.info("Loaded affinity progress for player {}: {} affinities, {} perks", 
+                            player.getName().getString(), 
+                            newProgress.getAllAffinities().size(),
+                            newProgress.getAllActivePerkReferences().size());
                     } catch (Exception e) {
                         ArsAffinity.LOGGER.error("Failed to deserialize affinity progress for player {}: {}", 
-                            player.getName().getString(), e.getMessage());
+                            player.getName().getString(), e.getMessage(), e);
                     }
+                } else {
+                    ArsAffinity.LOGGER.warn("Empty affinity data found for player {}", player.getName().getString());
                 }
+            } else {
+                ArsAffinity.LOGGER.info("No existing affinity data found for player {}, creating new progress", 
+                    player.getName().getString());
             }
+            
             return newProgress;
         });
     }
@@ -50,22 +62,33 @@ public class SchoolAffinityProgressProvider {
         
         if (progress != null) {
             CompoundTag playerData = player.getPersistentData();
+            String dataKey = "ars_affinity:school_affinity_progress";
+            
             try {
                 CompoundTag affinityData = progress.serializeNBT(player.level().registryAccess());
-                playerData.put(IDENTIFIER.toString(), affinityData);
-                ArsAffinity.LOGGER.debug("Saved affinity progress for player: {}", player.getName().getString());
+                playerData.put(dataKey, affinityData);
+                
+                ArsAffinity.LOGGER.info("Saved affinity progress for player {}: {} affinities, {} perks", 
+                    player.getName().getString(),
+                    progress.getAllAffinities().size(),
+                    progress.getAllActivePerkReferences().size());
+                    
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to serialize affinity progress for player {}: {}", 
-                    player.getName().getString(), e.getMessage());
+                    player.getName().getString(), e.getMessage(), e);
             }
+        } else {
+            ArsAffinity.LOGGER.warn("No progress found in cache for player {} during save", player.getName().getString());
         }
     }
     
     public static void saveAllProgress() {
+        ArsAffinity.LOGGER.info("Saving all player progress (cache size: {})", playerProgressCache.size());
         // Note: We can't save all progress without Player objects, but the cache will be cleared anyway
     }
     
     public static void clearCache() {
+        ArsAffinity.LOGGER.info("Clearing player progress cache (size: {})", playerProgressCache.size());
         playerProgressCache.clear();
     }
     

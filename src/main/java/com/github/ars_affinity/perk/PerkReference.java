@@ -72,7 +72,7 @@ public class PerkReference {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("perkType", perkType.name());
-        tag.putString("sourceSchool", sourceSchool.getId().toString());
+        tag.putString("sourceSchool", getShortSchoolId(sourceSchool));
         tag.putInt("sourceTier", sourceTier);
         return tag;
     }
@@ -87,6 +87,7 @@ public class PerkReference {
     
     private static SpellSchool getSpellSchoolFromId(String id) {
         return switch (id) {
+            // Full format (current)
             case "ars_nouveau:elemental_fire" -> SpellSchools.ELEMENTAL_FIRE;
             case "ars_nouveau:elemental_water" -> SpellSchools.ELEMENTAL_WATER;
             case "ars_nouveau:elemental_earth" -> SpellSchools.ELEMENTAL_EARTH;
@@ -95,7 +96,27 @@ public class PerkReference {
             case "ars_nouveau:necromancy" -> SpellSchools.NECROMANCY;
             case "ars_nouveau:conjuration" -> SpellSchools.CONJURATION;
             case "ars_nouveau:manipulation" -> SpellSchools.MANIPULATION;
+            // Short format (legacy - for backward compatibility)
+            case "fire" -> SpellSchools.ELEMENTAL_FIRE;
+            case "water" -> SpellSchools.ELEMENTAL_WATER;
+            case "earth" -> SpellSchools.ELEMENTAL_EARTH;
+            case "air" -> SpellSchools.ELEMENTAL_AIR;
             default -> SpellSchools.ELEMENTAL_FIRE;
+        };
+    }
+    
+    private static String getShortSchoolId(SpellSchool school) {
+        String schoolId = school.getId().toString();
+        return switch (schoolId) {
+            case "ars_nouveau:elemental_fire" -> "fire";
+            case "ars_nouveau:elemental_water" -> "water";
+            case "ars_nouveau:elemental_earth" -> "earth";
+            case "ars_nouveau:elemental_air" -> "air";
+            case "ars_nouveau:abjuration" -> "abjuration";
+            case "ars_nouveau:necromancy" -> "necromancy";
+            case "ars_nouveau:conjuration" -> "conjuration";
+            case "ars_nouveau:manipulation" -> "manipulation";
+            default -> schoolId;
         };
     }
 }

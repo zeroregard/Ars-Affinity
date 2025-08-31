@@ -51,11 +51,7 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     private void markDirty() {
         this.isDirty = true;
-        // Auto-save if we have a player reference
-        if (player != null && !player.level().isClientSide()) {
-            SchoolAffinityProgressProvider.savePlayerProgress(player);
-            this.isDirty = false;
-        }
+        // Data will be saved when player logs out or server stops
     }
     
     public float getAffinity(SpellSchool school) {
@@ -189,54 +185,75 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        ArsAffinity.LOGGER.info("Starting serialization. Affinities map size: {}, contents: {}", affinities.size(), affinities);
+        
         CompoundTag tag = new CompoundTag();
         
         CompoundTag affinitiesTag = new CompoundTag();
         for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
-            affinitiesTag.putFloat(entry.getKey().getId().toString(), entry.getValue());
+            String schoolId = getShortSchoolId(entry.getKey());
+            float affinity = entry.getValue();
+            ArsAffinity.LOGGER.info("Serializing affinity: school={}, shortId={}, affinity={}", 
+                entry.getKey(), schoolId, affinity);
+            affinitiesTag.putFloat(schoolId, affinity);
         }
         tag.put("affinities", affinitiesTag);
         
         ListTag perksTag = new ListTag();
         for (PerkReference reference : activePerks.values()) {
-            perksTag.add(reference.serializeNBT());
+            CompoundTag perkTag = reference.serializeNBT();
+            perksTag.add(perkTag);
+            ArsAffinity.LOGGER.debug("Serializing perk: {} -> {}", reference.getPerkType(), perkTag);
         }
         tag.put("activePerks", perksTag);
         
         ArsAffinity.LOGGER.info("Serializing SchoolAffinityProgress: {} affinities, {} perks", 
             affinities.size(), activePerks.size());
+        ArsAffinity.LOGGER.debug("Serialized NBT: {}", tag);
         
         return tag;
     }
     
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        ArsAffinity.LOGGER.info("Deserializing NBT: {}", tag);
+        
         CompoundTag affinitiesTag = tag.getCompound("affinities");
+        ArsAffinity.LOGGER.info("Affinities tag: {} (keys: {})", affinitiesTag, affinitiesTag.getAllKeys());
         affinities.clear();
         for (String key : affinitiesTag.getAllKeys()) {
+            ArsAffinity.LOGGER.info("Processing affinity key: '{}'", key);
             SpellSchool school = getSpellSchoolFromId(key);
-            float level = affinitiesTag.getFloat(key);
-            affinities.put(school, level);
+            if (school != null) {
+                float level = affinitiesTag.getFloat(key);
+                affinities.put(school, level);
+                ArsAffinity.LOGGER.info("Deserialized affinity: {} = {} -> school: {}", key, level, school);
+            } else {
+                ArsAffinity.LOGGER.error("Skipping affinity for unknown school ID: '{}'", key);
+            }
         }
         
         ListTag perksTag = tag.getList("activePerks", Tag.TAG_COMPOUND);
+        ArsAffinity.LOGGER.debug("Perks tag: {} (size: {})", perksTag, perksTag.size());
         activePerks.clear();
         for (Tag perkTag : perksTag) {
             if (perkTag instanceof CompoundTag compoundTag) {
+                ArsAffinity.LOGGER.debug("Deserializing perk tag: {}", compoundTag);
                 PerkReference reference = PerkReference.deserializeNBT(compoundTag);
                 activePerks.put(reference.getPerkType(), reference);
+                ArsAffinity.LOGGER.debug("Deserialized perk: {} -> {}", reference.getPerkType(), reference);
             }
         }
         
         ArsAffinity.LOGGER.info("Deserialized SchoolAffinityProgress: {} affinities, {} perks", 
             affinities.size(), activePerks.size());
         
-        // Rebuild perk index after deserialization
-        rebuildPerkIndex();
+        // Don't rebuild perk index when loading from NBT - preserve the loaded data
     }
     
     private static SpellSchool getSpellSchoolFromId(String id) {
-        return switch (id) {
+        SpellSchool school = switch (id) {
+            // Full format (current)
             case "ars_nouveau:elemental_fire" -> SpellSchools.ELEMENTAL_FIRE;
             case "ars_nouveau:elemental_water" -> SpellSchools.ELEMENTAL_WATER;
             case "ars_nouveau:elemental_earth" -> SpellSchools.ELEMENTAL_EARTH;
@@ -245,7 +262,35 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
             case "ars_nouveau:necromancy" -> SpellSchools.NECROMANCY;
             case "ars_nouveau:conjuration" -> SpellSchools.CONJURATION;
             case "ars_nouveau:manipulation" -> SpellSchools.MANIPULATION;
-            default -> SpellSchools.ELEMENTAL_FIRE;
+            // Short format (legacy - for backward compatibility)
+            case "fire" -> SpellSchools.ELEMENTAL_FIRE;
+            case "water" -> SpellSchools.ELEMENTAL_WATER;
+            case "earth" -> SpellSchools.ELEMENTAL_EARTH;
+            case "air" -> SpellSchools.ELEMENTAL_AIR;
+            default -> null;
+        };
+        
+        if (school == null) {
+            ArsAffinity.LOGGER.error("Unknown spell school ID: '{}'. This will cause data loss!", id);
+            // Don't return a default school - let the caller handle this
+            return null;
+        }
+        
+        return school;
+    }
+    
+    private static String getShortSchoolId(SpellSchool school) {
+        String schoolId = school.getId().toString();
+        return switch (schoolId) {
+            case "ars_nouveau:elemental_fire" -> "fire";
+            case "ars_nouveau:elemental_water" -> "water";
+            case "ars_nouveau:elemental_earth" -> "earth";
+            case "ars_nouveau:elemental_air" -> "air";
+            case "ars_nouveau:abjuration" -> "abjuration";
+            case "ars_nouveau:necromancy" -> "necromancy";
+            case "ars_nouveau:conjuration" -> "conjuration";
+            case "ars_nouveau:manipulation" -> "manipulation";
+            default -> schoolId;
         };
     }
 } 
