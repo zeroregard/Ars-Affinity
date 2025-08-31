@@ -7,45 +7,90 @@ import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.registry.ModPotions;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class DeflectionEvents {
-    
+
     @SubscribeEvent
     public static void onProjectileImpact(ProjectileImpactEvent event) {
-        if (!(event.getProjectile() instanceof Projectile projectile)) return;
-        if (!(event.getRayTraceResult().getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
-        
-        if (player.hasEffect(ModPotions.DEFLECTION_COOLDOWN_EFFECT)) return;
-        
+        var projectile = event.getProjectile();
+        var level = projectile.level();
+
+        if (level.isClientSide()) {
+            return;
+        }
+
+        var rayTraceResult = event.getRayTraceResult();
+        if (!(rayTraceResult instanceof net.minecraft.world.phys.EntityHitResult entityHitResult)) {
+            return;
+        }
+
+        var hitEntity = entityHitResult.getEntity();
+        if (!(hitEntity instanceof net.minecraft.world.entity.player.Player player)) {
+            return;
+        }
+
+        if (player.hasEffect(ModPotions.DEFLECTION_COOLDOWN_EFFECT)) {
+            return;
+        }
+
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
-        
-        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_DEFLECTION, perk -> {
-            if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                event.setCanceled(true);
-                
-                player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, durationPerk.time, 0, false, true, true));
-                
-                Vec3 currentMotion = projectile.getDeltaMovement();
-                Vec3 reversedMotion = currentMotion.scale(-1.0);
-                projectile.setDeltaMovement(reversedMotion);
-                
-                Vec3 newPos = player.position().add(reversedMotion.normalize().scale(2.0));
-                projectile.setPos(newPos.x, newPos.y, newPos.z);
-                
-                projectile.setOwner(player);
-                
-                ArsAffinity.LOGGER.debug("Player {} deflected projectile - PASSIVE_DEFLECTION active (cooldown: {}s)", 
-                    player.getName().getString(), durationPerk.time / 20);
+        if (progress == null) {
+            return;
+        }
+
+        int manipulationTier = progress.getTier(com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION);
+        if (manipulationTier <= 0) {
+            return;
+        }
+
+        final boolean[] hasPerk = {false};
+        AffinityPerkHelper.applyHighestTierPerk(progress, manipulationTier, com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION, AffinityPerkType.PASSIVE_DEFLECTION, perk -> {
+            if (perk instanceof AffinityPerk.DurationBasedPerk) {
+                hasPerk[0] = true;
             }
         });
+
+        if (!hasPerk[0]) {
+            return;
+        }
+
+        event.setCanceled(true);
+        try {
+            var motion = projectile.getDeltaMovement();
+            var reversedMotion = motion.scale(-1.0);
+
+            projectile.setDeltaMovement(reversedMotion);
+
+            double x = reversedMotion.x;
+            double z = reversedMotion.z;
+            if (x != 0.0 || z != 0.0) {
+                projectile.setYRot((float)(Math.atan2(z, x) * 180.0 / Math.PI) - 90.0f);
+            }
+            
+            // If it's an arrow, also update the arrow's rotation
+            if (projectile instanceof net.minecraft.world.entity.projectile.AbstractArrow arrow) {
+                arrow.setBaseDamage(arrow.getBaseDamage() * 1.5); // Increase damage for reversed projectiles
+            }
+            
+            // Send motion packet to sync velocity with client
+            if (projectile instanceof net.minecraft.world.entity.Entity entity) {
+                net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket motionPacket = 
+                    new net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket(entity);
+                level.getServer().getPlayerList().broadcast(null, entity.getX(), entity.getY(), entity.getZ(), 64.0, level.dimension(), motionPacket);
+            }
+
+            AffinityPerkHelper.applyHighestTierPerk(progress, manipulationTier, com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION, AffinityPerkType.PASSIVE_DEFLECTION, perk -> {
+                if (perk instanceof AffinityPerk.DurationBasedPerk reversalPerk) {
+                    player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, reversalPerk.time, 0, false, true, true));
+                }
+            });
+
+        } catch (Exception e) {
+            ArsAffinity.LOGGER.error("Deflection: Error reversing projectile", e);
+        }
     }
 } 

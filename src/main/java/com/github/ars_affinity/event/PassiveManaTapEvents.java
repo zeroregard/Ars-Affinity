@@ -17,8 +17,7 @@ public class PassiveManaTapEvents {
     
     @SubscribeEvent
     public static void onSpellDamage(SpellDamageEvent.Post event) {
-        if (!(event.context.getCaster() instanceof com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster playerCaster)) return;
-        var player = playerCaster.player;
+        if (!(event.caster instanceof Player player)) return;
         if (player.level().isClientSide()) return;
         
         // Only trigger if damage was actually dealt
@@ -26,7 +25,8 @@ public class PassiveManaTapEvents {
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANA_TAP, perk -> {
+            // Check all schools for mana tap perks
+            AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_MANA_TAP, perk -> {
                 if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                     double manaRestore = event.damage * amountPerk.amount;
                     

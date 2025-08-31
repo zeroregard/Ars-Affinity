@@ -5,39 +5,48 @@ import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
-import net.minecraft.world.entity.player.Player;
+import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+
+import java.util.Random;
 
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class FireThornsEvents {
-    
+
+    private static final Random RANDOM = new Random();
+
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
+    public static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.level().isClientSide()) return;
+
+        // Get the attacker
+        LivingEntity attacker = event.getSource().getEntity() instanceof LivingEntity ? 
+            (LivingEntity) event.getSource().getEntity() : null;
         
+        if (attacker == null) return;
+
+        // Get player's affinity progress
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress == null) return;
-        
-        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_FIRE_THORNS, perk -> {
-            if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                if (Math.random() < amountPerk.amount) {
-                    LivingEntity attacker = event.getSource().getEntity() instanceof LivingEntity living ? living : null;
-                    if (attacker != null && attacker != player) {
-                        attacker.setSecondsOnFire(5);
+
+        int fireTier = progress.getTier(SpellSchools.ELEMENTAL_FIRE);
+        if (fireTier > 0) {
+            AffinityPerkHelper.applyHighestTierPerk(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.PASSIVE_FIRE_THORNS, perk -> {
+                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                    if (RANDOM.nextFloat() < amountPerk.amount) {
+                        // Set the attacker on fire
+                        attacker.setRemainingFireTicks(3 * 20);
                         
-                        ArsAffinity.LOGGER.debug("Player {} was attacked - PASSIVE_FIRE_THORNS ignited attacker {} (chance: {}%)", 
-                            player.getName().getString(), 
-                            attacker.getName().getString(),
-                            (int)(amountPerk.amount * 100));
+                        ArsAffinity.LOGGER.info("Fire Thorns activated! Player {} ignited attacker {} ({}% chance)", 
+                            player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
                     }
                 }
-            }
-        });
+            });
+        }
     }
 } 

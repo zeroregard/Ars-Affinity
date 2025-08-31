@@ -8,44 +8,61 @@ import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.registry.ModPotions;
 import com.hollingsworth.arsnouveau.api.event.SpellCastEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveManipulationSicknessEvents {
-    
+
     @SubscribeEvent
     public static void onSpellCast(SpellCastEvent event) {
-        if (!(event.context.getCaster() instanceof com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster playerCaster)) return;
+        if (!(event.context.getCaster() instanceof PlayerCaster playerCaster)) {
+            return;
+        }
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
-        
-        boolean hasManipulationSchool = event.context.getSpell().unsafeList().stream()
-            .anyMatch(part -> part.spellSchools.contains(SpellSchools.MANIPULATION));
-        if (!hasManipulationSchool) return;
-        
+
+        // Check if player already has manipulation sickness and is trying to cast a manipulation spell
+        if (player.hasEffect(ModPotions.MANIPULATION_SICKNESS_EFFECT) && containsManipulationGlyph(event.spell)) {
+            event.setCanceled(true);
+            ArsAffinity.LOGGER.info("Player {} attempted to cast manipulation spell while under manipulation sickness effect", 
+                player.getName().getString());
+            return;
+        }
+
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
-        
-        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
-            if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
-                // Apply sickness effect
-                player.addEffect(new MobEffectInstance(ModPotions.MANIPULATION_SICKNESS_EFFECT, sicknessPerk.duration, 0, false, true, true));
-                
-                // Apply hunger cost
-                FoodData foodData = player.getFoodData();
-                int currentFood = foodData.getFoodLevel();
-                int newFood = Math.max(0, currentFood - sicknessPerk.hunger);
-                foodData.setFoodLevel(newFood);
-                
-                ArsAffinity.LOGGER.debug("Player {} cast manipulation spell - PASSIVE_MANIPULATION_SICKNESS applied (duration: {}s, hunger cost: {})", 
-                    player.getName().getString(), 
-                    sicknessPerk.duration / 20, 
-                    sicknessPerk.hunger);
+        if (progress != null) {
+            int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
+            if (conjurationTier > 0) {
+                AffinityPerkHelper.applyHighestTierPerk(progress, conjurationTier, SpellSchools.CONJURATION, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
+                    if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
+                        if (containsManipulationGlyph(event.spell)) {
+                            applyManipulationSickness(player, sicknessPerk.duration, sicknessPerk.hunger);
+                            ArsAffinity.LOGGER.info("Player {} cast manipulation spell with PASSIVE_MANIPULATION_SICKNESS perk for {} seconds with {} hunger",
+                                player.getName().getString(), sicknessPerk.duration / 20, sicknessPerk.hunger);
+                        }
+                    }
+                });
             }
-        });
+        }
+    }
+
+    private static boolean containsManipulationGlyph(com.hollingsworth.arsnouveau.api.spell.Spell spell) {
+        return spell.unsafeList().stream()
+            .anyMatch(part -> part != null && part.spellSchools.stream()
+                .anyMatch(school -> school == SpellSchools.MANIPULATION));
+    }
+
+    private static void applyManipulationSickness(Player player, int duration, int hunger) {
+        if (player == null) return;
+
+        player.addEffect(new MobEffectInstance(ModPotions.MANIPULATION_SICKNESS_EFFECT, duration, 0, false, true, true));
+        
+        if (hunger > 0) {
+            player.getFoodData().addExhaustion(hunger);
+        }
     }
 }

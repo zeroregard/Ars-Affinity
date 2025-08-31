@@ -6,6 +6,7 @@ import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.hollingsworth.arsnouveau.api.event.SpellDamageEvent;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -14,34 +15,29 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class PassivePacifistEvents {
     
     @SubscribeEvent
-    public static void onSpellDamage(SpellDamageEvent.Post event) {
-        if (!(event.context.getCaster() instanceof com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster playerCaster)) return;
+    public static void onSpellDamage(SpellDamageEvent.Pre event) {
+        if (!(event.context.getCaster() instanceof PlayerCaster playerCaster)) {
+            return;
+        }
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
         
         var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
-        
-        AffinityPerkHelper.applyActivePerk(progress, AffinityPerkType.PASSIVE_PACIFIST, perk -> {
-            if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                double damageReduction = event.damage * amountPerk.amount;
-                double newDamage = Math.max(0, event.damage - damageReduction);
-                
-                // Use reflection to set the damage since it's a final field
-                try {
-                    java.lang.reflect.Field damageField = event.getClass().getDeclaredField("damage");
-                    damageField.setAccessible(true);
-                    damageField.set(event, newDamage);
-                } catch (Exception e) {
-                    ArsAffinity.LOGGER.warn("Failed to reduce spell damage for pacifist perk: {}", e.getMessage());
+        if (progress != null) {
+            // Check all schools for pacifist perks
+            AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_PACIFIST, perk -> {
+                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                    // Reduce damage by the specified percentage
+                    float reduction = amountPerk.amount;
+                    float originalDamage = event.damage;
+                    float newDamage = originalDamage * (1.0f - reduction);
+                    
+                    event.damage = newDamage;
+                    
+                    ArsAffinity.LOGGER.info("Player {} spell damage reduced from {} to {} due to PASSIVE_PACIFIST ({}% reduction)", 
+                        player.getName().getString(), originalDamage, newDamage, (int)(reduction * 100));
                 }
-                
-                ArsAffinity.LOGGER.debug("Player {} spell damage reduced by PASSIVE_PACIFIST: {} -> {} (reduction: {}%)", 
-                    player.getName().getString(), 
-                    event.damage + damageReduction,
-                    newDamage,
-                    (int)(amountPerk.amount * 100));
-            }
-        });
+            });
+        }
     }
 }
