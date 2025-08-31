@@ -18,9 +18,11 @@ For testing and debugging purposes, the following commands are available for ser
 - `/ars-affinity get <school>` - Get current affinity for a school
 - `/ars-affinity list` - List all current affinities
 - `/ars-affinity reset` - Reset all affinities to 0%
+- `/ars-affinity blacklist` - Show current glyph blacklist 
 
 **Examples:**
 - `/ars-affinity set fire 100` - Set fire affinity to 100% (Tier 3)
 - `/ars-affinity set water 50` - Set water affinity to 50% (Tier 2)
 - `/ars-affinity get fire` - Check current fire affinity
 - `/ars-affinity list` - See all affinities at once
+- `/ars-affinity blacklist` - View configured glyph blacklist

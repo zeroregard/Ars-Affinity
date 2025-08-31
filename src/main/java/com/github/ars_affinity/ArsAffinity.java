@@ -2,6 +2,9 @@ package com.github.ars_affinity;
 
 import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
+import com.github.ars_affinity.capability.WetTicksCapability;
+import com.github.ars_affinity.capability.WetTicks;
+import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
@@ -28,6 +31,9 @@ import com.github.ars_affinity.event.PassiveSummoningPowerEvents;
 import com.github.ars_affinity.event.PassiveUnstableSummoningEvents;
 import com.github.ars_affinity.event.SpellAmplificationEvents;
 import com.github.ars_affinity.event.SpellBlightEvents;
+import com.github.ars_affinity.event.PassiveHydrationEvents;
+import com.github.ars_affinity.event.SanctuaryEvents;
+import com.github.ars_affinity.event.SilencedEvents;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModItems;
@@ -111,6 +117,9 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(PassiveUnstableSummoningEvents.class);
         NeoForge.EVENT_BUS.register(SpellAmplificationEvents.class);
         NeoForge.EVENT_BUS.register(SpellBlightEvents.class);
+        NeoForge.EVENT_BUS.register(PassiveHydrationEvents.class);
+        NeoForge.EVENT_BUS.register(SanctuaryEvents.class);
+        NeoForge.EVENT_BUS.register(SilencedEvents.class);
 
         AffinityPerkManager.loadConfig();
         
@@ -127,7 +136,20 @@ public class ArsAffinity {
                 return null;
             }
         );
+        
+        event.registerEntity(
+            WetTicksCapability.WET_TICKS,
+            EntityType.PLAYER,
+            (entity, context) -> {
+                if (entity instanceof Player player) {
+                    return WetTicksProvider.getWetTicks(player);
+                }
+                return null;
+            }
+        );
+        
         LOGGER.info("Registered SchoolAffinityProgress capability");
+        LOGGER.info("Registered WetTicks capability");
     }
     
     private void onRegisterCommands(RegisterCommandsEvent event) {
@@ -137,15 +159,18 @@ public class ArsAffinity {
     
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         SchoolAffinityProgressProvider.loadPlayerProgress(event.getEntity());
+        WetTicksProvider.loadPlayerWetTicks(event.getEntity());
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         SchoolAffinityProgressProvider.savePlayerProgress(event.getEntity());
+        WetTicksProvider.savePlayerWetTicks(event.getEntity());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
         SchoolAffinityProgressProvider.saveAllProgress();
         SchoolAffinityProgressProvider.clearCache();
+        WetTicksProvider.clearCache();
     }
 
     public static ResourceLocation prefix(String str) {

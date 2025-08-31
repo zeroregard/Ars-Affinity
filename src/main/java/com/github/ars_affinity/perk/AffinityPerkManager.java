@@ -182,4 +182,30 @@ public class AffinityPerkManager {
         List<AffinityPerk> levelPerks = schoolPerkMap.get(level);
         return levelPerks != null ? levelPerks : new java.util.ArrayList<>();
     }
+    
+    // Use this to access static perk data regardless of whether a player actually has this perk or not
+    // Later on, we should be using this instead of storing perk data per player. Players should only have the perk type and tier stored, not the data.
+    public static AffinityPerk getPerk(SpellSchool school, int tier, AffinityPerkType perkType) {
+        if (!isLoaded) {
+            loadConfig();
+        }
+        
+        Map<Integer, List<AffinityPerk>> schoolPerkMap = schoolPerks.get(school);
+        if (schoolPerkMap == null) {
+            return null;
+        }
+        
+        List<AffinityPerk> tierPerks = schoolPerkMap.get(tier);
+        if (tierPerks == null) {
+            return null;
+        }
+        
+        for (AffinityPerk perk : tierPerks) {
+            if (perk.perk == perkType) {
+                return perk;
+            }
+        }
+        
+        return null;
+    }
 } 
