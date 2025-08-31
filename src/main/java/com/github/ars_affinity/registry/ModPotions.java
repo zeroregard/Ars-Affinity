@@ -16,14 +16,22 @@ import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
-import com.github.ars_affinity.potion.affinity_increase.FireAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.WaterAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.EarthAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.AirAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.AbjurationAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.AnimaAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.ConjurationAffinityEffect;
-import com.github.ars_affinity.potion.affinity_increase.ManipulationAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.FireAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.WaterAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.EarthAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.AirAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.AbjurationAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.AnimaAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.ConjurationAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.ManipulationAffinityLevel1Effect;
+import com.github.ars_affinity.potion.affinity_increase.FireAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.WaterAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.EarthAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.AirAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.AbjurationAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.AnimaAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.ConjurationAffinityLevel2Effect;
+import com.github.ars_affinity.potion.affinity_increase.ManipulationAffinityLevel2Effect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -53,25 +61,45 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
     
-    // Affinity potion effects
-    public static final DeferredHolder<MobEffect, FireAffinityEffect> FIRE_AFFINITY_EFFECT = EFFECTS.register("fire_affinity", FireAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, WaterAffinityEffect> WATER_AFFINITY_EFFECT = EFFECTS.register("water_affinity", WaterAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, EarthAffinityEffect> EARTH_AFFINITY_EFFECT = EFFECTS.register("earth_affinity", EarthAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, AirAffinityEffect> AIR_AFFINITY_EFFECT = EFFECTS.register("air_affinity", AirAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, AbjurationAffinityEffect> ABJURATION_AFFINITY_EFFECT = EFFECTS.register("abjuration_affinity", AbjurationAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, AnimaAffinityEffect> ANIMA_AFFINITY_EFFECT = EFFECTS.register("anima_affinity", AnimaAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, ConjurationAffinityEffect> CONJURATION_AFFINITY_EFFECT = EFFECTS.register("conjuration_affinity", ConjurationAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, ManipulationAffinityEffect> MANIPULATION_AFFINITY_EFFECT = EFFECTS.register("manipulation_affinity", ManipulationAffinityEffect::new);
+    // Affinity potion effects - Level 1 (placeholder)
+    public static final DeferredHolder<MobEffect, FireAffinityLevel1Effect> FIRE_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("fire_affinity_level_1", FireAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, WaterAffinityLevel1Effect> WATER_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("water_affinity_level_1", WaterAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, EarthAffinityLevel1Effect> EARTH_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("earth_affinity_level_1", EarthAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, AirAffinityLevel1Effect> AIR_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("air_affinity_level_1", AirAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, AbjurationAffinityLevel1Effect> ABJURATION_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("abjuration_affinity_level_1", AbjurationAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, AnimaAffinityLevel1Effect> ANIMA_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("anima_affinity_level_1", AnimaAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, ConjurationAffinityLevel1Effect> CONJURATION_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("conjuration_affinity_level_1", ConjurationAffinityLevel1Effect::new);
+    public static final DeferredHolder<MobEffect, ManipulationAffinityLevel1Effect> MANIPULATION_AFFINITY_LEVEL1_EFFECT = EFFECTS.register("manipulation_affinity_level_1", ManipulationAffinityLevel1Effect::new);
+    
+    // Affinity potion effects - Level 2 (increases affinity)
+    public static final DeferredHolder<MobEffect, FireAffinityLevel2Effect> FIRE_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("fire_affinity_level_2", FireAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, WaterAffinityLevel2Effect> WATER_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("water_affinity_level_2", WaterAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, EarthAffinityLevel2Effect> EARTH_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("earth_affinity_level_2", EarthAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, AirAffinityLevel2Effect> AIR_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("air_affinity_level_2", AirAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, AbjurationAffinityLevel2Effect> ABJURATION_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("abjuration_affinity_level_2", AbjurationAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, AnimaAffinityLevel2Effect> ANIMA_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("anima_affinity_level_2", AnimaAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, ConjurationAffinityLevel2Effect> CONJURATION_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("conjuration_affinity_level_2", ConjurationAffinityLevel2Effect::new);
+    public static final DeferredHolder<MobEffect, ManipulationAffinityLevel2Effect> MANIPULATION_AFFINITY_LEVEL2_EFFECT = EFFECTS.register("manipulation_affinity_level_2", ManipulationAffinityLevel2Effect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
     
-    // Affinity potions - instant effect, no duration
-    public static final DeferredHolder<Potion, Potion> FIRE_AFFINITY_POTION = POTIONS.register("fire_affinity", () -> new Potion(new MobEffectInstance(FIRE_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> WATER_AFFINITY_POTION = POTIONS.register("water_affinity", () -> new Potion(new MobEffectInstance(WATER_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> EARTH_AFFINITY_POTION = POTIONS.register("earth_affinity", () -> new Potion(new MobEffectInstance(EARTH_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> AIR_AFFINITY_POTION = POTIONS.register("air_affinity", () -> new Potion(new MobEffectInstance(AIR_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> ABJURATION_AFFINITY_POTION = POTIONS.register("abjuration_affinity", () -> new Potion(new MobEffectInstance(ABJURATION_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> ANIMA_AFFINITY_POTION = POTIONS.register("anima_affinity", () -> new Potion(new MobEffectInstance(ANIMA_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> CONJURATION_AFFINITY_POTION = POTIONS.register("conjuration_affinity", () -> new Potion(new MobEffectInstance(CONJURATION_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> MANIPULATION_AFFINITY_POTION = POTIONS.register("manipulation_affinity", () -> new Potion(new MobEffectInstance(MANIPULATION_AFFINITY_EFFECT, 1)));
+    // Affinity potions - Level 1 (placeholder, no duration)
+    public static final DeferredHolder<Potion, Potion> FIRE_AFFINITY_LEVEL1_POTION = POTIONS.register("fire_affinity_level_1", () -> new Potion(new MobEffectInstance(FIRE_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> WATER_AFFINITY_LEVEL1_POTION = POTIONS.register("water_affinity_level_1", () -> new Potion(new MobEffectInstance(WATER_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> EARTH_AFFINITY_LEVEL1_POTION = POTIONS.register("earth_affinity_level_1", () -> new Potion(new MobEffectInstance(EARTH_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> AIR_AFFINITY_LEVEL1_POTION = POTIONS.register("air_affinity_level_1", () -> new Potion(new MobEffectInstance(AIR_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ABJURATION_AFFINITY_LEVEL1_POTION = POTIONS.register("abjuration_affinity_level_1", () -> new Potion(new MobEffectInstance(ABJURATION_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ANIMA_AFFINITY_LEVEL1_POTION = POTIONS.register("anima_affinity_level_1", () -> new Potion(new MobEffectInstance(ANIMA_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> CONJURATION_AFFINITY_LEVEL1_POTION = POTIONS.register("conjuration_affinity_level_1", () -> new Potion(new MobEffectInstance(CONJURATION_AFFINITY_LEVEL1_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> MANIPULATION_AFFINITY_LEVEL1_POTION = POTIONS.register("manipulation_affinity_level_1", () -> new Potion(new MobEffectInstance(MANIPULATION_AFFINITY_LEVEL1_EFFECT, 1)));
+    
+    // Affinity potions - Level 2 (increases affinity, instant effect, no duration)
+    public static final DeferredHolder<Potion, Potion> FIRE_AFFINITY_LEVEL2_POTION = POTIONS.register("fire_affinity_level_2", () -> new Potion(new MobEffectInstance(FIRE_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> WATER_AFFINITY_LEVEL2_POTION = POTIONS.register("water_affinity_level_2", () -> new Potion(new MobEffectInstance(WATER_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> EARTH_AFFINITY_LEVEL2_POTION = POTIONS.register("earth_affinity_level_2", () -> new Potion(new MobEffectInstance(EARTH_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> AIR_AFFINITY_LEVEL2_POTION = POTIONS.register("air_affinity_level_2", () -> new Potion(new MobEffectInstance(AIR_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ABJURATION_AFFINITY_LEVEL2_POTION = POTIONS.register("abjuration_affinity_level_2", () -> new Potion(new MobEffectInstance(ABJURATION_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ANIMA_AFFINITY_LEVEL2_POTION = POTIONS.register("anima_affinity_level_2", () -> new Potion(new MobEffectInstance(ANIMA_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> CONJURATION_AFFINITY_LEVEL2_POTION = POTIONS.register("conjuration_affinity_level_2", () -> new Potion(new MobEffectInstance(CONJURATION_AFFINITY_LEVEL2_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> MANIPULATION_AFFINITY_LEVEL2_POTION = POTIONS.register("manipulation_affinity_level_2", () -> new Potion(new MobEffectInstance(MANIPULATION_AFFINITY_LEVEL2_EFFECT, 1)));
 } 

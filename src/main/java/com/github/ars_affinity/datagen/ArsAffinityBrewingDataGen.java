@@ -1,18 +1,13 @@
 package com.github.ars_affinity.datagen;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.registry.ModPotions;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -67,14 +62,21 @@ public class ArsAffinityBrewingDataGen implements DataProvider {
     private void generateBrewingRecipe(CachedOutput output, SpellSchool school) {
         String schoolName = SCHOOL_TO_NAME.get(school);
         String essenceItem = SCHOOL_TO_ESSENCE.get(school);
-        DeferredHolder<Potion, Potion> potion = getPotionForSchool(school);
         
-        if (potion == null || essenceItem == null) {
+        if (essenceItem == null) {
             ArsAffinity.LOGGER.warn("Could not generate brewing recipe for school: {}", schoolName);
             return;
         }
         
-        // Create brewing recipe JSON
+        // Generate Level 1 recipe: mundane potion + essence = level 1 potion
+        generateLevel1Recipe(output, schoolName, essenceItem);
+        
+        // Generate Level 2 recipe: level 1 potion + essence = level 2 potion
+        generateLevel2Recipe(output, schoolName, essenceItem);
+    }
+    
+    private void generateLevel1Recipe(CachedOutput output, String schoolName, String essenceItem) {
+        // Create brewing recipe JSON for Level 1
         JsonObject recipe = new JsonObject();
         recipe.addProperty("type", "minecraft:brewing");
         
@@ -88,36 +90,59 @@ public class ArsAffinityBrewingDataGen implements DataProvider {
         ingredient.addProperty("item", essenceItem);
         recipe.add("ingredient", ingredient);
         
-        // Output potion
+        // Output potion (Level 1)
         JsonObject outputPotion = new JsonObject();
-        outputPotion.addProperty("item", "ars_affinity:" + schoolName + "_affinity");
+        outputPotion.addProperty("item", "ars_affinity:" + schoolName + "_affinity_level_1");
         recipe.add("output", outputPotion);
         
-        // Save the recipe
+        // Save the Level 1 recipe
         Path recipePath = packOutput.getOutputFolder()
             .resolve("data")
             .resolve(ArsAffinity.MOD_ID)
             .resolve("recipes")
-            .resolve(schoolName + "_affinity_potion.json");
+            .resolve(schoolName + "_affinity_level_1_potion.json");
             
         try {
             DataProvider.saveStable(output, recipe, recipePath);
-            ArsAffinity.LOGGER.info("Generated brewing recipe for {}: {}", schoolName, recipePath);
+            ArsAffinity.LOGGER.info("Generated Level 1 brewing recipe for {}: {}", schoolName, recipePath);
         } catch (Exception e) {
-            ArsAffinity.LOGGER.error("Failed to save brewing recipe for {}: {}", schoolName, e.getMessage());
+            ArsAffinity.LOGGER.error("Failed to save Level 1 brewing recipe for {}: {}", schoolName, e.getMessage());
         }
     }
     
-    private DeferredHolder<Potion, Potion> getPotionForSchool(SpellSchool school) {
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_FIRE) return ModPotions.FIRE_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_WATER) return ModPotions.WATER_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_EARTH) return ModPotions.EARTH_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_AIR) return ModPotions.AIR_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.ABJURATION) return ModPotions.ABJURATION_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.NECROMANCY) return ModPotions.ANIMA_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.CONJURATION) return ModPotions.CONJURATION_AFFINITY_POTION;
-        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION) return ModPotions.MANIPULATION_AFFINITY_POTION;
-        return null;
+    private void generateLevel2Recipe(CachedOutput output, String schoolName, String essenceItem) {
+        // Create brewing recipe JSON for Level 2
+        JsonObject recipe = new JsonObject();
+        recipe.addProperty("type", "minecraft:brewing");
+        
+        // Input potion (Level 1 potion)
+        JsonObject input = new JsonObject();
+        input.addProperty("item", "ars_affinity:" + schoolName + "_affinity_level_1");
+        recipe.add("input", input);
+        
+        // Ingredient (essence)
+        JsonObject ingredient = new JsonObject();
+        ingredient.addProperty("item", essenceItem);
+        recipe.add("ingredient", ingredient);
+        
+        // Output potion (Level 2)
+        JsonObject outputPotion = new JsonObject();
+        outputPotion.addProperty("item", "ars_affinity:" + schoolName + "_affinity_level_2");
+        recipe.add("output", outputPotion);
+        
+        // Save the Level 2 recipe
+        Path recipePath = packOutput.getOutputFolder()
+            .resolve("data")
+            .resolve(ArsAffinity.MOD_ID)
+            .resolve("recipes")
+            .resolve(schoolName + "_affinity_level_2_potion.json");
+            
+        try {
+            DataProvider.saveStable(output, recipe, recipePath);
+            ArsAffinity.LOGGER.info("Generated Level 2 brewing recipe for {}: {}", schoolName, recipePath);
+        } catch (Exception e) {
+            ArsAffinity.LOGGER.error("Failed to save Level 2 brewing recipe for {}: {}", schoolName, recipePath);
+        }
     }
     
     @Override

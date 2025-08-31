@@ -9,12 +9,12 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
+public abstract class AbstractAffinityIncreaseLevel2Effect extends MobEffect {
     
     private final SpellSchool targetSchool;
     private final String schoolName;
     
-    protected AbstractAffinityIncreaseEffect(SpellSchool targetSchool, String schoolName, int color) {
+    protected AbstractAffinityIncreaseLevel2Effect(SpellSchool targetSchool, String schoolName, int color) {
         super(MobEffectCategory.BENEFICIAL, color);
         this.targetSchool = targetSchool;
         this.schoolName = schoolName;
@@ -29,7 +29,7 @@ public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
                 float newAffinity = Math.min(1.0f, currentAffinity + 0.10f); // Increase by 10%
                 affinityProgress.setAffinity(targetSchool, newAffinity);
                 
-                ArsAffinity.LOGGER.info("{} AFFINITY - Applied {} affinity potion effect for player: {} - affinity: {} -> {}", 
+                ArsAffinity.LOGGER.info("{} AFFINITY LEVEL 2 - Applied {} affinity potion effect for player: {} - affinity: {} -> {}", 
                     schoolName.toUpperCase(), schoolName, player.getName().getString(), currentAffinity, newAffinity);
             }
         }
@@ -49,6 +49,6 @@ public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
     
     @Override
     public String getDescriptionId() {
-        return "effect.ars_affinity." + schoolName + "_affinity";
+        return "effect.ars_affinity." + schoolName + "_affinity_level_2";
     }
 }

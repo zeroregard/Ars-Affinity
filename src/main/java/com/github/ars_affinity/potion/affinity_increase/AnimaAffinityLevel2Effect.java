@@ -2,9 +2,9 @@ package com.github.ars_affinity.potion.affinity_increase;
 
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 
-public class AnimaAffinityEffect extends AbstractAffinityIncreaseEffect {
+public class AnimaAffinityLevel2Effect extends AbstractAffinityIncreaseLevel2Effect {
     
-    public AnimaAffinityEffect() {
+    public AnimaAffinityLevel2Effect() {
         super(SpellSchools.NECROMANCY, "anima", 0xFF6d6d6d); // Anima school color (same as necromancy)
     }
 }
