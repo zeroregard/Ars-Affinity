@@ -3,6 +3,7 @@ package com.github.ars_affinity.capability;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkType;
+import com.github.ars_affinity.perk.AffinityPerkManager;
 import com.github.ars_affinity.perk.PerkData;
 import com.github.ars_affinity.perk.PerkReference;
 import com.github.ars_affinity.perk.PerkRegistry;
@@ -12,10 +13,11 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +25,8 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     private final Map<SpellSchool, Float> affinities = new HashMap<>();
     private final Map<AffinityPerkType, PerkReference> activePerks = new HashMap<>();
+    private boolean isDirty = false;
+    private Player player; // Reference to the player for saving
     
     private static final SpellSchool[] SUPPORTED_SCHOOLS = {
         SpellSchools.ELEMENTAL_FIRE,
@@ -41,18 +45,33 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         }
     }
     
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+    
+    private void markDirty() {
+        this.isDirty = true;
+        // Auto-save if we have a player reference
+        if (player != null && !player.level().isClientSide()) {
+            SchoolAffinityProgressProvider.savePlayerProgress(player);
+            this.isDirty = false;
+        }
+    }
+    
     public float getAffinity(SpellSchool school) {
         return affinities.getOrDefault(school, 0.0f);
     }
     
-    public void setAffinity(SpellSchool school, float level) {
+    public void setAffinity(SpellSchool school, float affinity) {
         float oldLevel = affinities.getOrDefault(school, 0.0f);
-        affinities.put(school, level);
-        
+        affinities.put(school, affinity);
         rebuildPerkIndex();
         
         ArsAffinity.LOGGER.debug("Affinity changed for {}: {} -> {}", 
-            school.getId().toString().replace(":", "_"), oldLevel, level);
+            school.getId().toString().replace(":", "_"), oldLevel, affinity);
+        
+        // Mark that this progress needs to be saved
+        markDirty();
     }
     
     public Map<SpellSchool, Float> getAllAffinities() {
@@ -77,69 +96,50 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         return activePerks.get(perkType);
     }
     
-    public PerkData getActivePerk(AffinityPerkType perkType) {
-        PerkReference reference = activePerks.get(perkType);
-        return reference != null ? reference.getPerkData() : null;
-    }
+
     
     public Set<PerkReference> getAllActivePerkReferences() {
         return Set.copyOf(activePerks.values());
     }
     
-    public Map<AffinityPerkType, PerkData> getAllActivePerks() {
-        Map<AffinityPerkType, PerkData> result = new HashMap<>();
-        for (Map.Entry<AffinityPerkType, PerkReference> entry : activePerks.entrySet()) {
-            PerkData data = entry.getValue().getPerkData();
-            if (data != null) {
-                result.put(entry.getKey(), data);
-            }
-        }
-        return result;
-    }
+
     
     private void rebuildPerkIndex() {
-        Map<AffinityPerkType, PerkReference> newActivePerks = new HashMap<>();
-        
-        for (AffinityPerkType perkType : AffinityPerkType.values()) {
-            PerkReference bestPerk = findBestPerkForType(perkType);
-            if (bestPerk != null) {
-                newActivePerks.put(perkType, bestPerk);
-            }
-        }
-        
         activePerks.clear();
-        activePerks.putAll(newActivePerks);
-        
-        ArsAffinity.LOGGER.debug("Perk index rebuilt. Active perks: {}", activePerks.size());
-    }
-    
-    private PerkReference findBestPerkForType(AffinityPerkType perkType) {
-        PerkReference bestPerk = null;
-        int bestTier = 0;
+        ArsAffinity.LOGGER.info("Rebuilding perk index for player...");
         
         for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
             SpellSchool school = entry.getKey();
             float affinity = entry.getValue();
             int tier = getTier(school);
             
+            ArsAffinity.LOGGER.info("School: {}, Affinity: {}, Tier: {}", 
+                school.getId(), affinity, tier);
+            
             if (tier > 0) {
-                String key = String.format("%s_%s_%d", 
-                    school.getId().toString().toUpperCase().replace(":", "_"), 
-                    perkType.name(), 
-                    tier);
+                // Use AffinityPerkManager to get perks from JSON config files
+                List<AffinityPerk> perksForTier = AffinityPerkManager.getPerksForLevel(school, tier);
+                ArsAffinity.LOGGER.info("Found {} perks for school {} at tier {}", perksForTier.size(), school.getId(), tier);
                 
-                if (PerkRegistry.hasPerk(key)) {
-                    PerkReference candidate = new PerkReference(perkType, school, tier);
-                    if (tier > bestTier) {
-                        bestPerk = candidate;
-                        bestTier = tier;
+                for (AffinityPerk perk : perksForTier) {
+                    ArsAffinity.LOGGER.info("Processing perk: {} for school {} at tier {}", 
+                        perk.perk, school.getId(), tier);
+                    
+                    // Check if we already have a perk of this type with a higher tier
+                    PerkReference existing = activePerks.get(perk.perk);
+                    if (existing == null || existing.getSourceTier() < tier) {
+                        activePerks.put(perk.perk, new PerkReference(perk.perk, school, tier));
+                        ArsAffinity.LOGGER.info("Added perk: {} for school {} at tier {}", 
+                            perk.perk, school.getId(), tier);
                     }
-                    break;
                 }
             }
         }
         
-        return bestPerk;
+        ArsAffinity.LOGGER.info("Perk index rebuilt. Active perks: {}", activePerks.size());
+        for (Map.Entry<AffinityPerkType, PerkReference> entry : activePerks.entrySet()) {
+            ArsAffinity.LOGGER.info("Active perk: {} -> {}", entry.getKey(), entry.getValue());
+        }
     }
     
     public int getTier(SpellSchool school) {
@@ -203,6 +203,9 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         }
         tag.put("activePerks", perksTag);
         
+        ArsAffinity.LOGGER.info("Serializing SchoolAffinityProgress: {} affinities, {} perks", 
+            affinities.size(), activePerks.size());
+        
         return tag;
     }
     
@@ -224,6 +227,12 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
                 activePerks.put(reference.getPerkType(), reference);
             }
         }
+        
+        ArsAffinity.LOGGER.info("Deserialized SchoolAffinityProgress: {} affinities, {} perks", 
+            affinities.size(), activePerks.size());
+        
+        // Rebuild perk index after deserialization
+        rebuildPerkIndex();
     }
     
     private static SpellSchool getSpellSchoolFromId(String id) {

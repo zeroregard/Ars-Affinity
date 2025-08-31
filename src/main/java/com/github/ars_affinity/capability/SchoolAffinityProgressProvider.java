@@ -20,11 +20,19 @@ public class SchoolAffinityProgressProvider {
         
         return playerProgressCache.computeIfAbsent(playerId, id -> {
             SchoolAffinityProgress newProgress = new SchoolAffinityProgress();
+            newProgress.setPlayer(player); // Set player reference for auto-saving
+            
             CompoundTag playerData = player.getPersistentData();
             if (playerData.contains(IDENTIFIER.toString())) {
                 CompoundTag affinityData = playerData.getCompound(IDENTIFIER.toString());
                 if (affinityData != null) {
-                    newProgress.deserializeNBT(null, affinityData);
+                    // Create a proper HolderLookup.Provider for deserialization
+                    try {
+                        newProgress.deserializeNBT(player.level().registryAccess(), affinityData);
+                    } catch (Exception e) {
+                        ArsAffinity.LOGGER.error("Failed to deserialize affinity progress for player {}: {}", 
+                            player.getName().getString(), e.getMessage());
+                    }
                 }
             }
             return newProgress;
@@ -42,8 +50,14 @@ public class SchoolAffinityProgressProvider {
         
         if (progress != null) {
             CompoundTag playerData = player.getPersistentData();
-            CompoundTag affinityData = progress.serializeNBT(null);
-            playerData.put(IDENTIFIER.toString(), affinityData);
+            try {
+                CompoundTag affinityData = progress.serializeNBT(player.level().registryAccess());
+                playerData.put(IDENTIFIER.toString(), affinityData);
+                ArsAffinity.LOGGER.debug("Saved affinity progress for player: {}", player.getName().getString());
+            } catch (Exception e) {
+                ArsAffinity.LOGGER.error("Failed to serialize affinity progress for player {}: {}", 
+                    player.getName().getString(), e.getMessage());
+            }
         }
     }
     

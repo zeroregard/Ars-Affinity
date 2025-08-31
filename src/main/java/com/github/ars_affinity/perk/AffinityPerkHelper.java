@@ -24,31 +24,42 @@ public class AffinityPerkHelper {
     }
     
     public static AffinityPerk getActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType) {
-        PerkData perkData = progress.getActivePerk(perkType);
-        return perkData != null ? perkData.perk : null;
+        PerkReference perkRef = progress.getActivePerkReference(perkType);
+        if (perkRef != null) {
+            // Get the actual perk data from AffinityPerkManager
+            return AffinityPerkManager.getPerk(perkRef.getSourceSchool(), perkRef.getSourceTier(), perkRef.getPerkType());
+        }
+        return null;
     }
 
     public static AffinityPerk getActivePerk(Player player, AffinityPerkType perkType) {
         SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            PerkData perkData = progress.getActivePerk(perkType);
-            return perkData != null ? perkData.perk : null;
+            return getActivePerk(progress, perkType);
         }
         return null;
     }
     
     public static PerkData getActivePerkData(SchoolAffinityProgress progress, AffinityPerkType perkType) {
-        return progress.getActivePerk(perkType);
+        PerkReference perkRef = progress.getActivePerkReference(perkType);
+        if (perkRef != null) {
+            // Create a PerkData object from the reference and the actual perk
+            AffinityPerk perk = AffinityPerkManager.getPerk(perkRef.getSourceSchool(), perkRef.getSourceTier(), perkRef.getPerkType());
+            if (perk != null) {
+                return new PerkData(perk, perkRef.getSourceSchool(), perkRef.getSourceTier());
+            }
+        }
+        return null;
     }
     
     public static SpellSchool getPerkSourceSchool(SchoolAffinityProgress progress, AffinityPerkType perkType) {
-        PerkData perkData = progress.getActivePerk(perkType);
-        return perkData != null ? perkData.sourceSchool : null;
+        PerkReference perkRef = progress.getActivePerkReference(perkType);
+        return perkRef != null ? perkRef.getSourceSchool() : null;
     }
     
     public static int getPerkSourceTier(SchoolAffinityProgress progress, AffinityPerkType perkType) {
-        PerkData perkData = progress.getActivePerk(perkType);
-        return perkData != null ? perkData.sourceTier : 0;
+        PerkReference perkRef = progress.getActivePerkReference(perkType);
+        return perkRef != null ? perkRef.getSourceTier() : 0;
     }
     
     public static void applyActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
@@ -86,7 +97,17 @@ public class AffinityPerkHelper {
     }
     
     public static Map<AffinityPerkType, PerkData> getAllActivePerks(SchoolAffinityProgress progress) {
-        return progress.getAllActivePerks();
+        Map<AffinityPerkType, PerkData> result = new java.util.HashMap<>();
+        Set<PerkReference> perkRefs = progress.getAllActivePerkReferences();
+        
+        for (PerkReference perkRef : perkRefs) {
+            AffinityPerk perk = AffinityPerkManager.getPerk(perkRef.getSourceSchool(), perkRef.getSourceTier(), perkRef.getPerkType());
+            if (perk != null) {
+                result.put(perkRef.getPerkType(), new PerkData(perk, perkRef.getSourceSchool(), perkRef.getSourceTier()));
+            }
+        }
+        
+        return result;
     }
     
     public static Set<PerkReference> getAllActivePerkReferences(SchoolAffinityProgress progress) {

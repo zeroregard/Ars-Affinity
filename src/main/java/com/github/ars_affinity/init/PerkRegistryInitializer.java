@@ -6,6 +6,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
+import java.util.stream.Collectors;
+
 @EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class PerkRegistryInitializer {
     
@@ -17,5 +19,9 @@ public class PerkRegistryInitializer {
         
         ArsAffinity.LOGGER.info("PerkRegistry initialization complete. Registered {} perk configurations.", 
             PerkRegistry.getTotalPerkCount());
+        
+        // Log some sample perks to verify they're loaded
+        ArsAffinity.LOGGER.info("Sample perk keys: {}", 
+            PerkRegistry.getAllPerkKeys().stream().limit(10).collect(Collectors.joining(", ")));
     }
 }
