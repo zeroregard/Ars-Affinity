@@ -55,20 +55,18 @@ public abstract class PlayerFrictionMixin {
         
         if (COLD_WALKER_BLOCKS.contains(groundState) || COLD_WALKER_BLOCKS.contains(aboveState)) {
             var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
-            if (perk != null) {
-                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    float newFriction = 0.6F - (amountPerk.amount * 0.6F);
-                    ArsAffinity.LOGGER.debug(
-                            "Player {} has COLD_WALKER perk with amount {} - overriding ice/snow/powdered snow friction from {} to {}",
-                            player.getName().getString(),
-                            amountPerk.amount,
-                            friction,
-                            newFriction
-                        );
-                    // Calculate friction based on iceAmplifier: 0.6 - (iceAmplifier * 0.6)
-                    // This means: iceAmplifier 0.0 = 0.6F (normal ground), iceAmplifier 1.0 = 0.0F (maximum speed)
-                    return newFriction;
-                }
+            if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+                float newFriction = 0.6F - (amountPerk.amount * 0.6F);
+                ArsAffinity.LOGGER.debug(
+                        "Player {} has COLD_WALKER perk with amount {} - overriding ice/snow/powdered snow friction from {} to {}",
+                        player.getName().getString(),
+                        amountPerk.amount,
+                        friction,
+                        newFriction
+                    );
+                // Calculate friction based on iceAmplifier: 0.6 - (iceAmplifier * 0.6)
+                // This means: iceAmplifier 0.0 = 0.6F (normal ground), iceAmplifier 1.0 = 0.0F (maximum speed)
+                return newFriction;
             }
         }
         

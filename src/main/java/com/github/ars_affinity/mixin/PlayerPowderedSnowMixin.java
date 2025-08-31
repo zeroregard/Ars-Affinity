@@ -65,7 +65,7 @@ public class PlayerPowderedSnowMixin {
 
         if (state.getBlock() instanceof PowderSnowBlock) {
             var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
-            if (perk != null) {
+            if (perk instanceof AffinityPerk) {
                 // Cancel vanilla slowdown entirely
                 ci.cancel();
                 

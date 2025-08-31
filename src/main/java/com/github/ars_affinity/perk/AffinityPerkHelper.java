@@ -27,6 +27,15 @@ public class AffinityPerkHelper {
         PerkData perkData = progress.getActivePerk(perkType);
         return perkData != null ? perkData.perk : null;
     }
+
+    public static AffinityPerk getActivePerk(Player player, AffinityPerkType perkType) {
+        SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        if (progress != null) {
+            PerkData perkData = progress.getActivePerk(perkType);
+            return perkData != null ? perkData.perk : null;
+        }
+        return null;
+    }
     
     public static PerkData getActivePerkData(SchoolAffinityProgress progress, AffinityPerkType perkType) {
         return progress.getActivePerk(perkType);
@@ -49,24 +58,23 @@ public class AffinityPerkHelper {
         }
     }
     
-    private static <T extends AffinityPerk> void applyActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType, Class<T> perkClass, Consumer<T> perkConsumer) {
-        AffinityPerk perk = getActivePerk(progress, perkType);
-        if (perk != null && perkClass.isInstance(perk)) {
-            perkConsumer.accept(perkClass.cast(perk));
-        }
-    }
-    
     public static void applyActivePerk(Player player, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
         SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            applyActivePerk(progress, perkType, perkConsumer);
+            AffinityPerk perk = getActivePerk(progress, perkType);
+            if (perk != null) {
+                perkConsumer.accept(perk);
+            }
         }
     }
     
     public static <T extends AffinityPerk> void applyActivePerk(Player player, AffinityPerkType perkType, Class<T> perkClass, Consumer<T> perkConsumer) {
         SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
         if (progress != null) {
-            applyActivePerk(progress, perkType, perkClass, perkConsumer);
+            AffinityPerk perk = getActivePerk(progress, perkType);
+            if (perk != null && perkClass.isInstance(perk)) {
+                perkConsumer.accept(perkClass.cast(perk));
+            }
         }
     }
     
