@@ -12,5 +12,61 @@
 				"name": "ars_affinity:dash"
 			}
 		]
+	},
+	"tier_change_fire": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_fire"
+			}
+		]
+	},
+	"tier_change_water": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_water"
+			}
+		]
+	},
+	"tier_change_earth": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_earth"
+			}
+		]
+	},
+	"tier_change_air": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_air"
+			}
+		]
+	},
+	"tier_change_abjuration": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_abjuration"
+			}
+		]
+	},
+	"tier_change_conjuration": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_conjuration"
+			}
+		]
+	},
+	"tier_change_necromancy": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_necromancy"
+			}
+		]
+	},
+	"tier_change_manipulation": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_manipulation"
+			}
+		]
 	}
 }
