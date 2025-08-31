@@ -11,8 +11,16 @@ import java.util.Set;
 
 public class AffinityPerkHelper {
     
-    public static boolean hasActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType) {
+    private static boolean hasActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType) {
         return progress.hasActivePerk(perkType);
+    }
+
+    public static boolean hasActivePerk(Player player, AffinityPerkType perkType) {
+        SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        if (progress != null) {
+            return hasActivePerk(progress, perkType);
+        }
+        return false;
     }
     
     public static AffinityPerk getActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType) {

@@ -3,7 +3,6 @@ package com.github.ars_affinity.init;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.PerkRegistry;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
