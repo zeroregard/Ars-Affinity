@@ -9,7 +9,7 @@ This mod adds 8 new consumable potions that increase your affinity towards speci
 3. **Potion of Earth Affinity** - Increases Earth school affinity by 10%
 4. **Potion of Air Affinity** - Increases Air school affinity by 10%
 5. **Potion of Abjuration Affinity** - Increases Abjuration school affinity by 10%
-6. **Potion of Necromancy Affinity** - Increases Necromancy school affinity by 10%
+6. **Potion of Anima Affinity** - Increases Anima school affinity by 10%
 7. **Potion of Conjuration Affinity** - Increases Conjuration school affinity by 10%
 8. **Potion of Manipulation Affinity** - Increases Manipulation school affinity by 10%
 
@@ -24,7 +24,7 @@ All affinity potions are crafted using Ars Nouveau's **Enchanting Apparatus**:
   - Earth Essence → Earth Affinity Potion
   - Air Essence → Air Affinity Potion
   - Abjuration Essence → Abjuration Affinity Potion
-  - Necromancy Essence → Necromancy Affinity Potion
+  - Anima Essence → Anima Affinity Potion
   - Conjuration Essence → Conjuration Affinity Potion
   - Manipulation Essence → Manipulation Affinity Potion
 
@@ -38,6 +38,16 @@ Simply drink the potion to instantly increase your affinity towards that school 
 - Affinity increases are capped at 100% (1.0) per school
 - The potions use the same color scheme as their respective magic schools
 - All potions are beneficial effects and can be used in splash and lingering variants
+
+## Code Architecture
+
+The affinity potion effects are implemented using a superclass pattern to reduce code duplication:
+
+- **AbstractAffinityIncreaseEffect**: Base class that handles all the common functionality
+- **Individual Effect Classes**: Simple classes that only specify the school, name, and color
+- **Package Structure**: All affinity effects are organized in `com.github.ars_affinity.potion.affinity_increase`
+
+This approach makes it easy to add new affinity potions in the future by simply extending the superclass.
 
 ## Recipe Examples
 

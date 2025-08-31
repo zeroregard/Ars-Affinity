@@ -54,7 +54,7 @@
   "effect.ars_affinity.earth_affinity": "Earth Affinity",
   "effect.ars_affinity.air_affinity": "Air Affinity",
   "effect.ars_affinity.abjuration_affinity": "Abjuration Affinity",
-  "effect.ars_affinity.necromancy_affinity": "Necromancy Affinity",
+  "effect.ars_affinity.anima_affinity": "Anima Affinity",
   "effect.ars_affinity.conjuration_affinity": "Conjuration Affinity",
   "effect.ars_affinity.manipulation_affinity": "Manipulation Affinity",
   "item.minecraft.potion.effect.ars_affinity.silenced": "Potion of Silence",
@@ -86,10 +86,10 @@
   "item.minecraft.lingering_potion.effect.ars_affinity.abjuration_affinity": "Lingering Potion of Abjuration Affinity",
   "item.minecraft.tipped_arrow.effect.ars_affinity.abjuration_affinity": "Arrow of Abjuration Affinity",
   
-  "item.minecraft.potion.effect.ars_affinity.necromancy_affinity": "Potion of Necromancy Affinity",
-  "item.minecraft.splash_potion.effect.ars_affinity.necromancy_affinity": "Splash Potion of Necromancy Affinity",
-  "item.minecraft.lingering_potion.effect.ars_affinity.necromancy_affinity": "Lingering Potion of Necromancy Affinity",
-  "item.minecraft.tipped_arrow.effect.ars_affinity.necromancy_affinity": "Arrow of Necromancy Affinity",
+  "item.minecraft.potion.effect.ars_affinity.anima_affinity": "Potion of Anima Affinity",
+  "item.minecraft.splash_potion.effect.ars_affinity.anima_affinity": "Splash Potion of Anima Affinity",
+  "item.minecraft.lingering_potion.effect.ars_affinity.anima_affinity": "Lingering Potion of Anima Affinity",
+  "item.minecraft.tipped_arrow.effect.ars_affinity.anima_affinity": "Arrow of Anima Affinity",
   
   "item.minecraft.potion.effect.ars_affinity.conjuration_affinity": "Potion of Conjuration Affinity",
   "item.minecraft.splash_potion.effect.ars_affinity.conjuration_affinity": "Splash Potion of Conjuration Affinity",

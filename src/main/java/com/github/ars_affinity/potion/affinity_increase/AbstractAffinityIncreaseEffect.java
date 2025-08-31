@@ -1,18 +1,23 @@
-package com.github.ars_affinity.potion;
+package com.github.ars_affinity.potion.affinity_increase;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgress;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
-import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
+import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-public class ConjurationAffinityEffect extends MobEffect {
+public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
     
-    public ConjurationAffinityEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0xFF6ae3ce); // Conjuration school color
+    private final SpellSchool targetSchool;
+    private final String schoolName;
+    
+    protected AbstractAffinityIncreaseEffect(SpellSchool targetSchool, String schoolName, int color) {
+        super(MobEffectCategory.BENEFICIAL, color);
+        this.targetSchool = targetSchool;
+        this.schoolName = schoolName;
     }
     
     @Override
@@ -20,12 +25,12 @@ public class ConjurationAffinityEffect extends MobEffect {
         if (entity instanceof Player player) {
             SchoolAffinityProgress affinityProgress = SchoolAffinityProgressHelper.getAffinityProgress(player);
             if (affinityProgress != null) {
-                float currentAffinity = affinityProgress.getAffinity(SpellSchools.CONJURATION);
+                float currentAffinity = affinityProgress.getAffinity(targetSchool);
                 float newAffinity = Math.min(1.0f, currentAffinity + 0.10f); // Increase by 10%
-                affinityProgress.setAffinity(SpellSchools.CONJURATION, newAffinity);
+                affinityProgress.setAffinity(targetSchool, newAffinity);
                 
-                ArsAffinity.LOGGER.info("CONJURATION AFFINITY - Applied conjuration affinity potion effect for player: {} - affinity: {} -> {}", 
-                    player.getName().getString(), currentAffinity, newAffinity);
+                ArsAffinity.LOGGER.info("{} AFFINITY - Applied {} affinity potion effect for player: {} - affinity: {} -> {}", 
+                    schoolName.toUpperCase(), schoolName, player.getName().getString(), currentAffinity, newAffinity);
             }
         }
         return true;
@@ -44,6 +49,6 @@ public class ConjurationAffinityEffect extends MobEffect {
     
     @Override
     public String getDescriptionId() {
-        return "effect.ars_affinity.conjuration_affinity";
+        return "effect.ars_affinity." + schoolName + "_affinity";
     }
 }

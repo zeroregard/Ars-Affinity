@@ -16,14 +16,14 @@ import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
-import com.github.ars_affinity.potion.FireAffinityEffect;
-import com.github.ars_affinity.potion.WaterAffinityEffect;
-import com.github.ars_affinity.potion.EarthAffinityEffect;
-import com.github.ars_affinity.potion.AirAffinityEffect;
-import com.github.ars_affinity.potion.AbjurationAffinityEffect;
-import com.github.ars_affinity.potion.NecromancyAffinityEffect;
-import com.github.ars_affinity.potion.ConjurationAffinityEffect;
-import com.github.ars_affinity.potion.ManipulationAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.FireAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.WaterAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.EarthAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.AirAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.AbjurationAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.AnimaAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.ConjurationAffinityEffect;
+import com.github.ars_affinity.potion.affinity_increase.ManipulationAffinityEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -59,7 +59,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, EarthAffinityEffect> EARTH_AFFINITY_EFFECT = EFFECTS.register("earth_affinity", EarthAffinityEffect::new);
     public static final DeferredHolder<MobEffect, AirAffinityEffect> AIR_AFFINITY_EFFECT = EFFECTS.register("air_affinity", AirAffinityEffect::new);
     public static final DeferredHolder<MobEffect, AbjurationAffinityEffect> ABJURATION_AFFINITY_EFFECT = EFFECTS.register("abjuration_affinity", AbjurationAffinityEffect::new);
-    public static final DeferredHolder<MobEffect, NecromancyAffinityEffect> NECROMANCY_AFFINITY_EFFECT = EFFECTS.register("necromancy_affinity", NecromancyAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, AnimaAffinityEffect> ANIMA_AFFINITY_EFFECT = EFFECTS.register("anima_affinity", AnimaAffinityEffect::new);
     public static final DeferredHolder<MobEffect, ConjurationAffinityEffect> CONJURATION_AFFINITY_EFFECT = EFFECTS.register("conjuration_affinity", ConjurationAffinityEffect::new);
     public static final DeferredHolder<MobEffect, ManipulationAffinityEffect> MANIPULATION_AFFINITY_EFFECT = EFFECTS.register("manipulation_affinity", ManipulationAffinityEffect::new);
 
@@ -71,7 +71,7 @@ public class ModPotions {
     public static final DeferredHolder<Potion, Potion> EARTH_AFFINITY_POTION = POTIONS.register("earth_affinity", () -> new Potion(new MobEffectInstance(EARTH_AFFINITY_EFFECT, 1)));
     public static final DeferredHolder<Potion, Potion> AIR_AFFINITY_POTION = POTIONS.register("air_affinity", () -> new Potion(new MobEffectInstance(AIR_AFFINITY_EFFECT, 1)));
     public static final DeferredHolder<Potion, Potion> ABJURATION_AFFINITY_POTION = POTIONS.register("abjuration_affinity", () -> new Potion(new MobEffectInstance(ABJURATION_AFFINITY_EFFECT, 1)));
-    public static final DeferredHolder<Potion, Potion> NECROMANCY_AFFINITY_POTION = POTIONS.register("necromancy_affinity", () -> new Potion(new MobEffectInstance(NECROMANCY_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ANIMA_AFFINITY_POTION = POTIONS.register("anima_affinity", () -> new Potion(new MobEffectInstance(ANIMA_AFFINITY_EFFECT, 1)));
     public static final DeferredHolder<Potion, Potion> CONJURATION_AFFINITY_POTION = POTIONS.register("conjuration_affinity", () -> new Potion(new MobEffectInstance(CONJURATION_AFFINITY_EFFECT, 1)));
     public static final DeferredHolder<Potion, Potion> MANIPULATION_AFFINITY_POTION = POTIONS.register("manipulation_affinity", () -> new Potion(new MobEffectInstance(MANIPULATION_AFFINITY_EFFECT, 1)));
 } 
