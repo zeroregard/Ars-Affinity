@@ -1,7 +1,9 @@
 package com.github.ars_affinity.perk;
 
 import com.github.ars_affinity.capability.SchoolAffinityProgress;
+import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Consumer;
 import java.util.Map;
@@ -36,6 +38,27 @@ public class AffinityPerkHelper {
         AffinityPerk perk = getActivePerk(progress, perkType);
         if (perk != null) {
             perkConsumer.accept(perk);
+        }
+    }
+    
+    private static <T extends AffinityPerk> void applyActivePerk(SchoolAffinityProgress progress, AffinityPerkType perkType, Class<T> perkClass, Consumer<T> perkConsumer) {
+        AffinityPerk perk = getActivePerk(progress, perkType);
+        if (perk != null && perkClass.isInstance(perk)) {
+            perkConsumer.accept(perkClass.cast(perk));
+        }
+    }
+    
+    public static void applyActivePerk(Player player, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
+        SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        if (progress != null) {
+            applyActivePerk(progress, perkType, perkConsumer);
+        }
+    }
+    
+    public static <T extends AffinityPerk> void applyActivePerk(Player player, AffinityPerkType perkType, Class<T> perkClass, Consumer<T> perkConsumer) {
+        SchoolAffinityProgress progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        if (progress != null) {
+            applyActivePerk(progress, perkType, perkClass, perkConsumer);
         }
     }
     

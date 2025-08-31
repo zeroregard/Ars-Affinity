@@ -21,16 +21,13 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.tags.DamageTypeTags;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 
 import java.util.Random;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveSoulspikeEvents {
 
     private static final Random RANDOM = new Random();
@@ -58,14 +55,12 @@ public class PassiveSoulspikeEvents {
 
         int animaTier = progress.getTier(SpellSchools.NECROMANCY);
         if (animaTier > 0) {
-            AffinityPerkHelper.applyHighestTierPerk(progress, animaTier, SpellSchools.NECROMANCY, AffinityPerkType.PASSIVE_SOULSPIKE, perk -> {
-                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    if (RANDOM.nextFloat() < amountPerk.amount) {
-                        applySoulspike(player, attacker, false);
-                        
-                        ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
-                            player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
-                    }
+            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+                if (RANDOM.nextFloat() < amountPerk.amount) {
+                    applySoulspike(player, attacker, false);
+                    
+                    ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                        player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
                 }
             });
         }
@@ -89,19 +84,17 @@ public class PassiveSoulspikeEvents {
 
         int animaTier = progress.getTier(SpellSchools.NECROMANCY);
         if (animaTier > 0) {
-            AffinityPerkHelper.applyHighestTierPerk(progress, animaTier, SpellSchools.NECROMANCY, AffinityPerkType.PASSIVE_SOULSPIKE, perk -> {
-                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    float rangedChance = amountPerk.amount * 0.5f;
-                    if (RANDOM.nextFloat() < rangedChance) {
-                        LivingEntity attacker = projectile.getOwner() instanceof LivingEntity ? 
-                            (LivingEntity) projectile.getOwner() : null;
+            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+                float rangedChance = amountPerk.amount * 0.5f;
+                if (RANDOM.nextFloat() < rangedChance) {
+                    LivingEntity attacker = projectile.getOwner() instanceof LivingEntity ? 
+                        (LivingEntity) projectile.getOwner() : null;
+                    
+                    if (attacker != null) {
+                        applySoulspike(player, attacker, true);
                         
-                        if (attacker != null) {
-                            applySoulspike(player, attacker, true);
-                            
-                            ArsAffinity.LOGGER.info("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
-                                player.getName().getString(), attacker.getName().getString(), (int)(rangedChance * 100));
-                        }
+                        ArsAffinity.LOGGER.info("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                            player.getName().getString(), attacker.getName().getString(), (int)(rangedChance * 100));
                     }
                 }
             });

@@ -15,8 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+// TODO: We must pull from main and fix this one
 public class PassiveHydrationEvents {
     
     private static final java.util.Map<java.util.UUID, Integer> lastFoodLevels = new java.util.HashMap<>();

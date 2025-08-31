@@ -12,7 +12,6 @@ import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectHeal;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.UUID;
 
 // The idea with this one is to only get the tier in onSpellCast because then we don'tneed to look up 
 // the player's tier  on every single effect resolve - so we look up once instead of up to 9 times.
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SpellAmplificationEvents {
 
     private static final Map<UUID, Float> playerHealingAmplification = new HashMap<>();
@@ -32,25 +30,18 @@ public class SpellAmplificationEvents {
         }
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
-
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            // Check all schools for healing amplification perks
-            AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION, perk -> {
-                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Check if the spell contains healing effects
-                    var healingEffects = event.spell.unsafeList().stream()
-                        .filter(part -> part instanceof EffectHeal).toList();
-                    
-                    if (healingEffects.size() > 0) {
-                        // Store the amplification amount for this player
-                        playerHealingAmplification.put(player.getUUID(), amountPerk.amount);
-                        ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% amplification", 
-                            player.getName().getString(), (int)(amountPerk.amount * 100));
-                    }
-                }
-            });
-        }
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+            // Check if the spell contains healing effects
+            var healingEffects = event.spell.unsafeList().stream()
+                .filter(part -> part instanceof EffectHeal).toList();
+            
+            if (healingEffects.size() > 0) {
+                // Store the amplification amount for this player
+                playerHealingAmplification.put(player.getUUID(), amountPerk.amount);
+                ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% amplification", 
+                    player.getName().getString(), (int)(amountPerk.amount * 100));
+            }
+        });
     }
 
     @SubscribeEvent
