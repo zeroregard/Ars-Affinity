@@ -16,6 +16,14 @@ import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
+import com.github.ars_affinity.potion.FireAffinityEffect;
+import com.github.ars_affinity.potion.WaterAffinityEffect;
+import com.github.ars_affinity.potion.EarthAffinityEffect;
+import com.github.ars_affinity.potion.AirAffinityEffect;
+import com.github.ars_affinity.potion.AbjurationAffinityEffect;
+import com.github.ars_affinity.potion.NecromancyAffinityEffect;
+import com.github.ars_affinity.potion.ConjurationAffinityEffect;
+import com.github.ars_affinity.potion.ManipulationAffinityEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -44,6 +52,26 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SwarmingEffect> SWARMING_EFFECT = EFFECTS.register("swarming", SwarmingEffect::new);
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
+    
+    // Affinity potion effects
+    public static final DeferredHolder<MobEffect, FireAffinityEffect> FIRE_AFFINITY_EFFECT = EFFECTS.register("fire_affinity", FireAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, WaterAffinityEffect> WATER_AFFINITY_EFFECT = EFFECTS.register("water_affinity", WaterAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, EarthAffinityEffect> EARTH_AFFINITY_EFFECT = EFFECTS.register("earth_affinity", EarthAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, AirAffinityEffect> AIR_AFFINITY_EFFECT = EFFECTS.register("air_affinity", AirAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, AbjurationAffinityEffect> ABJURATION_AFFINITY_EFFECT = EFFECTS.register("abjuration_affinity", AbjurationAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, NecromancyAffinityEffect> NECROMANCY_AFFINITY_EFFECT = EFFECTS.register("necromancy_affinity", NecromancyAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, ConjurationAffinityEffect> CONJURATION_AFFINITY_EFFECT = EFFECTS.register("conjuration_affinity", ConjurationAffinityEffect::new);
+    public static final DeferredHolder<MobEffect, ManipulationAffinityEffect> MANIPULATION_AFFINITY_EFFECT = EFFECTS.register("manipulation_affinity", ManipulationAffinityEffect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
+    
+    // Affinity potions - instant effect, no duration
+    public static final DeferredHolder<Potion, Potion> FIRE_AFFINITY_POTION = POTIONS.register("fire_affinity", () -> new Potion(new MobEffectInstance(FIRE_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> WATER_AFFINITY_POTION = POTIONS.register("water_affinity", () -> new Potion(new MobEffectInstance(WATER_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> EARTH_AFFINITY_POTION = POTIONS.register("earth_affinity", () -> new Potion(new MobEffectInstance(EARTH_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> AIR_AFFINITY_POTION = POTIONS.register("air_affinity", () -> new Potion(new MobEffectInstance(AIR_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> ABJURATION_AFFINITY_POTION = POTIONS.register("abjuration_affinity", () -> new Potion(new MobEffectInstance(ABJURATION_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> NECROMANCY_AFFINITY_POTION = POTIONS.register("necromancy_affinity", () -> new Potion(new MobEffectInstance(NECROMANCY_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> CONJURATION_AFFINITY_POTION = POTIONS.register("conjuration_affinity", () -> new Potion(new MobEffectInstance(CONJURATION_AFFINITY_EFFECT, 1)));
+    public static final DeferredHolder<Potion, Potion> MANIPULATION_AFFINITY_POTION = POTIONS.register("manipulation_affinity", () -> new Potion(new MobEffectInstance(MANIPULATION_AFFINITY_EFFECT, 1)));
 } 
