@@ -24,6 +24,7 @@ public abstract class PlayerFrictionMixin {
         Blocks.ICE.defaultBlockState(),
         Blocks.BLUE_ICE.defaultBlockState(),
         Blocks.PACKED_ICE.defaultBlockState(),
+        Blocks.FROSTED_ICE.defaultBlockState(),
         Blocks.SNOW.defaultBlockState(),
         Blocks.SNOW_BLOCK.defaultBlockState(),
         Blocks.POWDER_SNOW.defaultBlockState()
