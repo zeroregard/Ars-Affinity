@@ -96,20 +96,6 @@ public class AffinityPerkHelper {
         }
     }
     
-    public static Map<AffinityPerkType, PerkData> getAllActivePerks(SchoolAffinityProgress progress) {
-        Map<AffinityPerkType, PerkData> result = new java.util.HashMap<>();
-        Set<PerkReference> perkRefs = progress.getAllActivePerkReferences();
-        
-        for (PerkReference perkRef : perkRefs) {
-            AffinityPerk perk = AffinityPerkManager.getPerk(perkRef.getSourceSchool(), perkRef.getSourceTier(), perkRef.getPerkType());
-            if (perk != null) {
-                result.put(perkRef.getPerkType(), new PerkData(perk, perkRef.getSourceSchool(), perkRef.getSourceTier()));
-            }
-        }
-        
-        return result;
-    }
-    
     public static Set<PerkReference> getAllActivePerkReferences(SchoolAffinityProgress progress) {
         return progress.getAllActivePerkReferences();
     }
