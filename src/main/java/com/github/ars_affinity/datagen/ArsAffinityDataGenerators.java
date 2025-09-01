@@ -6,8 +6,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
-import java.util.List;
-
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ArsAffinityDataGenerators {
     
@@ -16,12 +14,11 @@ public class ArsAffinityDataGenerators {
         PackOutput packOutput = event.getGenerator().getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         
-        // Register our brewing recipe datagen
-        event.getGenerator().addProvider(
-            event.includeServer(),
-            new ArsAffinityBrewingDataGen(packOutput, existingFileHelper)
-        );
+        // Register our data generators
+        event.getGenerator().addProvider(event.includeServer(), new RecipeDataGen(packOutput, existingFileHelper));
+        event.getGenerator().addProvider(event.includeServer(), new CuriosDataGen(packOutput, existingFileHelper));
+        event.getGenerator().addProvider(event.includeClient(), new ItemModelDataGen(packOutput, existingFileHelper));
         
-
+        // Brewing recipes are registered through RegisterBrewingRecipesEvent in ModPotions
     }
 }

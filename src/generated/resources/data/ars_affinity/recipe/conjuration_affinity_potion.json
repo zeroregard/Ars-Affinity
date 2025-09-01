@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:brewing",
+  "ingredient": {
+    "item": "ars_nouveau:conjuration_essence"
+  },
+  "input": {
+    "item": "minecraft:awkward_potion"
+  },
+  "output": {
+    "item": "ars_affinity:conjuration_affinity"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:brewing",
+  "ingredient": {
+    "item": "ars_nouveau:water_essence"
+  },
+  "input": {
+    "item": "minecraft:awkward_potion"
+  },
+  "output": {
+    "item": "ars_affinity:water_affinity"
+  }
+}
