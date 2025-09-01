@@ -17,7 +17,7 @@ For testing and debugging purposes, the following commands are available for ser
 - `/ars-affinity set <school> <percentage>` - Set affinity for a school (0-100%)
 - `/ars-affinity get <school>` - Get current affinity for a school
 - `/ars-affinity list` - List all current affinities
-- `/ars-affinity reset` - Reset all affinities to 0%
+- `/ars-affinity reset` - Reset all affinities to 12.5% (default)
 - `/ars-affinity blacklist` - Show current glyph blacklist 
 
 **Examples:**

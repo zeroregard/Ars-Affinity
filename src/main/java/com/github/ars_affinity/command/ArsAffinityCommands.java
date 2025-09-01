@@ -111,12 +111,13 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        // Reset all schools to 0%
+        // Reset all schools to default (12.5%)
+        float defaultAffinity = 1.0f / 8.0f;
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            progress.setAffinity(school, 0.0f);
+            progress.setAffinity(school, defaultAffinity);
         }
 
-        source.sendSuccess(() -> Component.literal("Reset all affinities to 0%"), true);
+        source.sendSuccess(() -> Component.literal("Reset all affinities to 12.5%"), true);
         ArsAffinity.LOGGER.info("Player {} reset all affinities", player.getName().getString());
 
         return 1;

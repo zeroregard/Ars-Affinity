@@ -170,8 +170,9 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
             if (!schoolAffinities.containsKey(school)) {
-                schoolAffinities.put(school, 0.0f);
-                schoolTiers.put(school, 0);
+                float defaultAffinity = 1.0f / 8.0f;
+                schoolAffinities.put(school, defaultAffinity);
+                schoolTiers.put(school, calculateTier(defaultAffinity));
             }
             if (!schoolTiers.containsKey(school)) {
                 schoolTiers.put(school, calculateTier(schoolAffinities.get(school)));
