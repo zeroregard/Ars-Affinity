@@ -12,9 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveSummonDefenseEvents {
 
     @SubscribeEvent
@@ -26,7 +24,7 @@ public class PassiveSummonDefenseEvents {
         if (progress != null) {
             int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
             if (conjurationTier > 0) { // Any tier above 0
-                AffinityPerkHelper.applyHighestTierPerk(progress, conjurationTier, SpellSchools.CONJURATION, AffinityPerkType.PASSIVE_SUMMON_DEFENSE, perk -> {
+                AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SUMMON_DEFENSE, AffinityPerk.AmountBasedPerk.class, perk -> {
                     if (event.summon.getLivingEntity() != null) {
                         equipArmorToSummon(event.summon.getLivingEntity(), conjurationTier, event.world);
                         ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMON_DEFENSE perk",

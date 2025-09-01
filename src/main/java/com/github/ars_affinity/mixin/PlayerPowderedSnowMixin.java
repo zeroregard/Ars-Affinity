@@ -1,17 +1,11 @@
 package com.github.ars_affinity.mixin;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
-import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
-import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -19,8 +13,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(Entity.class)
 public class PlayerPowderedSnowMixin {
@@ -42,25 +34,15 @@ public class PlayerPowderedSnowMixin {
 
         // Only prevent freezing if trying to accumulate frozen ticks
         if (ticks > entity.getTicksFrozen()) {
-            var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-            if (progress != null) {
-                int waterTier = progress.getTier(SpellSchools.ELEMENTAL_WATER);
-                if (waterTier > 0) {
-                    List<AffinityPerk> perks = AffinityPerkManager.getPerksForCurrentLevel(SpellSchools.ELEMENTAL_WATER, waterTier);
-                    for (AffinityPerk perk : perks) {
-                        if (perk.perk == AffinityPerkType.PASSIVE_COLD_WALKER) {
-                            if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk && amountPerk.amount > 0) {
-                                // Keep current frozen ticks instead of increasing them
-                                ci.cancel();
-                                ArsAffinity.LOGGER.debug(
-                                    "Player {} has COLD_WALKER perk - preventing frozen tick accumulation",
-                                    player.getName().getString()
-                                );
-                                return;
-                            }
-                        }
-                    }
-                }
+            var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
+            if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk && amountPerk.amount > 0) {
+                // Keep current frozen ticks instead of increasing them
+                ci.cancel();
+                ArsAffinity.LOGGER.debug(
+                    "Player {} has COLD_WALKER perk - preventing frozen tick accumulation",
+                    player.getName().getString()
+                );
+                return;
             }
         }
     }
@@ -82,26 +64,16 @@ public class PlayerPowderedSnowMixin {
         }
 
         if (state.getBlock() instanceof PowderSnowBlock) {
-            var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-            if (progress != null) {
-                int waterTier = progress.getTier(SpellSchools.ELEMENTAL_WATER);
-                if (waterTier > 0) {
-                    List<AffinityPerk> perks = AffinityPerkManager.getPerksForCurrentLevel(SpellSchools.ELEMENTAL_WATER, waterTier);
-                    for (AffinityPerk perk : perks) {
-                        if (perk.perk == AffinityPerkType.PASSIVE_COLD_WALKER) {
-                        
-                            // Cancel vanilla slowdown entirely
-                            ci.cancel();
-                            
-                            ArsAffinity.LOGGER.debug(
-                                "Player {} has COLD_WALKER perk - no slowdown",
-                                player.getName().getString()
-                            );
-                            return;
-
-                        }
-                    }
-                }
+            var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
+            if (perk instanceof AffinityPerk) {
+                // Cancel vanilla slowdown entirely
+                ci.cancel();
+                
+                ArsAffinity.LOGGER.debug(
+                    "Player {} has COLD_WALKER perk - no slowdown",
+                    player.getName().getString()
+                );
+                return;
             }
         }
     }
