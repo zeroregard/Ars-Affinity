@@ -18,13 +18,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 
 import java.util.Random;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveUnstableSummoningEvents {
     
     private static final Random RANDOM = new Random();
@@ -36,52 +34,45 @@ public class PassiveUnstableSummoningEvents {
         }
         var player = playerCaster.player;
         if (event.world.isClientSide()) return;
-        
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            int manipulationTier = progress.getTier(SpellSchools.MANIPULATION);
-            if (manipulationTier > 0) {
-                AffinityPerkHelper.applyHighestTierPerk(progress, manipulationTier, SpellSchools.MANIPULATION, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING, perk -> {
-                    if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
-                        if (RANDOM.nextFloat() < unstablePerk.chance) {
-                            LivingEntity originalEntity = event.summon.getLivingEntity();
-                            if (originalEntity != null && !unstablePerk.entities.isEmpty()) {
-                                Level level = originalEntity.level();
-                                double x = originalEntity.getX();
-                                double y = originalEntity.getY();
-                                double z = originalEntity.getZ();
-                                
-                                originalEntity.discard();
-                                
-                                String randomEntityId = unstablePerk.entities.get(RANDOM.nextInt(unstablePerk.entities.size()));
-                                java.util.Optional<EntityType<?>> entityTypeOpt = EntityType.byString(randomEntityId);
-                                
-                                if (entityTypeOpt.isPresent()) {
-                                    EntityType<?> entityType = entityTypeOpt.get();
-                                    Entity newEntity = entityType.create(level);
-                                    if (newEntity instanceof LivingEntity livingEntity) {
-                                        livingEntity.setPos(x, y, z);
-                                        livingEntity.addTag("unstable_summon");
-                                        livingEntity.setCustomName(net.minecraft.network.chat.Component.literal("Unstable Summon"));
-                                        level.addFreshEntity(livingEntity);
 
-                                        if (level instanceof ServerLevel serverLevel) {
-                                            UnstableSummonTimer timer = new UnstableSummonTimer(livingEntity, 20 * 60);
-                                            EventQueue.getServerInstance().addEvent(timer);
-                                        }
-                                        
-                                        ArsAffinity.LOGGER.info("Player {} triggered UNSTABLE_SUMMONING perk ({}%) - transformed summon into {}", 
-                                            player.getName().getString(), (int)(unstablePerk.chance * 100), randomEntityId);
-                                    }
-                                } else {
-                                    ArsAffinity.LOGGER.warn("Invalid entity type for UNSTABLE_SUMMONING perk: {}", randomEntityId);
-                                }
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING, AffinityPerk.UnstableSummoningPerk.class, unstablePerk -> {
+            if (RANDOM.nextFloat() < unstablePerk.chance) {
+                LivingEntity originalEntity = event.summon.getLivingEntity();
+                if (originalEntity != null && !unstablePerk.entities.isEmpty()) {
+                    Level level = originalEntity.level();
+                    double x = originalEntity.getX();
+                    double y = originalEntity.getY();
+                    double z = originalEntity.getZ();
+                    
+                    originalEntity.discard();
+                    
+                    String randomEntityId = unstablePerk.entities.get(RANDOM.nextInt(unstablePerk.entities.size()));
+                    java.util.Optional<EntityType<?>> entityTypeOpt = EntityType.byString(randomEntityId);
+                    
+                    if (entityTypeOpt.isPresent()) {
+                        EntityType<?> entityType = entityTypeOpt.get();
+                        Entity newEntity = entityType.create(level);
+                        if (newEntity instanceof LivingEntity livingEntity) {
+                            livingEntity.setPos(x, y, z);
+                            livingEntity.addTag("unstable_summon");
+                            livingEntity.setCustomName(net.minecraft.network.chat.Component.literal("Unstable Summon"));
+                            level.addFreshEntity(livingEntity);
+
+                            if (level instanceof ServerLevel) {
+                                UnstableSummonTimer timer = new UnstableSummonTimer(livingEntity, 20 * 60);
+                                EventQueue.getServerInstance().addEvent(timer);
                             }
+                            
+                            ArsAffinity.LOGGER.info("Player {} triggered UNSTABLE_SUMMONING perk ({}%) - transformed summon into {}", 
+                                player.getName().getString(), (int)(unstablePerk.chance * 100), randomEntityId);
                         }
+                    } else {
+                        ArsAffinity.LOGGER.warn("Invalid entity type for UNSTABLE_SUMMONING perk: {}", randomEntityId);
                     }
-                });
+                }
             }
-        }
+        });
+        
     }
     
     @SubscribeEvent

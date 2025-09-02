@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+// TODO: this is a network packet, not an event handler
 public record SanctuaryKeyReleasePacket() implements CustomPacketPayload {
 	public static final CustomPacketPayload.Type<SanctuaryKeyReleasePacket> TYPE = new CustomPacketPayload.Type<>(ArsAffinity.prefix("sanctuary_release"));
 	public static final StreamCodec<FriendlyByteBuf, SanctuaryKeyReleasePacket> STREAM_CODEC = StreamCodec.unit(new SanctuaryKeyReleasePacket());

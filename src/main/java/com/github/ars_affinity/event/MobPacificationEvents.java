@@ -1,10 +1,7 @@
 package com.github.ars_affinity.event;
 
-import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
-import com.github.ars_affinity.perk.AffinityPerkManager;
 import com.github.ars_affinity.perk.AffinityPerkType;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,7 +9,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -22,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class MobPacificationEvents {
 
     // Cache for mob pacification perks per player
@@ -74,18 +69,10 @@ public class MobPacificationEvents {
         UUID playerId = player.getUUID();
         Set<String> pacifiedMobs = new HashSet<>();
         
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            playerMobPacificationCache.put(playerId, pacifiedMobs);
-            return;
-        }
-        
         // Check all schools for mob pacification perks
-        AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_MOB_PACIFICATION, perk -> {
-            if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
-                if (entityPerk.entities != null) {
-                    pacifiedMobs.addAll(entityPerk.entities);
-                }
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_MOB_PACIFICATION, AffinityPerk.EntityBasedPerk.class, entityPerk -> {
+            if (entityPerk.entities != null) {
+                pacifiedMobs.addAll(entityPerk.entities);
             }
         });
         

@@ -13,10 +13,8 @@ import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveHydrationEvents {
     
     private static final java.util.Map<java.util.UUID, Integer> lastFoodLevels = new java.util.HashMap<>();
@@ -40,11 +38,7 @@ public class PassiveHydrationEvents {
             return;
         }
 
-        AffinityPerkHelper.applyHighestTierPerk(progress, waterTier, SpellSchools.ELEMENTAL_WATER, AffinityPerkType.PASSIVE_HYDRATION, perk -> {
-            if (!(perk instanceof AffinityPerk.DurationBasedPerk durationPerk)) {
-                return;
-            }
-
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_HYDRATION, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
             // Get wet ticks capability
             WetTicks wetTicks = player.getCapability(WetTicksCapability.WET_TICKS);
             if (wetTicks == null) {
@@ -55,7 +49,6 @@ public class PassiveHydrationEvents {
             boolean isWet = player.isInWater() || player.isInWaterRainOrBubble();
             boolean isOnFire = player.isOnFire();
 
-
             if (isOnFire) {
                 player.removeEffect(ModPotions.HYDRATED_EFFECT);
                 wetTicks.resetWetTicks();
@@ -65,9 +58,7 @@ public class PassiveHydrationEvents {
                 return;
             }
             
-            
             if (isWet) {
-
                 wetTicks.addWetTicks(20);
                 int newWetTicks = wetTicks.getWetTicks();
                 WetTicksProvider.savePlayerWetTicks(player);

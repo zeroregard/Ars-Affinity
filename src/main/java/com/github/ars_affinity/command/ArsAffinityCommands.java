@@ -1,8 +1,12 @@
+
 package com.github.ars_affinity.command;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
+import com.github.ars_affinity.perk.AffinityPerkType;
+
+import com.github.ars_affinity.perk.PerkReference;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
 import com.github.ars_affinity.util.GlyphBlacklistHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
@@ -20,6 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class ArsAffinityCommands {
 
@@ -39,6 +44,8 @@ public class ArsAffinityCommands {
                 .executes(ArsAffinityCommands::resetAllAffinities))
             .then(Commands.literal("list")
                 .executes(ArsAffinityCommands::listAllAffinities))
+            .then(Commands.literal("list-perks")
+                .executes(ArsAffinityCommands::listPerks))
             .then(Commands.literal("blacklist")
                 .executes(ArsAffinityCommands::showGlyphBlacklist)));
     }
@@ -111,13 +118,12 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        // Reset all schools to default (12.5%)
-        float defaultAffinity = 1.0f / 8.0f;
+        // Reset all schools to 0%
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            progress.setAffinity(school, defaultAffinity);
+            progress.setAffinity(school, 0.0f);
         }
 
-        source.sendSuccess(() -> Component.literal("Reset all affinities to 12.5%"), true);
+        source.sendSuccess(() -> Component.literal("Reset all affinities to 0%"), true);
         ArsAffinity.LOGGER.info("Player {} reset all affinities", player.getName().getString());
 
         return 1;
@@ -175,6 +181,38 @@ public class ArsAffinityCommands {
         return 1;
     }
 
+    private static int listPerks(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        
+        if (progress == null) {
+            context.getSource().sendFailure(Component.literal("Failed to get affinity progress"));
+            return 0;
+        }
+        
+        Set<PerkReference> activePerkRefs = progress.getAllActivePerkReferences();
+        
+        if (activePerkRefs.isEmpty()) {
+            context.getSource().sendSuccess(() -> Component.literal("No active perks"), false);
+            return 1;
+        }
+        
+        context.getSource().sendSuccess(() -> Component.literal("Active perks:"), false);
+        
+        for (PerkReference perkRef : activePerkRefs) {
+            AffinityPerkType perkType = perkRef.getPerkType();
+            SpellSchool school = perkRef.getSourceSchool();
+            int tier = perkRef.getSourceTier();
+            
+            String perkName = perkType.name().replace("_", " ").toLowerCase();
+            String schoolName = school.getId().toString().replace("ars_nouveau:", "").replace("_", " ").toLowerCase();
+            
+            context.getSource().sendSuccess(() -> Component.literal("  - " + perkName + " (" + schoolName + " Tier " + tier + ")"), false);
+        }
+        
+        return 1;
+    }
+
     private static SuggestionProvider<CommandSourceStack> getSchoolSuggestions() {
         return (context, builder) -> {
             String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
@@ -197,4 +235,5 @@ public class ArsAffinityCommands {
             default -> null;
         };
     }
+
 } 
