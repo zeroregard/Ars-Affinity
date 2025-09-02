@@ -3,7 +3,6 @@ package com.github.ars_affinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
 import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
 import com.github.ars_affinity.capability.WetTicksCapability;
-import com.github.ars_affinity.capability.WetTicks;
 import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
