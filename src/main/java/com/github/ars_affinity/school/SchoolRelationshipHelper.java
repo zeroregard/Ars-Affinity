@@ -114,31 +114,29 @@ public class SchoolRelationshipHelper {
         return newAffinities;
     }
     
+    private static boolean configValidated = false;
+    
     public static int calculateTierFromAffinity(float affinity) {
+        // Lazy validation - validate config the first time this method is called
+        if (!configValidated) {
+            ArsAffinityConfig.validateTierThresholds();
+            configValidated = true;
+        }
+        
         float percentage = affinity * 100.0f;
         
-        if (percentage >= 75.0f) {
+        double tier3Threshold = ArsAffinityConfig.TIER_3_THRESHOLD_PERCENTAGE.get();
+        double tier2Threshold = ArsAffinityConfig.TIER_2_THRESHOLD_PERCENTAGE.get();
+        double tier1Threshold = ArsAffinityConfig.TIER_1_THRESHOLD_PERCENTAGE.get();
+        
+        if (percentage >= tier3Threshold) {
             return 3;
-        } else if (percentage >= 40.0f) {
+        } else if (percentage >= tier2Threshold) {
             return 2;
-        } else if (percentage >= 20.0f) {
+        } else if (percentage >= tier1Threshold) {
             return 1;
         } else {
             return 0;
-        }
-    }
-    
-    private static void normalizeIfOverOne(Map<SpellSchool, Float> affinities) {
-        float total = 0.0f;
-        for (float value : affinities.values()) {
-            total += value;
-        }
-        
-        if (total > 1.0f) {
-            for (SpellSchool school : affinities.keySet()) {
-                float value = affinities.get(school);
-                affinities.put(school, value / total);
-            }
         }
     }
 

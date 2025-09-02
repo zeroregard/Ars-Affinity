@@ -1,10 +1,11 @@
+
 package com.github.ars_affinity.command;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerkType;
-import com.github.ars_affinity.perk.PerkData;
+
 import com.github.ars_affinity.perk.PerkReference;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
 import com.github.ars_affinity.util.GlyphBlacklistHelper;
@@ -234,4 +235,5 @@ public class ArsAffinityCommands {
             default -> null;
         };
     }
+
 } 

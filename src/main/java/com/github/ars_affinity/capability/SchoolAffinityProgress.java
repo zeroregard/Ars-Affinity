@@ -1,12 +1,11 @@
+
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.perk.AffinityPerkManager;
-import com.github.ars_affinity.perk.PerkData;
 import com.github.ars_affinity.perk.PerkReference;
-import com.github.ars_affinity.perk.PerkRegistry;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.core.HolderLookup;

@@ -8,8 +8,15 @@ public class ArsAffinityConfig {
     public static ModConfigSpec SERVER_CONFIG;
     public static ModConfigSpec.DoubleValue OPPOSING_SCHOOL_PENALTY_PERCENTAGE;
     public static ModConfigSpec.DoubleValue AFFINITY_GAIN_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue AFFINITY_POTION_INCREASE_PERCENTAGE;
+    public static ModConfigSpec.IntValue AFFINITY_CONSUMABLE_COOLDOWN_DURATION;
     public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
     public static ModConfigSpec.IntValue ANCHOR_CHARM_DEFAULT_CHARGES;
+    
+    // Tier Threshold Configuration
+    public static ModConfigSpec.DoubleValue TIER_1_THRESHOLD_PERCENTAGE;
+    public static ModConfigSpec.DoubleValue TIER_2_THRESHOLD_PERCENTAGE;
+    public static ModConfigSpec.DoubleValue TIER_3_THRESHOLD_PERCENTAGE;
     
     // ICE BLAST Configuration
     public static ModConfigSpec.DoubleValue ICE_BLAST_DEFAULT_MANA_COST;
@@ -42,9 +49,24 @@ public class ArsAffinityConfig {
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.001 to 0.1)")
             .defineInRange("affinityGainMultiplier", 0.01, 0.001, 0.1);
+        AFFINITY_POTION_INCREASE_PERCENTAGE = SERVER_BUILDER
+            .comment("Percentage increase for affinity potions (0.0 to 1.0)")
+            .defineInRange("affinityPotionIncreasePercentage", 0.10, 0.01, 1.0);
+        AFFINITY_CONSUMABLE_COOLDOWN_DURATION = SERVER_BUILDER
+            .comment("Duration in seconds for affinity consumable cooldown effect (default 30 minutes = 1800 seconds)")
+            .defineInRange("affinityConsumableCooldownDuration", 1800, 60, 7200);
         DEEP_UNDERGROUND_Y_THRESHOLD = SERVER_BUILDER
             .comment("Y coordinate threshold for deep underground detection. Players below this Y level are considered deep underground")
             .defineInRange("deepUndergroundYThreshold", 20, -64, 320);
+        TIER_1_THRESHOLD_PERCENTAGE = SERVER_BUILDER
+            .comment("Minimum affinity percentage required to reach Tier 1 (0.0 to 100.0)")
+            .defineInRange("tier1ThresholdPercentage", 25.0, 0.0, 100.0);
+        TIER_2_THRESHOLD_PERCENTAGE = SERVER_BUILDER
+            .comment("Minimum affinity percentage required to reach Tier 2 (0.0 to 100.0)")
+            .defineInRange("tier2ThresholdPercentage", 50.0, 0.0, 100.0);
+        TIER_3_THRESHOLD_PERCENTAGE = SERVER_BUILDER
+            .comment("Minimum affinity percentage required to reach Tier 3 (0.0 to 100.0)")
+            .defineInRange("tier3ThresholdPercentage", 75.0, 0.0, 100.0);
         SERVER_BUILDER.pop();
         
         SERVER_BUILDER.comment("Anchor Charm Configuration").push("anchor_charm");
@@ -108,5 +130,36 @@ public class ArsAffinityConfig {
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();
+    }
+
+    public static void validateConfig() {
+        validateTierThresholds();
+    }
+    
+    public static void validateTierThresholds() {
+        double tier1 = TIER_1_THRESHOLD_PERCENTAGE.get();
+        double tier2 = TIER_2_THRESHOLD_PERCENTAGE.get();
+        double tier3 = TIER_3_THRESHOLD_PERCENTAGE.get();
+        
+        // Check order: Tier 2 >= Tier 1
+        if (tier2 < tier1) {
+            String errorMsg = String.format("Invalid tier configuration: Tier 2 threshold (%.1f%%) cannot be lower than Tier 1 threshold (%.1f%%)", 
+                tier2, tier1);
+            throw new RuntimeException("Ars Affinity: " + errorMsg);
+        }
+        
+        // Check order: Tier 3 >= Tier 2
+        if (tier3 < tier2) {
+            String errorMsg = String.format("Invalid tier configuration: Tier 3 threshold (%.1f%%) cannot be lower than Tier 2 threshold (%.1f%%)", 
+                tier3, tier2);
+            throw new RuntimeException("Ars Affinity: " + errorMsg);
+        }
+        
+        // Check uniqueness: All tiers must be different
+        if (tier1 == tier2 || tier2 == tier3) {
+            String errorMsg = String.format("Invalid tier configuration: Tier thresholds must be unique. Current values: Tier 1=%.1f%%, Tier 2=%.1f%%, Tier 3=%.1f%%", 
+                tier1, tier2, tier3);
+            throw new RuntimeException("Ars Affinity: " + errorMsg);
+        }
     }
 } 
