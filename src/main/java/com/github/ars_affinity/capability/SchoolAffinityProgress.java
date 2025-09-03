@@ -39,8 +39,9 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     };
     
     public SchoolAffinityProgress() {
+        float defaultAffinity = 1.0f / SUPPORTED_SCHOOLS.length;
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
-            affinities.put(school, 0.0f);
+            affinities.put(school, defaultAffinity);
         }
     }
     

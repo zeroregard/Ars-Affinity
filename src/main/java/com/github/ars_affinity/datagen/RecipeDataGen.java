@@ -45,7 +45,7 @@ public class RecipeDataGen implements DataProvider {
             "ars_nouveau:abjuration_essence",
             "ars_nouveau:conjuration_essence",
             "ars_nouveau:manipulation_essence",
-            "ars_elemental:anima_essence"
+            "minecraft:wither_skeleton_skull" // TODO: "ars_elemental:anima_essence"
         };
         
         for (String essence : essences) {
@@ -136,7 +136,7 @@ public class RecipeDataGen implements DataProvider {
             {"abjuration", "ars_nouveau:abjuration_essence"},
             {"conjuration", "ars_nouveau:conjuration_essence"},
             {"manipulation", "ars_nouveau:manipulation_essence"},
-            {"anima", "ars_elemental:anima_essence"}
+            {"anima", "minecraft:wither_skeleton_skull"} // TODO: "ars_elemental:anima_essence"
         };
         
         for (String[] schoolEssence : schoolEssences) {

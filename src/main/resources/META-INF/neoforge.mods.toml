@@ -34,10 +34,3 @@ config="ars_affinity.mixins.json"
     versionRange="[5.8.2,)"
     ordering="AFTER"
     side="BOTH"
-
-[[dependencies.ars_affinity]]
-    modId="ars_elemental"
-    mandatory=true
-    versionRange="[0.7.5,)"
-    ordering="AFTER"
-    side="BOTH" 

@@ -6,12 +6,12 @@ import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
-import com.hollingsworth.arsnouveau.api.spell.Spell;
-import com.hollingsworth.arsnouveau.api.spell.SpellContext;
-import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
-import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
-import alexthw.ars_elemental.common.glyphs.EffectCharm;
-import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
+// import com.hollingsworth.arsnouveau.api.spell.Spell; // TODO: Uncomment when implementing custom EffectCharm
+// import com.hollingsworth.arsnouveau.api.spell.SpellContext; // TODO: Uncomment when implementing custom EffectCharm
+// import com.hollingsworth.arsnouveau.api.spell.SpellResolver; // TODO: Uncomment when implementing custom EffectCharm
+// import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch; // TODO: Uncomment when implementing custom EffectCharm
+// import alexthw.ars_elemental.common.glyphs.EffectCharm; // TODO: Replace with custom implementation
+// import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster; // TODO: Uncomment when implementing custom EffectCharm
 import com.hollingsworth.arsnouveau.api.mana.IManaCap;
 import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +23,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
-import com.hollingsworth.arsnouveau.api.spell.SpellStats;
+// import com.hollingsworth.arsnouveau.api.spell.SpellStats; // TODO: Uncomment when implementing custom EffectCharm
 
 import java.util.Random;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -113,6 +113,8 @@ public class PassiveSoulspikeEvents {
         if (attacker instanceof Player) {
             attacker.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, amplifier, false, true, true));
         } else {
+            // TODO: Replace EffectCharm with custom implementation
+            /*
             try {
                 // Create SpellStats with the proper amplifier
                 SpellStats spellStats = new SpellStats.Builder()
@@ -137,6 +139,12 @@ public class PassiveSoulspikeEvents {
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to apply EffectCharm to attacker", e);
             }
+            */
+            
+            // Temporary fallback: just apply weakness effect
+            attacker.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, amplifier, false, true, true));
+            ArsAffinity.LOGGER.info("Applied fallback weakness effect to attacker {} with amplifier {} (player max mana: {})", 
+                attacker.getName().getString(), amplifier, playerMana != null ? playerMana.getMaxMana() : 0);
         }
         
         ArsAffinity.LOGGER.info("Applied soulspike to attacker {} with amplifier {} (player max mana: {})", 
