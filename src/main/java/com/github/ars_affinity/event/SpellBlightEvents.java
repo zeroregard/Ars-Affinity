@@ -14,13 +14,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class SpellBlightEvents {
 
     private static final Map<UUID, Float> playerBlightReduction = new HashMap<>();
@@ -33,24 +31,18 @@ public class SpellBlightEvents {
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            // Check all schools for blight perks
-            AffinityPerkHelper.applyAllHighestTierPerks(progress, AffinityPerkType.PASSIVE_BLIGHTED, perk -> {
-                if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                    // Check if the spell contains healing effects
-                    var healingEffects = event.spell.unsafeList().stream()
-                        .filter(part -> part instanceof EffectHeal).toList();
-                    
-                    if (healingEffects.size() > 0) {
-                        // Store the blight reduction amount for this player
-                        playerBlightReduction.put(player.getUUID(), amountPerk.amount);
-                        ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% blight reduction", 
-                            player.getName().getString(), (int)(amountPerk.amount * 100));
-                    }
-                }
-            });
-        }
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_BLIGHTED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+            // Check if the spell contains healing effects
+            var healingEffects = event.spell.unsafeList().stream()
+                .filter(part -> part instanceof EffectHeal).toList();
+            
+            if (healingEffects.size() > 0) {
+                // Store the blight reduction amount for this player
+                playerBlightReduction.put(player.getUUID(), amountPerk.amount);
+                ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% blight reduction", 
+                    player.getName().getString(), (int)(amountPerk.amount * 100));
+            }
+        });
     }
 
     @SubscribeEvent

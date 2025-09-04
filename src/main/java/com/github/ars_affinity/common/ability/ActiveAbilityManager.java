@@ -44,20 +44,12 @@ public class ActiveAbilityManager {
 			SpellSchool school = entry.getKey();
 			AffinityPerkType perkType = entry.getValue();
 
-			int tier = progress.getTier(school);
-
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: Tier for {} is {}", school.getId(), tier);
-			if (tier > 0) {
-				final AffinityPerk[] foundPerk = {null};
-				AffinityPerkHelper.applyHighestTierPerk(progress, tier, school, perkType, perk -> {
-					foundPerk[0] = perk;
-				});
-
-				if (foundPerk[0] != null) {
-					activePerk = foundPerk[0];
-					ArsAffinity.LOGGER.info("ACTIVE ABILITY: Selected perk {} for school {}", ((AffinityPerk.ActiveAbilityPerk) activePerk).perk, school.getId());
-					break;
-				}
+			// O(1) perk lookup using the new perk index
+			AffinityPerk perk = AffinityPerkHelper.getActivePerk(progress, perkType);
+			if (perk != null) {
+				activePerk = perk;
+				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Selected perk {} for school {}", ((AffinityPerk.ActiveAbilityPerk) activePerk).perk, school.getId());
+				break;
 			}
 		}
 

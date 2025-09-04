@@ -27,7 +27,7 @@ public class SchoolGlyphScreen extends BaseDocScreen {
     private final Screen previousScreen; // TODO
     private final List<SpellSchool> schools;
 
-    public SchoolGlyphScreen(Screen previousScreen) {
+    public SchoolGlyphScreen(Screen previousScreen, SpellSchool selectedSchool) {
         super();
         this.previousScreen = previousScreen;
         this.schools = List.of(
@@ -40,7 +40,7 @@ public class SchoolGlyphScreen extends BaseDocScreen {
                 SpellSchools.CONJURATION,
                 SpellSchools.MANIPULATION
         );
-        this.selectedSchool = schools.get(0);
+        this.selectedSchool = selectedSchool;
         updateGlyphsForSchool();
     }
 
@@ -197,5 +197,15 @@ public class SchoolGlyphScreen extends BaseDocScreen {
         }
         
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+    
+    // Override the back button behavior from BaseDocScreen
+    @Override
+    public void goBack() {
+        if (previousScreen != null) {
+            minecraft.setScreen(previousScreen);
+        } else {
+            super.goBack();
+        }
     }
 }

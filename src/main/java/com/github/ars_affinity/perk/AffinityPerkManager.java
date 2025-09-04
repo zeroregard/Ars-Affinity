@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -37,10 +38,12 @@ public class AffinityPerkManager {
     public static void loadConfig() {
         schoolPerks.clear();
 
-        Path configDir = Path.of("config", "ars_affinity", "perks");
+        Path configDir = FMLPaths.CONFIGDIR.get().resolve("ars_affinity").resolve("perks");
+        ArsAffinity.LOGGER.info("Loading perks from config directory: {}", configDir.toAbsolutePath());
 
         try {
             if (!Files.exists(configDir)) {
+                ArsAffinity.LOGGER.warn("Perk config directory does not exist: {}", configDir);
                 Files.createDirectories(configDir);
                 return;
             }
@@ -51,14 +54,29 @@ public class AffinityPerkManager {
                         .filter(path -> path.toString().endsWith(".json"))
                         .collect(Collectors.toList());
 
+                ArsAffinity.LOGGER.info("Found {} JSON perk files to load", jsonFiles.size());
+
                 for (Path path : jsonFiles) {
                     try {
+                        ArsAffinity.LOGGER.info("Loading perk file: {}", path);
                         loadPerkFile(configDir, path);
                     } catch (Exception e) {
                         String errorMsg = "Failed to load perk file: " + path + " - " + e.getMessage();
                         ArsAffinity.LOGGER.error(errorMsg, e);
                         throw new RuntimeException("Ars Affinity: " + errorMsg, e);
                     }
+                }
+            }
+
+            ArsAffinity.LOGGER.info("Perk loading complete. Loaded {} schools with perks", schoolPerks.size());
+            for (Map.Entry<SpellSchool, Map<Integer, List<AffinityPerk>>> schoolEntry : schoolPerks.entrySet()) {
+                SpellSchool school = schoolEntry.getKey();
+                Map<Integer, List<AffinityPerk>> tierPerks = schoolEntry.getValue();
+                ArsAffinity.LOGGER.info("School {}: {} tiers with perks", school.getId(), tierPerks.size());
+                for (Map.Entry<Integer, List<AffinityPerk>> tierEntry : tierPerks.entrySet()) {
+                    int tier = tierEntry.getKey();
+                    List<AffinityPerk> perks = tierEntry.getValue();
+                    ArsAffinity.LOGGER.info("  Tier {}: {} perks", tier, perks.size());
                 }
             }
 
@@ -129,6 +147,7 @@ public class AffinityPerkManager {
     }
 
     private static void addPerk(SpellSchool school, int level, AffinityPerk perk) {
+        ArsAffinity.LOGGER.info("Adding perk: {} for school {} at level {}", perk.perk, school.getId(), level);
         schoolPerks.computeIfAbsent(school, k -> new HashMap<>())
                 .computeIfAbsent(level, k -> new java.util.ArrayList<>())
                 .add(perk);
@@ -155,6 +174,7 @@ public class AffinityPerkManager {
 
         Map<Integer, List<AffinityPerk>> schoolPerkMap = schoolPerks.get(school);
         if (schoolPerkMap == null) {
+            ArsAffinity.LOGGER.warn("No perks found for school: {}", school.getId());
             return new java.util.ArrayList<>();
         }
 
@@ -162,10 +182,14 @@ public class AffinityPerkManager {
         for (int i = 1; i <= level; i++) {
             List<AffinityPerk> levelPerks = schoolPerkMap.get(i);
             if (levelPerks != null) {
+                ArsAffinity.LOGGER.info("Found {} perks for school {} at level {}", levelPerks.size(), school.getId(), i);
                 perks.addAll(levelPerks);
+            } else {
+                ArsAffinity.LOGGER.info("No perks found for school {} at level {}", school.getId(), i);
             }
         }
 
+        ArsAffinity.LOGGER.info("Returning {} total perks for school {} up to level {}", perks.size(), school.getId(), level);
         return perks;
     }
 

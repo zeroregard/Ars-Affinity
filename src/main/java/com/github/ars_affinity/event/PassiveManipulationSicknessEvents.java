@@ -1,7 +1,6 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -12,9 +11,7 @@ import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveManipulationSicknessEvents {
 
     @SubscribeEvent
@@ -33,21 +30,13 @@ public class PassiveManipulationSicknessEvents {
             return;
         }
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
-            if (conjurationTier > 0) {
-                AffinityPerkHelper.applyHighestTierPerk(progress, conjurationTier, SpellSchools.CONJURATION, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, perk -> {
-                    if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
-                        if (containsManipulationGlyph(event.spell)) {
-                            applyManipulationSickness(player, sicknessPerk.duration, sicknessPerk.hunger);
-                            ArsAffinity.LOGGER.info("Player {} cast manipulation spell with PASSIVE_MANIPULATION_SICKNESS perk for {} seconds with {} hunger",
-                                player.getName().getString(), sicknessPerk.duration / 20, sicknessPerk.hunger);
-                        }
-                    }
-                });
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, AffinityPerk.ManipulationSicknessPerk.class, sicknessPerk -> {
+            if (containsManipulationGlyph(event.spell)) {
+                applyManipulationSickness(player, sicknessPerk.duration, sicknessPerk.hunger);
+                ArsAffinity.LOGGER.info("Player {} cast manipulation spell with PASSIVE_MANIPULATION_SICKNESS perk for {} seconds with {} hunger",
+                    player.getName().getString(), sicknessPerk.duration / 20, sicknessPerk.hunger);
             }
-        }
+        });
     }
 
     private static boolean containsManipulationGlyph(com.hollingsworth.arsnouveau.api.spell.Spell spell) {

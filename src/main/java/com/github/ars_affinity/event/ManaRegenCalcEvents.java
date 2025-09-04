@@ -9,9 +9,7 @@ import com.hollingsworth.arsnouveau.api.event.ManaRegenCalcEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ManaRegenCalcEvents {
     
     @SubscribeEvent
@@ -28,23 +26,18 @@ public class ManaRegenCalcEvents {
             if (progress != null) {
                 int fireTier = progress.getTier(SpellSchools.ELEMENTAL_FIRE);
                 if (fireTier > 0) {
-                    AffinityPerkHelper.applyHighestTierPerk(progress, fireTier, SpellSchools.ELEMENTAL_FIRE, AffinityPerkType.PASSIVE_DOUSED, perk -> {
-                        if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
-                            double currentRegen = event.getRegen();
-                            double reduction = currentRegen * amountPerk.amount;
-                            double newRegen = currentRegen - reduction;
-                            
-                            ArsAffinity.LOGGER.info("Player {} has PASSIVE_DOUSED perk ({}%) - reducing mana regen from {} to {}", 
-                                player.getName().getString(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
-                            
-                            event.setRegen(newRegen);
-                        }
+                    AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_DOUSED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+                        double currentRegen = event.getRegen();
+                        double reduction = currentRegen * amountPerk.amount;
+                        double newRegen = currentRegen - reduction;
+                        
+                        ArsAffinity.LOGGER.info("Player {} has PASSIVE_DOUSED perk ({}%) - reducing mana regen from {} to {}", 
+                            player.getName().getString(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
+                        
+                        event.setRegen(newRegen);
                     });
                 }
             }    
-
         }
-
-         
     }
 } 

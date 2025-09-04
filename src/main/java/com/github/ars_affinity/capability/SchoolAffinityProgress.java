@@ -1,115 +1,162 @@
+
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.event.TierChangeEvent;
-import com.github.ars_affinity.school.SchoolRelationshipHelper;
+import com.github.ars_affinity.perk.AffinityPerk;
+import com.github.ars_affinity.perk.AffinityPerkType;
+import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.perk.PerkReference;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
-    private final Map<SpellSchool, Float> schoolAffinities = new HashMap<>();
-    private final Map<SpellSchool, Integer> schoolTiers = new HashMap<>();
-    private Player player; // Reference to the player for event firing
+    private final Map<SpellSchool, Float> affinities = new HashMap<>();
+    private final Map<AffinityPerkType, PerkReference> activePerks = new HashMap<>();
+    private boolean isDirty = false;
+    private Player player; // Reference to the player for saving
+    
+    private static final SpellSchool[] SUPPORTED_SCHOOLS = {
+        SpellSchools.ELEMENTAL_FIRE,
+        SpellSchools.ELEMENTAL_WATER,
+        SpellSchools.ELEMENTAL_EARTH,
+        SpellSchools.ELEMENTAL_AIR,
+        SpellSchools.ABJURATION,
+        SpellSchools.NECROMANCY,
+        SpellSchools.CONJURATION,
+        SpellSchools.MANIPULATION
+    };
     
     public SchoolAffinityProgress() {
-        initializeDefaultAffinities();
+        for (SpellSchool school : SUPPORTED_SCHOOLS) {
+            affinities.put(school, 0.0f);
+        }
     }
     
     public void setPlayer(Player player) {
         this.player = player;
     }
     
-    private void initializeDefaultAffinities() {
-        float defaultAffinity = 1.0f / 8.0f;
-        
-        for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            schoolAffinities.put(school, defaultAffinity);
-            schoolTiers.put(school, calculateTier(defaultAffinity));
-        }
+    private void markDirty() {
+        this.isDirty = true;
+        // Data will be saved when player logs out or server stops
     }
     
     public float getAffinity(SpellSchool school) {
-        return schoolAffinities.getOrDefault(school, 0.0f);
+        return affinities.getOrDefault(school, 0.0f);
     }
     
-    public int getTier(SpellSchool school) {
-        return schoolTiers.getOrDefault(school, 0);
-    }
-    
-    public void setAffinity(SpellSchool school, float value) {
-        float clampedValue = Math.max(0.0f, Math.min(1.0f, value));
-        int oldTier = getTier(school);
-        schoolAffinities.put(school, clampedValue);
-        int newTier = calculateTier(clampedValue);
-        schoolTiers.put(school, newTier);
+    public void setAffinity(SpellSchool school, float affinity) {
+        float oldLevel = affinities.getOrDefault(school, 0.0f);
+        affinities.put(school, affinity);
+        rebuildPerkIndex();
         
-        // Fire event if tier changed
-        if (oldTier != newTier && player != null) {
-            NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+        ArsAffinity.LOGGER.debug("Affinity changed for {}: {} -> {}", 
+            school.getId().toString().replace(":", "_"), oldLevel, affinity);
+        
+        // Mark that this progress needs to be saved
+        markDirty();
+    }
+    
+    public Map<SpellSchool, Float> getAllAffinities() {
+        return new HashMap<>(affinities);
+    }
+    
+    public void normalizeAffinities(float maxTotal) {
+        float currentTotal = (float) affinities.values().stream().mapToDouble(Float::doubleValue).sum();
+        if (currentTotal > maxTotal) {
+            double scale = maxTotal / currentTotal;
+            affinities.replaceAll((school, level) -> (float) (level * scale));
+            
+            rebuildPerkIndex();
         }
     }
     
-    private int calculateTier(float affinity) {
-        return SchoolRelationshipHelper.calculateTierFromAffinity(affinity);
+    public boolean hasActivePerk(AffinityPerkType perkType) {
+        return activePerks.containsKey(perkType);
     }
     
-    public void applyChanges(Map<SpellSchool, Float> changes) {
-        for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+    public PerkReference getActivePerkReference(AffinityPerkType perkType) {
+        return activePerks.get(perkType);
+    }
+    
+
+    
+    public Set<PerkReference> getAllActivePerkReferences() {
+        return Set.copyOf(activePerks.values());
+    }
+    
+
+    
+    private void rebuildPerkIndex() {
+        activePerks.clear();
+        ArsAffinity.LOGGER.info("Rebuilding perk index for player...");
+        
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
             SpellSchool school = entry.getKey();
-            float change = entry.getValue();
-            float currentAffinity = getAffinity(school);
-            float newAffinity = Math.max(0.0f, Math.min(1.0f, currentAffinity + change));
-            setAffinity(school, newAffinity);
-        }
-        
-        normalizeAffinities();
-    }
-    
-    private void normalizeAffinities() {
-        float total = 0.0f;
-        for (float affinity : schoolAffinities.values()) {
-            total += affinity;
-        }
-        
-        if (total > 0.0f) {
-            for (SpellSchool school : schoolAffinities.keySet()) {
-                float normalized = schoolAffinities.get(school) / total;
-                int oldTier = getTier(school);
-                schoolAffinities.put(school, normalized);
-                int newTier = calculateTier(normalized);
-                schoolTiers.put(school, newTier);
+            float affinity = entry.getValue();
+            int tier = getTier(school);
+            
+            ArsAffinity.LOGGER.info("School: {}, Affinity: {}, Tier: {}", 
+                school.getId(), affinity, tier);
+            
+            if (tier > 0) {
+                // Use AffinityPerkManager to get perks from JSON config files
+                List<AffinityPerk> perksForTier = AffinityPerkManager.getPerksForLevel(school, tier);
+                ArsAffinity.LOGGER.info("Found {} perks for school {} at tier {}", perksForTier.size(), school.getId(), tier);
                 
-                // Fire event if tier changed during normalization
-                if (oldTier != newTier && player != null) {
-                    NeoForge.EVENT_BUS.post(new TierChangeEvent(player, school, oldTier, newTier));
+                for (AffinityPerk perk : perksForTier) {
+                    ArsAffinity.LOGGER.info("Processing perk: {} for school {} at tier {}", 
+                        perk.perk, school.getId(), tier);
+                    
+                    // Check if we already have a perk of this type with a higher tier
+                    PerkReference existing = activePerks.get(perk.perk);
+                    if (existing == null || existing.getSourceTier() < tier) {
+                        activePerks.put(perk.perk, new PerkReference(perk.perk, school, tier));
+                        ArsAffinity.LOGGER.info("Added perk: {} for school {} at tier {}", 
+                            perk.perk, school.getId(), tier);
+                    }
                 }
             }
         }
+        
+        ArsAffinity.LOGGER.info("Perk index rebuilt. Active perks: {}", activePerks.size());
+        for (Map.Entry<AffinityPerkType, PerkReference> entry : activePerks.entrySet()) {
+            ArsAffinity.LOGGER.info("Active perk: {} -> {}", entry.getKey(), entry.getValue());
+        }
     }
     
-    public float getTotalAffinity() {
-        float total = 0.0f;
-        for (float affinity : schoolAffinities.values()) {
-            total += affinity;
+    public int getTier(SpellSchool school) {
+        float affinity = getAffinity(school);
+        float percentage = affinity * 100.0f;
+        
+        if (percentage >= 75.0f) {
+            return 3;
+        } else if (percentage >= 40.0f) {
+            return 2;
+        } else if (percentage >= 20.0f) {
+            return 1;
+        } else {
+            return 0;
         }
-        return total;
     }
     
     public SpellSchool getPrimarySchool() {
         SpellSchool primary = null;
         float maxAffinity = 0.0f;
         
-        for (Map.Entry<SpellSchool, Float> entry : schoolAffinities.entrySet()) {
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
             if (entry.getValue() > maxAffinity) {
                 maxAffinity = entry.getValue();
                 primary = entry.getKey();
@@ -119,82 +166,130 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         return primary;
     }
     
+    public void applyChanges(Map<SpellSchool, Float> changes) {
+        for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+            SpellSchool school = entry.getKey();
+            float change = entry.getValue();
+            float currentAffinity = getAffinity(school);
+            float newAffinity = Math.max(0.0f, currentAffinity + change);
+            setAffinity(school, newAffinity);
+        }
+        
+        normalizeAffinities(100.0f);
+    }
+    
+    public float getTotalAffinity() {
+        return (float) affinities.values().stream().mapToDouble(Float::doubleValue).sum();
+    }
+    
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        ArsAffinity.LOGGER.info("Starting serialization. Affinities map size: {}, contents: {}", affinities.size(), affinities);
+        
         CompoundTag tag = new CompoundTag();
         
         CompoundTag affinitiesTag = new CompoundTag();
-        for (Map.Entry<SpellSchool, Float> entry : schoolAffinities.entrySet()) {
-            affinitiesTag.putFloat(entry.getKey().getId(), entry.getValue());
+        for (Map.Entry<SpellSchool, Float> entry : affinities.entrySet()) {
+            String schoolId = getShortSchoolId(entry.getKey());
+            float affinity = entry.getValue();
+            ArsAffinity.LOGGER.info("Serializing affinity: school={}, shortId={}, affinity={}", 
+                entry.getKey(), schoolId, affinity);
+            affinitiesTag.putFloat(schoolId, affinity);
         }
-        tag.put("schoolAffinities", affinitiesTag);
+        tag.put("affinities", affinitiesTag);
         
-        CompoundTag tiersTag = new CompoundTag();
-        for (Map.Entry<SpellSchool, Integer> entry : schoolTiers.entrySet()) {
-            tiersTag.putInt(entry.getKey().getId(), entry.getValue());
+        ListTag perksTag = new ListTag();
+        for (PerkReference reference : activePerks.values()) {
+            CompoundTag perkTag = reference.serializeNBT();
+            perksTag.add(perkTag);
+            ArsAffinity.LOGGER.debug("Serializing perk: {} -> {}", reference.getPerkType(), perkTag);
         }
-        tag.put("schoolTiers", tiersTag);
+        tag.put("activePerks", perksTag);
+        
+        ArsAffinity.LOGGER.info("Serializing SchoolAffinityProgress: {} affinities, {} perks", 
+            affinities.size(), activePerks.size());
+        ArsAffinity.LOGGER.debug("Serialized NBT: {}", tag);
         
         return tag;
     }
     
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        schoolAffinities.clear();
-        schoolTiers.clear();
+        ArsAffinity.LOGGER.info("Deserializing NBT: {}", tag);
         
-        if (tag.contains("schoolAffinities", Tag.TAG_COMPOUND)) {
-            CompoundTag affinitiesTag = tag.getCompound("schoolAffinities");
-            for (String key : affinitiesTag.getAllKeys()) {
-                SpellSchool school = getSpellSchoolFromString(key);
-                if (school != null) {
-                    float affinity = affinitiesTag.getFloat(key);
-                    schoolAffinities.put(school, affinity);
-                    schoolTiers.put(school, calculateTier(affinity));
-                } else {
-                    ArsAffinity.LOGGER.warn("Unknown spell school in NBT: {}", key);
-                }
+        CompoundTag affinitiesTag = tag.getCompound("affinities");
+        ArsAffinity.LOGGER.info("Affinities tag: {} (keys: {})", affinitiesTag, affinitiesTag.getAllKeys());
+        affinities.clear();
+        for (String key : affinitiesTag.getAllKeys()) {
+            ArsAffinity.LOGGER.info("Processing affinity key: '{}'", key);
+            SpellSchool school = getSpellSchoolFromId(key);
+            if (school != null) {
+                float level = affinitiesTag.getFloat(key);
+                affinities.put(school, level);
+                ArsAffinity.LOGGER.info("Deserialized affinity: {} = {} -> school: {}", key, level, school);
+            } else {
+                ArsAffinity.LOGGER.error("Skipping affinity for unknown school ID: '{}'", key);
             }
         }
         
-        if (tag.contains("schoolTiers", Tag.TAG_COMPOUND)) {
-            CompoundTag tiersTag = tag.getCompound("schoolTiers");
-            for (String key : tiersTag.getAllKeys()) {
-                SpellSchool school = getSpellSchoolFromString(key);
-                if (school != null) {
-                    int tier = tiersTag.getInt(key);
-                    schoolTiers.put(school, tier);
-                }
+        ListTag perksTag = tag.getList("activePerks", Tag.TAG_COMPOUND);
+        ArsAffinity.LOGGER.debug("Perks tag: {} (size: {})", perksTag, perksTag.size());
+        activePerks.clear();
+        for (Tag perkTag : perksTag) {
+            if (perkTag instanceof CompoundTag compoundTag) {
+                ArsAffinity.LOGGER.debug("Deserializing perk tag: {}", compoundTag);
+                PerkReference reference = PerkReference.deserializeNBT(compoundTag);
+                activePerks.put(reference.getPerkType(), reference);
+                ArsAffinity.LOGGER.debug("Deserialized perk: {} -> {}", reference.getPerkType(), reference);
             }
         }
         
-        for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            if (!schoolAffinities.containsKey(school)) {
-                schoolAffinities.put(school, 0.0f);
-                schoolTiers.put(school, 0);
-            }
-            if (!schoolTiers.containsKey(school)) {
-                schoolTiers.put(school, calculateTier(schoolAffinities.get(school)));
-            }
-        }
+        ArsAffinity.LOGGER.info("Deserialized SchoolAffinityProgress: {} affinities, {} perks", 
+            affinities.size(), activePerks.size());
         
-        normalizeAffinities();
+        // Don't rebuild perk index when loading from NBT - preserve the loaded data
     }
     
-    private SpellSchool getSpellSchoolFromString(String name) {
-        return switch (name.toLowerCase()) {
+    private static SpellSchool getSpellSchoolFromId(String id) {
+        SpellSchool school = switch (id) {
+            // Full format (current)
+            case "ars_nouveau:elemental_fire" -> SpellSchools.ELEMENTAL_FIRE;
+            case "ars_nouveau:elemental_water" -> SpellSchools.ELEMENTAL_WATER;
+            case "ars_nouveau:elemental_earth" -> SpellSchools.ELEMENTAL_EARTH;
+            case "ars_nouveau:elemental_air" -> SpellSchools.ELEMENTAL_AIR;
+            case "ars_nouveau:abjuration" -> SpellSchools.ABJURATION;
+            case "ars_nouveau:necromancy" -> SpellSchools.NECROMANCY;
+            case "ars_nouveau:conjuration" -> SpellSchools.CONJURATION;
+            case "ars_nouveau:manipulation" -> SpellSchools.MANIPULATION;
+            // Short format (legacy - for backward compatibility)
             case "fire" -> SpellSchools.ELEMENTAL_FIRE;
             case "water" -> SpellSchools.ELEMENTAL_WATER;
             case "earth" -> SpellSchools.ELEMENTAL_EARTH;
             case "air" -> SpellSchools.ELEMENTAL_AIR;
-            case "abjuration" -> SpellSchools.ABJURATION;
-            case "necromancy" -> SpellSchools.NECROMANCY;
-            case "conjuration" -> SpellSchools.CONJURATION;
-            case "manipulation" -> SpellSchools.MANIPULATION;
-            default -> {
-                ArsAffinity.LOGGER.warn("Unknown spell school name: {}", name);
-                yield null;
-            }
+            default -> null;
+        };
+        
+        if (school == null) {
+            ArsAffinity.LOGGER.error("Unknown spell school ID: '{}'. This will cause data loss!", id);
+            // Don't return a default school - let the caller handle this
+            return null;
+        }
+        
+        return school;
+    }
+    
+    private static String getShortSchoolId(SpellSchool school) {
+        String schoolId = school.getId().toString();
+        return switch (schoolId) {
+            case "ars_nouveau:elemental_fire" -> "fire";
+            case "ars_nouveau:elemental_water" -> "water";
+            case "ars_nouveau:elemental_earth" -> "earth";
+            case "ars_nouveau:elemental_air" -> "air";
+            case "ars_nouveau:abjuration" -> "abjuration";
+            case "ars_nouveau:necromancy" -> "necromancy";
+            case "ars_nouveau:conjuration" -> "conjuration";
+            case "ars_nouveau:manipulation" -> "manipulation";
+            default -> schoolId;
         };
     }
 } 

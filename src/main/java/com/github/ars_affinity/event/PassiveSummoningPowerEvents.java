@@ -20,11 +20,9 @@ import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.player.Player;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.lang.ref.WeakReference;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PassiveSummoningPowerEvents {
 
 
@@ -33,29 +31,22 @@ public class PassiveSummoningPowerEvents {
     public static void onSummonEvent(SummonEvent event) {
         if (!(event.shooter instanceof Player player)) return;
         if (event.world.isClientSide()) return;
-
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
-            if (conjurationTier > 0) { // Any tier above 0
-                // Apply SUMMONING_POWER perk (attribute boost and distance override)
-                AffinityPerkHelper.applyHighestTierPerk(progress, conjurationTier, SpellSchools.CONJURATION, AffinityPerkType.PASSIVE_SUMMONING_POWER, perk -> {
-                    if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-                        if (event.summon.getLivingEntity() != null) {
-                            // Apply SUMMON_POWER attribute boost to the PLAYER
-                            int summonPowerBonus = (int) durationPerk.amount;
-                            applySummonPowerBoostToPlayer(player, summonPowerBonus, durationPerk.time);
-
-                            // Apply extended distance override
-                            applyExtendedDistanceOverride(event.summon.getLivingEntity(), player, durationPerk.time, event.world);
-
-                            ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMONING_POWER perk (+{} power to player) for {} seconds, with extended distance control",
-                                player.getName().getString(), summonPowerBonus, durationPerk.time / 20);
-                        }
-                    }
-                });
-            }
+        if (event.summon.getLivingEntity() == null) {
+            return;
         }
+
+        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SUMMONING_POWER, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
+            // Apply SUMMON_POWER attribute boost to the PLAYER
+            int summonPowerBonus = (int) durationPerk.amount;
+            applySummonPowerBoostToPlayer(player, summonPowerBonus, durationPerk.time);
+
+            // Apply extended distance override
+            applyExtendedDistanceOverride(event.summon.getLivingEntity(), player, durationPerk.time, event.world);
+
+            ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMONING_POWER perk (+{} power to player) for {} seconds, with extended distance control",
+                player.getName().getString(), summonPowerBonus, durationPerk.time / 20);
+
+        });
     }
 
     private static void applySummonPowerBoostToPlayer(Player player, int powerBonus, int durationTicks) {
