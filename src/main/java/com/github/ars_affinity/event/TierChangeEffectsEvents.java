@@ -14,11 +14,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = ArsAffinity.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class TierChangeEffectsEvents {
     
     // Map of schools to their corresponding tier change sounds
     private static final Map<SpellSchool, SoundEvent> SCHOOL_SOUNDS = new HashMap<>();
+    private static final Map<Integer, SoundEvent> TIER_SOUNDS = new HashMap<>();
     
     static {
         SCHOOL_SOUNDS.put(SpellSchools.ELEMENTAL_FIRE, ModSounds.TIER_CHANGE_FIRE.get());
@@ -30,6 +30,12 @@ public class TierChangeEffectsEvents {
         SCHOOL_SOUNDS.put(SpellSchools.NECROMANCY, ModSounds.TIER_CHANGE_NECROMANCY.get());
         SCHOOL_SOUNDS.put(SpellSchools.MANIPULATION, ModSounds.TIER_CHANGE_MANIPULATION.get());
     }
+
+    static {
+        TIER_SOUNDS.put(1, ModSounds.TIER_CHANGE_ONE.get());
+        TIER_SOUNDS.put(2, ModSounds.TIER_CHANGE_TWO.get());
+        TIER_SOUNDS.put(3, ModSounds.TIER_CHANGE_THREE.get());
+    }
     
     @SubscribeEvent
     public static void onTierChange(TierChangeEvent event) {
@@ -39,7 +45,6 @@ public class TierChangeEffectsEvents {
         
         Player player = event.getPlayer();
         SpellSchool school = event.getSchool();
-        int oldTier = event.getOldTier();
         int newTier = event.getNewTier();
         
         // Only handle server-side events
@@ -48,27 +53,42 @@ public class TierChangeEffectsEvents {
         }
         
         // Play sound effect for nearby players
-        playTierChangeSound(player, school);
+        playTierChangeSound(player, school, newTier);
         
         // Send chat message to the player
         sendTierChangeMessage(player, school, newTier);
     }
     
-    private static void playTierChangeSound(Player player, SpellSchool school) {
-        SoundEvent sound = SCHOOL_SOUNDS.get(school);
-        if (sound == null) {
+    private static void playTierChangeSound(Player player, SpellSchool school, int tier) {
+        SoundEvent tierSound = TIER_SOUNDS.get(tier);
+        if (tierSound == null) {
+            ArsAffinity.LOGGER.warn("No tier sound found for tier: " + tier);
+            return;
+        }
+
+        player.level().playSound(
+                null,
+                player.getX(), player.getY(), player.getZ(),
+                tierSound,
+                SoundSource.BLOCKS,
+                1.0f,
+                1.0f
+        );
+
+        SoundEvent schoolSound = SCHOOL_SOUNDS.get(school);
+        if (schoolSound == null) {
             ArsAffinity.LOGGER.warn("No sound found for school: " + school.getId());
             return;
         }
         
         // Play sound at player location for all nearby players to hear
         player.level().playSound(
-            null, // No specific player source
-            player.getX(), player.getY(), player.getZ(),
-            sound,
-            SoundSource.PLAYERS, // Use PLAYERS sound source so it's audible to nearby players
-            1.0f, // Volume
-            1.0f  // Pitch
+                null,
+                player.getX(), player.getY(), player.getZ(),
+                schoolSound,
+                SoundSource.BLOCKS,
+                1.0f, // Volume
+                1.0f  // Pitch
         );
     }
     

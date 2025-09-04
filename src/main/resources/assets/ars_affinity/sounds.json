@@ -13,6 +13,27 @@
 			}
 		]
 	},
+	"tier_change_1": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_1"
+			}
+		]
+	},
+	"tier_change_2": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_2"
+			}
+		]
+	},
+	"tier_change_3": {
+		"sounds": [
+			{
+				"name": "ars_affinity:tier_change_3"
+			}
+		]
+	},
 	"tier_change_fire": {
 		"sounds": [
 			{

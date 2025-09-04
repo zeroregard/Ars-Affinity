@@ -2,6 +2,7 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.event.TierChangeEvent;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.perk.AffinityPerkManager;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +41,10 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     };
     
     public SchoolAffinityProgress() {
+        // Initialize all schools with equal distribution (1/schools.length)
+        float equalAffinity = 1.0f / SUPPORTED_SCHOOLS.length;
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
-            affinities.put(school, 0.0f);
+            affinities.put(school, equalAffinity);
         }
     }
     
@@ -59,7 +63,20 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
     public void setAffinity(SpellSchool school, float affinity) {
         float oldLevel = affinities.getOrDefault(school, 0.0f);
+        int oldTier = getTier(school);
+        
         affinities.put(school, affinity);
+        
+        int newTier = getTier(school);
+        
+        // Fire tier change event if tier actually changed
+        if (oldTier != newTier && player != null) {
+            TierChangeEvent event = new TierChangeEvent(player, school, oldTier, newTier);
+            NeoForge.EVENT_BUS.post(event);
+            ArsAffinity.LOGGER.info("Tier changed for {}: {} -> {} (affinity: {} -> {})", 
+                school.getId().toString().replace(":", "_"), oldTier, newTier, oldLevel, affinity);
+        }
+        
         rebuildPerkIndex();
         
         ArsAffinity.LOGGER.debug("Affinity changed for {}: {} -> {}", 
@@ -167,16 +184,17 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     }
     
     public void applyChanges(Map<SpellSchool, Float> changes) {
-        for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+        // Apply changes using the same logic as SchoolRelationshipHelper
+        Map<SpellSchool, Float> newAffinities = com.github.ars_affinity.school.SchoolRelationshipHelper.applyAffinityChanges(affinities, changes);
+        
+        // Apply the new affinities
+        for (Map.Entry<SpellSchool, Float> entry : newAffinities.entrySet()) {
             SpellSchool school = entry.getKey();
-            float change = entry.getValue();
-            float currentAffinity = getAffinity(school);
-            float newAffinity = Math.max(0.0f, currentAffinity + change);
+            float newAffinity = entry.getValue();
             setAffinity(school, newAffinity);
         }
-        
-        normalizeAffinities(100.0f);
     }
+    
     
     public float getTotalAffinity() {
         return (float) affinities.values().stream().mapToDouble(Float::doubleValue).sum();

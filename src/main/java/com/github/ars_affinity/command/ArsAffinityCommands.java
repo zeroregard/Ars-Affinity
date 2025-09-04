@@ -118,13 +118,15 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        // Reset all schools to 0%
+        // Reset all schools to equal distribution (1/schools.length)
+        float equalAffinity = 1.0f / SchoolRelationshipHelper.ALL_SCHOOLS.length;
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            progress.setAffinity(school, 0.0f);
+            progress.setAffinity(school, equalAffinity);
         }
 
-        source.sendSuccess(() -> Component.literal("Reset all affinities to 0%"), true);
-        ArsAffinity.LOGGER.info("Player {} reset all affinities", player.getName().getString());
+        float percentage = equalAffinity * 100.0f;
+        source.sendSuccess(() -> Component.literal(String.format("Reset all affinities to %.1f%% each", percentage)), true);
+        ArsAffinity.LOGGER.info("Player {} reset all affinities to {}% each", player.getName().getString(), percentage);
 
         return 1;
     }
