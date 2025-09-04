@@ -7,32 +7,8 @@ import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
+import com.github.ars_affinity.event.*;
 import com.github.ars_affinity.perk.AffinityPerkManager;
-import com.github.ars_affinity.event.DeflectionEvents;
-import com.github.ars_affinity.event.FieldAbilityTicker;
-import com.github.ars_affinity.event.FireThornsEvents;
-import com.github.ars_affinity.event.ManaRegenCalcEvents;
-import com.github.ars_affinity.event.MobPacificationEvents;
-import com.github.ars_affinity.event.PassiveBuriedEvents;
-import com.github.ars_affinity.event.PassiveDehydratedEvents;
-import com.github.ars_affinity.event.PassiveFreeJumpEvents;
-import com.github.ars_affinity.event.PassiveGroundedEvents;
-import com.github.ars_affinity.event.PassiveManaTapEvents;
-import com.github.ars_affinity.event.PassiveManipulationSicknessEvents;
-import com.github.ars_affinity.event.GhostStepEvents;
-import com.github.ars_affinity.event.PassiveLichFeastEvents;
-import com.github.ars_affinity.event.PassivePacifistEvents;
-import com.github.ars_affinity.event.PassiveSoulspikeEvents;
-import com.github.ars_affinity.event.PassiveStoneSkinEvents;
-import com.github.ars_affinity.event.PassiveSummonDefenseEvents;
-import com.github.ars_affinity.event.PassiveSummonHealthEvents;
-import com.github.ars_affinity.event.PassiveSummoningPowerEvents;
-import com.github.ars_affinity.event.PassiveUnstableSummoningEvents;
-import com.github.ars_affinity.event.SpellAmplificationEvents;
-import com.github.ars_affinity.event.SpellBlightEvents;
-import com.github.ars_affinity.event.PassiveHydrationEvents;
-import com.github.ars_affinity.event.SanctuaryEvents;
-import com.github.ars_affinity.event.SilencedEvents;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModItems;
@@ -92,6 +68,7 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
+        NeoForge.EVENT_BUS.register(TierChangeEffectsEvents.class);
         
         // Register event classes
         NeoForge.EVENT_BUS.register(PassiveLichFeastEvents.class);
@@ -119,6 +96,8 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(PassiveHydrationEvents.class);
         NeoForge.EVENT_BUS.register(SanctuaryEvents.class);
         NeoForge.EVENT_BUS.register(SilencedEvents.class);
+
+
 
         AffinityPerkManager.loadConfig();
         
