@@ -11,4 +11,17 @@ public class ModSounds {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH = SOUNDS.register("dash", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("dash")));
     public static final DeferredHolder<SoundEvent, SoundEvent> GROUND_SLAM = SOUNDS.register("ground_slam", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("ground_slam")));
+    
+    // School tier change sounds
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_ONE = SOUNDS.register("tier_change_1", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_1")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_TWO = SOUNDS.register("tier_change_2", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_2")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_THREE = SOUNDS.register("tier_change_3", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_3")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_FIRE = SOUNDS.register("tier_change_fire", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_fire")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_WATER = SOUNDS.register("tier_change_water", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_water")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_EARTH = SOUNDS.register("tier_change_earth", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_earth")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_AIR = SOUNDS.register("tier_change_air", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_air")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_ABJURATION = SOUNDS.register("tier_change_abjuration", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_abjuration")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_CONJURATION = SOUNDS.register("tier_change_conjuration", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_conjuration")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_NECROMANCY = SOUNDS.register("tier_change_necromancy", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_necromancy")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIER_CHANGE_MANIPULATION = SOUNDS.register("tier_change_manipulation", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("tier_change_manipulation")));
 }
