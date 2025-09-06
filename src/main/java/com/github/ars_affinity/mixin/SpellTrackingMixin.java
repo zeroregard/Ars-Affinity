@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -135,30 +136,38 @@ public abstract class SpellTrackingMixin {
             return;
         }
         
-        // Calculate affinity changes for each school
+        // Calculate affinity changes for each school and combine them
         float distributedCost = manaCost / schools.size();
+        Map<SpellSchool, Float> combinedChanges = new HashMap<>();
+        
         for (SpellSchool school : schools) {
             Map<SpellSchool, Float> changes = SchoolRelationshipHelper.calculateAffinityChanges(school, distributedCost);
-            SchoolAffinityProgress progress = SchoolAffinityProgressHelper.applyAffinityChanges(player, changes);
-            
-            if (progress != null) {
-                StringBuilder affinityLog = new StringBuilder();
-                affinityLog.append("Affinity Progress: ");
-                for (SpellSchool affinitySchool : SchoolRelationshipHelper.ALL_SCHOOLS) {
-                    float affinity = progress.getAffinity(affinitySchool);
-                    affinityLog.append(String.format("%s: %.1f%%", 
-                        affinitySchool.getTextComponent().getString(), 
-                        affinity * 100.0f));
-                    if (affinitySchool != SchoolRelationshipHelper.ALL_SCHOOLS[SchoolRelationshipHelper.ALL_SCHOOLS.length - 1]) {
-                        affinityLog.append(", ");
-                    }
-                }
-                
-                ArsAffinity.LOGGER.info("Affinity Progress: {}", affinityLog.toString());
-                
-                // The capability system handles saving automatically
-                // No need to manually save here
+            // Combine changes from all schools
+            for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+                combinedChanges.merge(entry.getKey(), entry.getValue(), Float::sum);
             }
+        }
+        
+        // Apply all changes at once to avoid multiple tier change events
+        SchoolAffinityProgress progress = SchoolAffinityProgressHelper.applyAffinityChanges(player, combinedChanges);
+        
+        if (progress != null) {
+            StringBuilder affinityLog = new StringBuilder();
+            affinityLog.append("Affinity Progress: ");
+            for (SpellSchool affinitySchool : SchoolRelationshipHelper.ALL_SCHOOLS) {
+                float affinity = progress.getAffinity(affinitySchool);
+                affinityLog.append(String.format("%s: %.1f%%", 
+                    affinitySchool.getTextComponent().getString(), 
+                    affinity * 100.0f));
+                if (affinitySchool != SchoolRelationshipHelper.ALL_SCHOOLS[SchoolRelationshipHelper.ALL_SCHOOLS.length - 1]) {
+                    affinityLog.append(", ");
+                }
+            }
+            
+            ArsAffinity.LOGGER.info("Affinity Progress: {}", affinityLog.toString());
+            
+            // The capability system handles saving automatically
+            // No need to manually save here
         }
     }
 
