@@ -49,7 +49,7 @@ public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
                     schoolName.toUpperCase(), schoolName, player.getName().getString(), increaseAmount * 100.0f);
                 
                 int cooldownDurationTicks = ArsAffinityConfig.AFFINITY_CONSUMABLE_COOLDOWN_DURATION.get() * 20; // Convert seconds to ticks
-                MobEffectInstance cooldownEffect = new MobEffectInstance(ModPotions.AFFINITY_CONSUMABLE_COOLDOWN_EFFECT, cooldownDurationTicks, 0, false, true, false);
+                MobEffectInstance cooldownEffect = new MobEffectInstance(ModPotions.AFFINITY_CONSUMABLE_COOLDOWN_EFFECT, cooldownDurationTicks, 0, false, false, false);
                 player.addEffect(cooldownEffect);
                 
                 ArsAffinity.LOGGER.info("{} AFFINITY - Applied cooldown effect to player: {} for {} seconds", 

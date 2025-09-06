@@ -13,4 +13,5 @@ public class AffinityConsumableCooldownEffect extends MobEffect {
     public String getDescriptionId() {
         return "effect.ars_affinity.affinity_consumable_cooldown";
     }
+
 }
