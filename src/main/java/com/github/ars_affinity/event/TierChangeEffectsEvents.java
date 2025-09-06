@@ -1,6 +1,7 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.registry.ModSounds;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
@@ -9,7 +10,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +45,7 @@ public class TierChangeEffectsEvents {
         
         Player player = event.getPlayer();
         SpellSchool school = event.getSchool();
+        int oldTier = event.getOldTier();
         int newTier = event.getNewTier();
         
         // Only handle server-side events
@@ -52,11 +53,13 @@ public class TierChangeEffectsEvents {
             return;
         }
         
-        // Play sound effect for nearby players
-        playTierChangeSound(player, school, newTier);
+
+        if (newTier > oldTier) {
+            playTierChangeSound(player, school, newTier);
+            sendTierChangeMessage(player, school, newTier);
+        }
         
-        // Send chat message to the player
-        sendTierChangeMessage(player, school, newTier);
+        SchoolAffinityProgressHelper.getAffinityProgress(player).rebuildPerkIndex();
     }
     
     private static void playTierChangeSound(Player player, SpellSchool school, int tier) {
