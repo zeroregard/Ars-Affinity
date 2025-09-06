@@ -186,8 +186,21 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     }
     
     public void applyChanges(Map<SpellSchool, Float> changes) {
+        // Apply exponential decay scaling to changes
+        Map<SpellSchool, Float> scaledChanges = new HashMap<>();
+        
+        for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+            SpellSchool school = entry.getKey();
+            float baseChange = entry.getValue();
+            float currentAffinity = getAffinity(school);
+            
+            // Apply non-linear scaling
+            float scaledChange = calculateScaledAffinityGain(baseChange, currentAffinity);
+            scaledChanges.put(school, scaledChange);
+        }
+        
         // Apply changes using the same logic as SchoolRelationshipHelper
-        Map<SpellSchool, Float> newAffinities = com.github.ars_affinity.school.SchoolRelationshipHelper.applyAffinityChanges(affinities, changes);
+        Map<SpellSchool, Float> newAffinities = com.github.ars_affinity.school.SchoolRelationshipHelper.applyAffinityChanges(affinities, scaledChanges);
         
         // Apply the new affinities
         for (Map.Entry<SpellSchool, Float> entry : newAffinities.entrySet()) {
@@ -195,6 +208,21 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
             float newAffinity = entry.getValue();
             setAffinity(school, newAffinity);
         }
+    }
+    
+    private float calculateScaledAffinityGain(float baseGain, float currentAffinity) {
+        // Get configurable scaling parameters
+        double decayStrength = ArsAffinityConfig.AFFINITY_SCALING_DECAY_STRENGTH.get();
+        double minimumFactor = ArsAffinityConfig.AFFINITY_SCALING_MINIMUM_FACTOR.get();
+        
+        // Exponential decay: gain decreases as affinity approaches 1.0
+        float decayFactor = (float) ((1.0f - currentAffinity) * decayStrength);
+        float scaledGain = baseGain * Math.max((float) minimumFactor, decayFactor);
+        
+        ArsAffinity.LOGGER.debug("Affinity scaling: baseGain={}, currentAffinity={}, decayFactor={}, scaledGain={}", 
+            baseGain, currentAffinity, decayFactor, scaledGain);
+        
+        return scaledGain;
     }
     
     

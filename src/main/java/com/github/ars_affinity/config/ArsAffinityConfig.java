@@ -8,8 +8,11 @@ public class ArsAffinityConfig {
     public static ModConfigSpec SERVER_CONFIG;
     public static ModConfigSpec.DoubleValue OPPOSING_SCHOOL_PENALTY_PERCENTAGE;
     public static ModConfigSpec.DoubleValue AFFINITY_GAIN_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue AFFINITY_SCALING_DECAY_STRENGTH;
+    public static ModConfigSpec.DoubleValue AFFINITY_SCALING_MINIMUM_FACTOR;
     public static ModConfigSpec.DoubleValue AFFINITY_POTION_INCREASE_PERCENTAGE;
     public static ModConfigSpec.IntValue AFFINITY_CONSUMABLE_COOLDOWN_DURATION;
+    
     public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
     public static ModConfigSpec.IntValue ANCHOR_CHARM_DEFAULT_CHARGES;
     
@@ -17,6 +20,8 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue TIER_1_THRESHOLD_PERCENTAGE;
     public static ModConfigSpec.DoubleValue TIER_2_THRESHOLD_PERCENTAGE;
     public static ModConfigSpec.DoubleValue TIER_3_THRESHOLD_PERCENTAGE;
+    
+
     
     // ICE BLAST Configuration
     public static ModConfigSpec.DoubleValue ICE_BLAST_DEFAULT_MANA_COST;
@@ -67,6 +72,12 @@ public class ArsAffinityConfig {
         TIER_3_THRESHOLD_PERCENTAGE = SERVER_BUILDER
             .comment("Minimum affinity percentage required to reach Tier 3 (0.0 to 100.0)")
             .defineInRange("tier3ThresholdPercentage", 75.0, 0.0, 100.0);
+        AFFINITY_SCALING_DECAY_STRENGTH = SERVER_BUILDER
+            .comment("How quickly affinity gain decreases as affinity increases (1.0 = linear, 2.0 = exponential, higher = more aggressive decay)")
+            .defineInRange("affinityScalingDecayStrength", 2.0, 0.5, 5.0);
+        AFFINITY_SCALING_MINIMUM_FACTOR = SERVER_BUILDER
+            .comment("Minimum percentage of original gain that can be applied (0.1 = 10%, 0.05 = 5%)")
+            .defineInRange("affinityScalingMinimumFactor", 0.1, 0.01, 0.5);
         SERVER_BUILDER.pop();
         
         SERVER_BUILDER.comment("Anchor Charm Configuration").push("anchor_charm");
