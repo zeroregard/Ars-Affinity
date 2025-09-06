@@ -2,6 +2,7 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.event.TierChangeEvent;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -77,8 +78,6 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
                 school.getId().toString().replace(":", "_"), oldTier, newTier, oldLevel, affinity);
         }
         
-        rebuildPerkIndex();
-        
         ArsAffinity.LOGGER.debug("Affinity changed for {}: {} -> {}", 
             school.getId().toString().replace(":", "_"), oldLevel, affinity);
         
@@ -95,8 +94,6 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         if (currentTotal > maxTotal) {
             double scale = maxTotal / currentTotal;
             affinities.replaceAll((school, level) -> (float) (level * scale));
-            
-            rebuildPerkIndex();
         }
     }
     
@@ -116,7 +113,7 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     
 
     
-    private void rebuildPerkIndex() {
+    public void rebuildPerkIndex() {
         activePerks.clear();
         ArsAffinity.LOGGER.info("Rebuilding perk index for player...");
         
@@ -158,11 +155,16 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
         float affinity = getAffinity(school);
         float percentage = affinity * 100.0f;
         
-        if (percentage >= 75.0f) {
+        // Use configurable thresholds
+        double tier3Threshold = ArsAffinityConfig.TIER_3_THRESHOLD_PERCENTAGE.get();
+        double tier2Threshold = ArsAffinityConfig.TIER_2_THRESHOLD_PERCENTAGE.get();
+        double tier1Threshold = ArsAffinityConfig.TIER_1_THRESHOLD_PERCENTAGE.get();
+        
+        if (percentage >= tier3Threshold) {
             return 3;
-        } else if (percentage >= 40.0f) {
+        } else if (percentage >= tier2Threshold) {
             return 2;
-        } else if (percentage >= 20.0f) {
+        } else if (percentage >= tier1Threshold) {
             return 1;
         } else {
             return 0;
@@ -284,6 +286,10 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
             case "water" -> SpellSchools.ELEMENTAL_WATER;
             case "earth" -> SpellSchools.ELEMENTAL_EARTH;
             case "air" -> SpellSchools.ELEMENTAL_AIR;
+            case "abjuration" -> SpellSchools.ABJURATION;
+            case "necromancy" -> SpellSchools.NECROMANCY;
+            case "conjuration" -> SpellSchools.CONJURATION;
+            case "manipulation" -> SpellSchools.MANIPULATION;
             default -> null;
         };
         
