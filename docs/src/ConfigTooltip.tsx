@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PerkRenderer from './PerkRenderer'
 import { titleCase } from './utils/string'
 
@@ -17,6 +17,8 @@ function ConfigTooltip({
 }: ConfigTooltipProps) {
     const [configData, setConfigData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
+    const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
+    const tooltipRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -46,6 +48,46 @@ function ConfigTooltip({
         loadConfig()
     }, [hoveredSchool, hoveredTier])
 
+    useEffect(() => {
+        if (!hoveredSchool || !hoveredTier) return
+
+        const calculatePosition = () => {
+            const tooltipWidth = 400
+            const tooltipHeight = tooltipRef.current?.offsetHeight || 350
+            const padding = 16
+            
+            let x = mousePosition.x
+            let y = mousePosition.y + 16
+
+            // Check right edge
+            if (x + tooltipWidth > window.innerWidth - padding) {
+                x = window.innerWidth - tooltipWidth - padding
+            }
+            
+            // Check left edge
+            if (x < padding) {
+                x = padding
+            }
+
+            // Check bottom edge
+            if (y + tooltipHeight > window.innerHeight - padding) {
+                y = mousePosition.y - tooltipHeight - 16
+            }
+
+            // Check top edge
+            if (y < padding) {
+                y = padding
+            }
+
+            setTooltipPosition({ x, y })
+        }
+
+        // Calculate position after a short delay to allow for content to render
+        const timeoutId = setTimeout(calculatePosition, 10)
+        
+        return () => clearTimeout(timeoutId)
+    }, [mousePosition, configData, hoveredSchool, hoveredTier])
+
     if (!hoveredSchool || !hoveredTier) return null
 
     return (
@@ -62,32 +104,36 @@ function ConfigTooltip({
             </style>
             <div style={{ 
                 position: 'fixed', 
-                left: `${mousePosition.x}px`, 
-                top: `${mousePosition.y + 16}px`, 
+                left: `${tooltipPosition.x}px`, 
+                top: `${tooltipPosition.y}px`, 
                 zIndex: 1000,
-                pointerEvents: 'none',
-                transform: 'translateX(-50%)'
+                pointerEvents: 'none'
             }}>
-                <div style={{
-                    width: '400px',
-                    height: '350px',
-                    backgroundColor: 'rgba(30, 15, 30, 0.9)',
-                    border: '7px solid transparent',
-                    borderImage: 'url(/tooltip.png) 3',
-                    borderImageSlice: '2',
-                    borderImageRepeat: 'stretch',
-                    borderRadius: '16px',
-                    color: 'white',
-                    padding: '15px',
-                    boxSizing: 'border-box',
-                    imageRendering: 'pixelated',
-                    fontFamily: 'Minecraft, monospace',
-                    fontSmooth: 'never',
-                    WebkitFontSmoothing: 'none',
-                    MozOsxFontSmoothing: 'none',
-                    textRendering: 'optimizeSpeed',
-                    textShadow: '2px 2px 0px rgba(62, 62, 62, 1)'
-                }}>
+                <div 
+                    ref={tooltipRef}
+                    style={{
+                        width: '400px',
+                        minHeight: '200px',
+                        maxHeight: '80vh',
+                        backgroundColor: 'rgba(30, 15, 30, 0.9)',
+                        border: '7px solid transparent',
+                        borderImage: 'url(/tooltip.png) 3',
+                        borderImageSlice: '2',
+                        borderImageRepeat: 'stretch',
+                        borderRadius: '16px',
+                        color: 'white',
+                        padding: '15px',
+                        boxSizing: 'border-box',
+                        imageRendering: 'pixelated',
+                        fontFamily: 'Minecraft, monospace',
+                        fontSmooth: 'never',
+                        WebkitFontSmoothing: 'none',
+                        MozOsxFontSmoothing: 'none',
+                        textRendering: 'optimizeSpeed',
+                        textShadow: '2px 2px 0px rgba(62, 62, 62, 1)',
+                        overflowY: 'auto'
+                    }}
+                >
                     <h2 style={{ 
                         margin: '0 0 4px 0', 
                         fontSize: '18px', 
