@@ -4,9 +4,9 @@ license="MIT"
 
 [[mods]]
 modId="ars_affinity"
-version="1.0.0-beta4"
+version="1.0.0-beta5"
 displayName="Ars Affinity"
-authors="arsaffinity-team"
+authors="zeroregard"
 description='''
 A mod focused on affinity systems for Ars Nouveau.
 '''
