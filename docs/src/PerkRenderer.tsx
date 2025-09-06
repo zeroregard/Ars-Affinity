@@ -46,6 +46,16 @@ function PerkRenderer({ perk }: PerkRendererProps) {
             .replace(/%d/g, (perk.cooldown / 20).toString())
             .replace('§bF§r', 'KEYBIND')
     }
+    // Handle ghost step perk (special case with amount, time, and cooldown)
+    else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
+        const percentage = perk.amount * 100
+        const timeInSeconds = perk.time
+        const cooldownInSeconds = perk.cooldown
+        formattedMessage = formattedMessage
+            .replace(/%d%%/g, percentage.toString() + '%')
+            .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
+            .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
+    }
     // Handle passive perks with time and amount
     else if (perk.time && perk.amount !== undefined) {
         formattedMessage = formattedMessage
