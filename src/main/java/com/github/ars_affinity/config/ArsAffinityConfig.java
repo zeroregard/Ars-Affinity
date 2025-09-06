@@ -47,8 +47,8 @@ public class ArsAffinityConfig {
             .comment("Percentage of affinity gain that opposing schools lose (0.0 to 1.0)")
             .defineInRange("opposingSchoolPenaltyPercentage", 0.66, 0.0, 1.0);
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
-            .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.001 to 0.1)")
-            .defineInRange("affinityGainMultiplier", 0.01, 0.001, 0.1);
+            .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
+            .defineInRange("affinityGainMultiplier", 0.005, 0.0001, 0.1);
         AFFINITY_POTION_INCREASE_PERCENTAGE = SERVER_BUILDER
             .comment("Percentage increase for affinity potions (0.0 to 1.0)")
             .defineInRange("affinityPotionIncreasePercentage", 0.10, 0.01, 1.0);
