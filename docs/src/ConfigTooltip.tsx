@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PerkRenderer from './PerkRenderer'
 import { titleCase } from './utils/string'
 
@@ -7,16 +7,18 @@ type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipul
 interface ConfigTooltipProps {
     hoveredSchool: School | null
     hoveredTier: number | null
-    mousePosition: { x: number, y: number }
+    hoveredElementPosition: { x: number, y: number, width: number, height: number } | null
 }
 
 function ConfigTooltip({ 
     hoveredSchool, 
     hoveredTier, 
-    mousePosition
+    hoveredElementPosition
 }: ConfigTooltipProps) {
     const [configData, setConfigData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
+    const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
+    const tooltipRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -46,6 +48,50 @@ function ConfigTooltip({
         loadConfig()
     }, [hoveredSchool, hoveredTier])
 
+    useEffect(() => {
+        if (!hoveredSchool || !hoveredTier || !hoveredElementPosition) return
+
+        const TOOLTIP_WIDTH = 400
+        const MARGIN = 16
+        const SCREEN_PADDING = 16
+
+        const calculateTooltipPosition = () => {
+            const tooltipHeight = tooltipRef.current?.offsetHeight || 0
+            const elementCenter = {
+                x: hoveredElementPosition.x + (hoveredElementPosition.width / 2),
+                y: hoveredElementPosition.y + (hoveredElementPosition.height / 2)
+            }
+
+            // Calculate horizontal position (centered on element)
+            let x = elementCenter.x - (TOOLTIP_WIDTH / 2)
+
+            // Calculate vertical position based on element location
+            const isElementInLowerHalf = elementCenter.y > window.innerHeight / 2
+            let y = isElementInLowerHalf
+                ? hoveredElementPosition.y - tooltipHeight - MARGIN
+                : hoveredElementPosition.y + hoveredElementPosition.height + MARGIN
+
+            // Constrain to screen bounds
+            x = Math.max(SCREEN_PADDING, Math.min(x, window.innerWidth - TOOLTIP_WIDTH - SCREEN_PADDING))
+            
+            // Handle vertical overflow with fallback positioning
+            if (y < SCREEN_PADDING) {
+                y = hoveredElementPosition.y + hoveredElementPosition.height + MARGIN
+            }
+            if (y + tooltipHeight > window.innerHeight - SCREEN_PADDING) {
+                y = hoveredElementPosition.y - tooltipHeight - MARGIN
+            }
+            if (y < SCREEN_PADDING) {
+                y = SCREEN_PADDING
+            }
+
+            setTooltipPosition({ x, y })
+        }
+
+        calculateTooltipPosition()
+    }, [hoveredElementPosition, hoveredSchool, hoveredTier, configData])
+
+
     if (!hoveredSchool || !hoveredTier) return null
 
     return (
@@ -62,32 +108,36 @@ function ConfigTooltip({
             </style>
             <div style={{ 
                 position: 'fixed', 
-                left: `${mousePosition.x}px`, 
-                top: `${mousePosition.y + 16}px`, 
+                left: `${tooltipPosition.x}px`, 
+                top: `${tooltipPosition.y}px`, 
                 zIndex: 1000,
-                pointerEvents: 'none',
-                transform: 'translateX(-50%)'
+                pointerEvents: 'none'
             }}>
-                <div style={{
-                    width: '400px',
-                    height: '350px',
-                    backgroundColor: 'rgba(30, 15, 30, 0.9)',
-                    border: '7px solid transparent',
-                    borderImage: 'url(/tooltip.png) 3',
-                    borderImageSlice: '2',
-                    borderImageRepeat: 'stretch',
-                    borderRadius: '16px',
-                    color: 'white',
-                    padding: '15px',
-                    boxSizing: 'border-box',
-                    imageRendering: 'pixelated',
-                    fontFamily: 'Minecraft, monospace',
-                    fontSmooth: 'never',
-                    WebkitFontSmoothing: 'none',
-                    MozOsxFontSmoothing: 'none',
-                    textRendering: 'optimizeSpeed',
-                    textShadow: '2px 2px 0px rgba(62, 62, 62, 1)'
-                }}>
+                <div 
+                    ref={tooltipRef}
+                    style={{
+                        width: '400px',
+                        minHeight: '200px',
+                        maxHeight: '80vh',
+                        backgroundColor: 'rgba(30, 15, 30, 0.9)',
+                        border: '7px solid transparent',
+                        borderImage: 'url(/tooltip.png) 3',
+                        borderImageSlice: '2',
+                        borderImageRepeat: 'stretch',
+                        borderRadius: '16px',
+                        color: 'white',
+                        padding: '15px',
+                        boxSizing: 'border-box',
+                        imageRendering: 'pixelated',
+                        fontFamily: 'Minecraft, monospace',
+                        fontSmooth: 'never',
+                        WebkitFontSmoothing: 'none',
+                        MozOsxFontSmoothing: 'none',
+                        textRendering: 'optimizeSpeed',
+                        textShadow: '2px 2px 0px rgba(62, 62, 62, 1)',
+                        overflowY: 'auto'
+                    }}
+                >
                     <h2 style={{ 
                         margin: '0 0 4px 0', 
                         fontSize: '18px', 

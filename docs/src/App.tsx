@@ -30,7 +30,7 @@ const tierSettings = [{
 function App(): React.JSX.Element {
     const [hoveredSchool, setHoveredSchool] = useState<School | null>(null)
     const [hoveredTier, setHoveredTier] = useState<number | null>(null)
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+    const [hoveredElementPosition, setHoveredElementPosition] = useState<{ x: number, y: number, width: number, height: number } | null>(null)
     const [messages, setMessages] = useState<Record<string, string>>({})
 
     useEffect(() => {
@@ -49,14 +49,6 @@ function App(): React.JSX.Element {
         loadMessages()
     }, [])
 
-    useEffect(() => {
-        const handleMouseMove = (event: MouseEvent) => {
-            setMousePosition({ x: event.clientX, y: event.clientY })
-        }
-
-        window.addEventListener('mousemove', handleMouseMove)
-        return () => window.removeEventListener('mousemove', handleMouseMove)
-    }, [])
 
     return (
         <IntlProvider messages={messages} locale="en">
@@ -90,13 +82,21 @@ function App(): React.JSX.Element {
                                     <button
                                         key={`${school}_${tierSetting.radius}`}
                                         onClick={() => console.log('hello')}
-                                        onMouseEnter={() => {
+                                        onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect()
                                             setHoveredSchool(school)
                                             setHoveredTier(tier)
+                                            setHoveredElementPosition({
+                                                x: rect.left,
+                                                y: rect.top,
+                                                width: rect.width,
+                                                height: rect.height
+                                            })
                                         }}
                                         onMouseLeave={() => {
                                             setHoveredSchool(null)
                                             setHoveredTier(null)
+                                            setHoveredElementPosition(null)
                                         }}
                                         style={{ 
                                             width: `${width}px`, 
@@ -142,7 +142,7 @@ function App(): React.JSX.Element {
                 <ConfigTooltip 
                     hoveredSchool={hoveredSchool}
                     hoveredTier={hoveredTier}
-                    mousePosition={mousePosition}
+                    hoveredElementPosition={hoveredElementPosition}
                 />
             </div>
         </IntlProvider>
