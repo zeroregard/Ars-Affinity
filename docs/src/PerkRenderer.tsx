@@ -46,20 +46,34 @@ function PerkRenderer({ perk }: PerkRendererProps) {
             .replace(/%d/g, (perk.cooldown / 20).toString())
             .replace('§bF§r', 'KEYBIND')
     }
+    // Handle ghost step perk (special case with amount, time, and cooldown)
+    else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
+        const percentage = perk.amount * 100
+        const timeInSeconds = perk.time
+        const cooldownInSeconds = perk.cooldown
+        formattedMessage = formattedMessage
+            .replace(/%d%%/g, percentage.toString() + '%')
+            .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
+            .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
+    }
     // Handle passive perks with time and amount
     else if (perk.time && perk.amount !== undefined) {
         formattedMessage = formattedMessage
             .replace(/%s/g, perk.amount.toString())
             .replace(/%d/g, (perk.time/20).toString())
     }
+    // Handle passive perks with just time
+    else if (perk.time !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
+    }
+   
+    else if (perkId === 'PASSIVE_SUMMONING_POWER' && perk.amount !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+    }
     // Handle passive perks with just amount
     else if (perk.amount !== undefined) {
-        // Special case for PASSIVE_SUMMONING_POWER - it's a direct value, not a percentage
-        if (perkId === 'PASSIVE_SUMMONING_POWER') {
-            formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
-        }
         // Check if the message contains %% to determine if it's a percentage
-        else if (message.includes('%%')) {
+        if (message.includes('%%')) {
             const percentage = perk.amount * 100
             formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
             formattedMessage = formattedMessage.replace(/%%/g, '%')
