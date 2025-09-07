@@ -32,6 +32,7 @@ function App(): React.JSX.Element {
     const [hoveredTier, setHoveredTier] = useState<number | null>(null)
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
     const [messages, setMessages] = useState<Record<string, string>>({})
+    const [configCache, setConfigCache] = useState<Record<string, any>>({})
 
     useEffect(() => {
         const loadMessages = async () => {
@@ -46,7 +47,31 @@ function App(): React.JSX.Element {
             }
         }
 
+        const preloadConfigs = async () => {
+            const configPromises = schools.flatMap(school => 
+                [1, 2, 3].map(tier => 
+                    fetch(`/config/ars_affinity/perks/${school}/${tier}.json`)
+                        .then(response => response.ok ? response.json() : null)
+                        .then(data => ({ key: `${school}_${tier}`, data }))
+                        .catch(() => ({ key: `${school}_${tier}`, data: null }))
+                )
+            )
+
+            try {
+                const results = await Promise.all(configPromises)
+                const cache: Record<string, any> = {}
+                results.forEach(({ key, data }) => {
+                    if (data) cache[key] = data
+                })
+                setConfigCache(cache)
+                // console.log('Preloaded configs:', Object.keys(cache).length)
+            } catch (error) {
+                console.error('Error preloading configs:', error)
+            }
+        }
+
         loadMessages()
+        preloadConfigs()
     }, [])
 
     useEffect(() => {
@@ -143,6 +168,7 @@ function App(): React.JSX.Element {
                     hoveredSchool={hoveredSchool}
                     hoveredTier={hoveredTier}
                     mousePosition={mousePosition}
+                    configCache={configCache}
                 />
             </div>
         </IntlProvider>

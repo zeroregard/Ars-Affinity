@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import PerkRenderer from './PerkRenderer'
 import { titleCase } from './utils/string'
 
@@ -8,43 +8,28 @@ interface ConfigTooltipProps {
     hoveredSchool: School | null
     hoveredTier: number | null
     mousePosition: { x: number, y: number }
+    configCache: Record<string, any>
 }
 
 function ConfigTooltip({ 
     hoveredSchool, 
     hoveredTier, 
-    mousePosition
+    mousePosition,
+    configCache
 }: ConfigTooltipProps) {
     const [configData, setConfigData] = useState<any>(null)
-    const [loading, setLoading] = useState(false)
+    const tooltipRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const loadConfig = async () => {
-            if (!hoveredSchool || !hoveredTier) {
-                setConfigData(null)
-                return
-            }
-
-            setLoading(true)
-            try {
-                const response = await fetch(`/config/ars_affinity/perks/${hoveredSchool}/${hoveredTier}.json`)
-                if (response.ok) {
-                    const data = await response.json()
-                    setConfigData(data)
-                } else {
-                    console.warn(`Config file not found: ${hoveredSchool}/${hoveredTier}.json`)
-                    setConfigData(null)
-                }
-            } catch (error) {
-                console.error('Error loading config:', error)
-                setConfigData(null)
-            } finally {
-                setLoading(false)
-            }
+        if (!hoveredSchool || !hoveredTier) {
+            setConfigData(null)
+            return
         }
 
-        loadConfig()
-    }, [hoveredSchool, hoveredTier])
+        const cacheKey = `${hoveredSchool}_${hoveredTier}`
+        const cachedData = configCache[cacheKey]
+        setConfigData(cachedData || null)
+    }, [hoveredSchool, hoveredTier, configCache])
 
     if (!hoveredSchool || !hoveredTier) return null
 
@@ -68,26 +53,31 @@ function ConfigTooltip({
                 pointerEvents: 'none',
                 transform: 'translateX(-50%)'
             }}>
-                <div style={{
-                    width: '400px',
-                    height: '350px',
-                    backgroundColor: 'rgba(30, 15, 30, 0.9)',
-                    border: '7px solid transparent',
-                    borderImage: 'url(/tooltip.png) 3',
-                    borderImageSlice: '2',
-                    borderImageRepeat: 'stretch',
-                    borderRadius: '16px',
-                    color: 'white',
-                    padding: '15px',
-                    boxSizing: 'border-box',
-                    imageRendering: 'pixelated',
-                    fontFamily: 'Minecraft, monospace',
-                    fontSmooth: 'never',
-                    WebkitFontSmoothing: 'none',
-                    MozOsxFontSmoothing: 'none',
-                    textRendering: 'optimizeSpeed',
-                    textShadow: '2px 2px 0px rgba(62, 62, 62, 1)'
-                }}>
+                <div 
+                    ref={tooltipRef}
+                    style={{
+                        width: '400px',
+                        minHeight: '200px',
+                        maxHeight: '80vh',
+                        backgroundColor: 'rgba(30, 15, 30, 0.9)',
+                        border: '7px solid transparent',
+                        borderImage: 'url(/tooltip.png) 3',
+                        borderImageSlice: '2',
+                        borderImageRepeat: 'stretch',
+                        borderRadius: '16px',
+                        color: 'white',
+                        padding: '15px',
+                        boxSizing: 'border-box',
+                        imageRendering: 'pixelated',
+                        fontFamily: 'Minecraft, monospace',
+                        fontSmooth: 'never',
+                        WebkitFontSmoothing: 'none',
+                        MozOsxFontSmoothing: 'none',
+                        textRendering: 'optimizeSpeed',
+                        textShadow: '2px 2px 0px rgba(62, 62, 62, 1)',
+                        overflowY: 'auto'
+                    }}
+                >
                     <h2 style={{ 
                         margin: '0 0 4px 0', 
                         fontSize: '18px', 
@@ -111,8 +101,9 @@ function ConfigTooltip({
                                 ))}
                         </div>
                     )}
-                    {!loading && !configData && (
+                    {!configData && (
                         <div style={{ color: '#ccc', fontStyle: 'italic' }}>
+                            Loading...
                         </div>
                     )}
                 </div>
