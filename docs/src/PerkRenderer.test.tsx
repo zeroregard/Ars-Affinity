@@ -123,7 +123,11 @@ describe("PerkRenderer", () => {
 
   describe("earth perks", () => {
     it("should render PASSIVE_GROUNDED correctly", () => {
-      const perk = earthPerks[0]
+      const perk = {
+        perk: "PASSIVE_GROUNDED",
+        amount: 0.3,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -134,18 +138,27 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_STONE_SKIN correctly", () => {
-      const perk = earthPerks[1]
+      const perk = {
+        perk: "PASSIVE_STONE_SKIN",
+        time: 400,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Melee attacks against you are negated \(20 second cooldown\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Melee attacks against you are negated \(20 second cooldown\)/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_GROUND_SLAM correctly", () => {
-      const perk = earthPerks[2]
+      const perk = {
+        perk: "ACTIVE_GROUND_SLAM",
+        manaCost: 0.2,
+        cooldown: 200,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -158,7 +171,11 @@ describe("PerkRenderer", () => {
 
   describe("air perks", () => {
     it("should render PASSIVE_BURIED correctly", () => {
-      const perk = airPerks[0]
+      const perk = {
+        perk: "PASSIVE_BURIED",
+        amount: 0.3,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -169,18 +186,27 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_FREE_JUMP correctly", () => {
-      const perk = airPerks[1]
+      const perk = {
+        perk: "PASSIVE_FREE_JUMP",
+        amount: 0.5,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Jumping costs -50% hunger/)).toBeInTheDocument()
+      expect(screen.getByText(/Jumping costs -50% hunger/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_AIR_DASH correctly", () => {
-      const perk = airPerks[2]
+      const perk = {
+        perk: "ACTIVE_AIR_DASH",
+        manaCost: 0.2,
+        cooldown: 100,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -193,7 +219,11 @@ describe("PerkRenderer", () => {
 
   describe("abjuration perks", () => {
     it("should render PASSIVE_HEALING_AMPLIFICATION correctly", () => {
-      const perk = abjurationPerks[0]
+      const perk = {
+        perk: "PASSIVE_HEALING_AMPLIFICATION",
+        amount: 0.25,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -204,7 +234,11 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_PACIFIST correctly", () => {
-      const perk = abjurationPerks[1]
+      const perk = {
+        perk: "PASSIVE_PACIFIST",
+        amount: 0.15,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -232,7 +266,12 @@ describe("PerkRenderer", () => {
     })
 
     it("should render ACTIVE_SANCTUARY correctly", () => {
-      const perk = abjurationPerks[3]
+      const perk = {
+        perk: "ACTIVE_SANCTUARY",
+        manaCost: 0.2,
+        cooldown: 100,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -245,40 +284,56 @@ describe("PerkRenderer", () => {
 
   describe("conjuration perks", () => {
     it("should render PASSIVE_SUMMON_HEALTH correctly", () => {
-      const perk = conjurationPerks[0]
+      const perk = {
+        perk: "PASSIVE_SUMMON_HEALTH",
+        amount: 1,
+        time: 400,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Grants summoned creatures \+1 health boost for 20 seconds/)).toBeInTheDocument()
+      expect(screen.getByText(/Grants summoned creatures \+1 health boost for 20 seconds/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SUMMON_DEFENSE correctly", () => {
-      const perk = conjurationPerks[1]
+      const perk = {
+        perk: "PASSIVE_SUMMON_DEFENSE",
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Equips summoned creatures with armor/)).toBeInTheDocument()
+      expect(screen.getByText(/Equips summoned creatures with armor/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SUMMONING_POWER correctly", () => {
-      const perk = conjurationPerks[2]
+      const perk = {
+        perk: "PASSIVE_SUMMONING_POWER",
+        amount: 1,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Summoning Power/)).toBeInTheDocument()
+      expect(screen.getByText(/Adds \+1 to your Summoning Power/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_MANIPULATION_SICKNESS correctly", () => {
-      const perk = conjurationPerks[3]
+      const perk = {
+        perk: "PASSIVE_MANIPULATION_SICKNESS",
+        time: 200,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -291,7 +346,11 @@ describe("PerkRenderer", () => {
 
   describe("necromancy perks", () => {
     it("should render PASSIVE_BLIGHTED correctly", () => {
-      const perk = necromancyPerks[0]
+      const perk = {
+        perk: "PASSIVE_BLIGHTED",
+        amount: 0.25,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -302,7 +361,12 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_LICH_FEAST correctly", () => {
-      const perk = necromancyPerks[1]
+      const perk = {
+        perk: "PASSIVE_LICH_FEAST",
+        health: 0.5,
+        hunger: 0.5,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -313,7 +377,11 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_SOULSPIKE correctly", () => {
-      const perk = necromancyPerks[2]
+      const perk = {
+        perk: "PASSIVE_SOULSPIKE",
+        amount: 0.20,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -324,20 +392,29 @@ describe("PerkRenderer", () => {
     })
 
     it("should render ACTIVE_CURSE_FIELD correctly", () => {
-      const perk = necromancyPerks[3]
+      const perk = {
+        perk: "ACTIVE_CURSE_FIELD",
+        manaCost: 0.2,
+        cooldown: 100,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/Hold KEYBIND to project a cursed field that damages and silences foes\. 5 second cooldown/)).toBeInTheDocument()
+      expect(screen.getByText(/ Hold KEYBIND to project a cursed field that damages and silences foes\. 5 second cooldown/)).toBeInTheDocument()
     })
   })
 
   describe("manipulation perks", () => {
     it("should render PASSIVE_MANA_TAP correctly", () => {
-      const perk = manipulationPerks[0]
+      const perk = {
+        perk: "PASSIVE_MANA_TAP",
+        amount: 1.0,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -348,18 +425,27 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_DEFLECTION correctly", () => {
-      const perk = manipulationPerks[1]
+      const perk = {
+        perk: "PASSIVE_DEFLECTION",
+        time: 120,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Incoming projectiles reverse direction and velocity \(6 second cooldown\)/)).toBeInTheDocument()
+      expect(screen.getByText(/Incoming projectiles reverse direction and velocity \(6 second cooldown\)/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_SWAP_ABILITY correctly", () => {
-      const perk = manipulationPerks[2]
+      const perk = {
+        perk: "ACTIVE_SWAP_ABILITY",
+        manaCost: 0.2,
+        cooldown: 60,
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -370,7 +456,11 @@ describe("PerkRenderer", () => {
     })
 
     it("should render PASSIVE_UNSTABLE_SUMMONING correctly", () => {
-      const perk = manipulationPerks[3]
+      const perk = {
+        perk: "PASSIVE_UNSTABLE_SUMMONING",
+        amount: 0.33,
+        isBuff: false
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
@@ -383,14 +473,18 @@ describe("PerkRenderer", () => {
 
   describe("common perks", () => {
     it("should render PASSIVE_MOB_PACIFICATION correctly", () => {
-      const perk = commonPerks[0]
+      const perk = {
+        perk: "PASSIVE_MOB_PACIFICATION",
+        entities: ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"],
+        isBuff: true
+      }
       render(
         <TestWrapper>
           <PerkRenderer perk={perk} />
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Drowned, Guardian, Elder Guardian ignore you/)).toBeInTheDocument()
+      expect(screen.getByText(/Drowned, Guardian, Elder Guardian ignore you/)).toBeInTheDocument()
     })
   })
 

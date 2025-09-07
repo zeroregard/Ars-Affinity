@@ -62,14 +62,18 @@ function PerkRenderer({ perk }: PerkRendererProps) {
             .replace(/%s/g, perk.amount.toString())
             .replace(/%d/g, (perk.time/20).toString())
     }
+    // Handle passive perks with just time
+    else if (perk.time !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
+    }
+   
+    else if (perkId === 'PASSIVE_SUMMONING_POWER' && perk.amount !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+    }
     // Handle passive perks with just amount
     else if (perk.amount !== undefined) {
-        // Special case for PASSIVE_SUMMONING_POWER - it's a direct value, not a percentage
-        if (perkId === 'PASSIVE_SUMMONING_POWER') {
-            formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
-        }
         // Check if the message contains %% to determine if it's a percentage
-        else if (message.includes('%%')) {
+        if (message.includes('%%')) {
             const percentage = perk.amount * 100
             formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
             formattedMessage = formattedMessage.replace(/%%/g, '%')
