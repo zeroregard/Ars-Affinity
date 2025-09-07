@@ -7,13 +7,13 @@ type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipul
 interface ConfigTooltipProps {
     hoveredSchool: School | null
     hoveredTier: number | null
-    mousePosition: { x: number, y: number }
+    hoveredElementPosition: { x: number, y: number, width: number, height: number } | null
 }
 
 function ConfigTooltip({ 
     hoveredSchool, 
     hoveredTier, 
-    mousePosition
+    hoveredElementPosition
 }: ConfigTooltipProps) {
     const [configData, setConfigData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
@@ -49,44 +49,48 @@ function ConfigTooltip({
     }, [hoveredSchool, hoveredTier])
 
     useEffect(() => {
-        if (!hoveredSchool || !hoveredTier) return
+        if (!hoveredSchool || !hoveredTier || !hoveredElementPosition) return
 
-        const calculatePosition = () => {
-            const tooltipWidth = 400
-            const tooltipHeight = tooltipRef.current?.offsetHeight || 350
-            const padding = 16
+        const TOOLTIP_WIDTH = 400
+        const MARGIN = 16
+        const SCREEN_PADDING = 16
+
+        const calculateTooltipPosition = () => {
+            const tooltipHeight = tooltipRef.current?.offsetHeight || 0
+            const elementCenter = {
+                x: hoveredElementPosition.x + (hoveredElementPosition.width / 2),
+                y: hoveredElementPosition.y + (hoveredElementPosition.height / 2)
+            }
+
+            // Calculate horizontal position (centered on element)
+            let x = elementCenter.x - (TOOLTIP_WIDTH / 2)
+
+            // Calculate vertical position based on element location
+            const isElementInLowerHalf = elementCenter.y > window.innerHeight / 2
+            let y = isElementInLowerHalf
+                ? hoveredElementPosition.y - tooltipHeight - MARGIN
+                : hoveredElementPosition.y + hoveredElementPosition.height + MARGIN
+
+            // Constrain to screen bounds
+            x = Math.max(SCREEN_PADDING, Math.min(x, window.innerWidth - TOOLTIP_WIDTH - SCREEN_PADDING))
             
-            let x = mousePosition.x
-            let y = mousePosition.y + 16
-
-            // Check right edge
-            if (x + tooltipWidth > window.innerWidth - padding) {
-                x = window.innerWidth - tooltipWidth - padding
+            // Handle vertical overflow with fallback positioning
+            if (y < SCREEN_PADDING) {
+                y = hoveredElementPosition.y + hoveredElementPosition.height + MARGIN
             }
-            
-            // Check left edge
-            if (x < padding) {
-                x = padding
+            if (y + tooltipHeight > window.innerHeight - SCREEN_PADDING) {
+                y = hoveredElementPosition.y - tooltipHeight - MARGIN
             }
-
-            // Check bottom edge
-            if (y + tooltipHeight > window.innerHeight - padding) {
-                y = mousePosition.y - tooltipHeight - 16
-            }
-
-            // Check top edge
-            if (y < padding) {
-                y = padding
+            if (y < SCREEN_PADDING) {
+                y = SCREEN_PADDING
             }
 
             setTooltipPosition({ x, y })
         }
 
-        // Calculate position after a short delay to allow for content to render
-        const timeoutId = setTimeout(calculatePosition, 10)
-        
-        return () => clearTimeout(timeoutId)
-    }, [mousePosition, configData, hoveredSchool, hoveredTier])
+        calculateTooltipPosition()
+    }, [hoveredElementPosition, hoveredSchool, hoveredTier, configData])
+
 
     if (!hoveredSchool || !hoveredTier) return null
 
