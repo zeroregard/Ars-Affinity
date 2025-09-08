@@ -2,7 +2,6 @@ package com.github.ars_affinity.common.ability;
 
 import com.github.ars_affinity.ArsAffinity;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -32,5 +31,9 @@ public class NetworkHandler {
 
     public static void sendToServer(CustomPacketPayload msg) {
         PacketDistributor.sendToServer(msg);
+    }
+    
+    public static void sendToAllClients(CustomPacketPayload msg) {
+        PacketDistributor.sendToAllPlayers(msg);
     }
 } 

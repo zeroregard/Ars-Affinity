@@ -100,6 +100,7 @@
   "key.categories.ars_affinity": "Ars Affinity",
   "ars_affinity.screen.affinity.title": "Affinities",
   "ars_affinity.screen.school_glyph.title": "School Glyphs",
+  "ars_affinity.gui.affinity": "Affinity Progress",
   "item.ars_affinity.affinity_anchor_charm": "Affinity Anchor Charm",
   "tooltip.ars_affinity.affinity_anchor_charm": "Prevents affinity changes while worn",
   "tooltip.ars_affinity.anchor_charm.shift_info": "Costs one charge per spell cast",
