@@ -53,7 +53,7 @@ public class ArsAffinityConfig {
             .defineInRange("opposingSchoolPenaltyPercentage", 0.66, 0.0, 1.0);
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
-            .defineInRange("affinityGainMultiplier", 0.005, 0.0001, 0.1);
+            .defineInRange("affinityGainMultiplier", 0.0025, 0.0001, 0.1);
         AFFINITY_POTION_INCREASE_PERCENTAGE = SERVER_BUILDER
             .comment("Percentage increase for affinity potions (0.0 to 1.0)")
             .defineInRange("affinityPotionIncreasePercentage", 0.10, 0.01, 1.0);
@@ -74,7 +74,7 @@ public class ArsAffinityConfig {
             .defineInRange("tier3ThresholdPercentage", 75.0, 0.0, 100.0);
         AFFINITY_SCALING_DECAY_STRENGTH = SERVER_BUILDER
             .comment("How quickly affinity gain decreases as affinity increases (1.0 = linear, 2.0 = exponential, higher = more aggressive decay)")
-            .defineInRange("affinityScalingDecayStrength", 2.0, 0.5, 5.0);
+            .defineInRange("affinityScalingDecayStrength", 3.0, 0.5, 5.0);
         AFFINITY_SCALING_MINIMUM_FACTOR = SERVER_BUILDER
             .comment("Minimum percentage of original gain that can be applied (0.1 = 10%, 0.05 = 5%)")
             .defineInRange("affinityScalingMinimumFactor", 0.1, 0.01, 0.5);

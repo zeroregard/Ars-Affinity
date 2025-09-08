@@ -60,6 +60,19 @@ public abstract class SpellTrackingMixin {
                 return;
             }
 
+            if (spell.recipe() == null) {
+                return;
+            }
+            
+            boolean hasElements = false;
+            for (AbstractSpellPart part : spell.recipe()) {
+                hasElements = true;
+                break;
+            }
+            if (!hasElements) {
+                return;
+            }
+
             SpellStats spellStats = this.getCastStats();
             trackSpellUsage((PlayerCaster) caster, spell, spellStats, world);
             

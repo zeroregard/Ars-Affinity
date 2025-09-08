@@ -104,15 +104,11 @@ public class SchoolAffinityProgress implements INBTSerializable<CompoundTag> {
     public PerkReference getActivePerkReference(AffinityPerkType perkType) {
         return activePerks.get(perkType);
     }
-    
 
-    
     public Set<PerkReference> getAllActivePerkReferences() {
         return Set.copyOf(activePerks.values());
     }
-    
 
-    
     public void rebuildPerkIndex() {
         activePerks.clear();
         ArsAffinity.LOGGER.info("Rebuilding perk index for player...");
