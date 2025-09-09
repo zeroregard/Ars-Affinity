@@ -93,17 +93,17 @@ public class SpiralParticleHelper {
         int successfulSpawns = 0;
         for (int i = 0; i < particleCount; i++) {
             // Add some randomness to the spawn position
-            double offsetX = (Math.random() - 0.5) * 2.0;
-            double offsetY = (Math.random() - 0.5) * 1.0;
-            double offsetZ = (Math.random() - 0.5) * 2.0;
+            double offsetX = 0;  //(Math.random() - 0.5) * 2.0;
+            double offsetY = 0;  // (Math.random() - 0.5) * 1.0;
+            double offsetZ = 0; // (Math.random() - 0.5) * 2.0;
             
             String spriteType = getSpriteTypeForSchool(school);
             SpiralParticleTypeData particleData = new SpiralParticleTypeData(
                 color, 
                 false, 
-                scale, 
+                1.0f,
                 1.0f, 
-                100 + (int)(Math.random() * 100), // Random lifetime between 100-200 ticks
+                40,
                 spriteType
             );
             particleData.setType(ParticleRegistry.SPIRAL_PARTICLE_TYPE.get());

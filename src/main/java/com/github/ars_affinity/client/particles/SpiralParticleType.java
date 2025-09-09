@@ -20,3 +20,4 @@ public class SpiralParticleType extends ParticleType<SpiralParticleTypeData> {
         return SpiralParticleTypeData.STREAM_CODEC;
     }
 }
+

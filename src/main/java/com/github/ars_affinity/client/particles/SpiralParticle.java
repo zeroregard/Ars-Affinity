@@ -15,21 +15,21 @@ public class SpiralParticle extends TextureSheetParticle {
 
     protected SpiralParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b, float scale, int lifetime, SpriteSet sprite) {
         super(worldIn, x, y, z, 0, 0, 0);
-        this.radius = 0.1f * scale; // Smaller radius (50% of original)
-        this.speed = 0.3f; // Much faster spiral (100% faster)
+        this.radius = 0.3f * scale;
+        this.speed = 0.2f;
         this.angle = (float) (Math.random() * 2 * Math.PI);
-        this.quadSize = scale * 0.15f + (float)(Math.random() * 0.05f); // Smaller base size (50% of original)
+        this.quadSize = scale * 0.15f + (float)(Math.random() * 0.05f);
         this.initialQuadSize = this.quadSize;
         this.hasPhysics = false;
-        this.initScale = scale * 0.01f; // Smaller initial scale
-        this.xd = ParticleUtil.inRange(-0.01, 0.01); // Less horizontal movement
-        this.yd = 0.15; // Upward movement (2 blocks in ~10 ticks)
+        this.initScale = scale * 0.01f;
+        this.xd = ParticleUtil.inRange(-0.01, 0.01);
+        this.yd = 0.001;
         this.zd = ParticleUtil.inRange(-0.01, 0.01);
-
-        this.friction = 0.99F; // More friction for controlled movement
-        this.speedUpWhenYMotionIsBlocked = false; // Don't speed up when blocked
+        this.setPos(x, y, z);
+        this.friction = 0.99F;
+        this.speedUpWhenYMotionIsBlocked = false;
         this.setColor(r, g, b);
-        this.lifetime = 20; // Fixed 1 second lifetime (20 ticks)
+        this.lifetime = 40;
 
         this.pickSprite(sprite);
         
@@ -42,27 +42,30 @@ public class SpiralParticle extends TextureSheetParticle {
         super.tick();
 
         angle += speed;
-        if (angle > 2 * Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-        
-        // Create upward spiral movement from spawn position
-        float spiralProgress = Math.min((float) this.age / this.lifetime, 1.0f);
-        float currentRadius = radius * (0.3f + spiralProgress * 0.7f); // Radius grows slightly over time
-        
-        // Spiral movement around the spawn position
+
+        float progress = Math.min((float) this.age / this.lifetime, 1.0f);
+
+        // Spiral radius growth
+        float currentRadius = radius * (0.3f + progress * 0.7f);
+
+        // Spiral X/Z
         double x = this.x + currentRadius * Math.sin(angle);
         double z = this.z + currentRadius * Math.cos(angle);
-        
-        // Upward movement - particles go from bottom to 2 blocks above spawn position
-        double y = this.y + (spiralProgress * 2.0); // 2 blocks in 20 ticks (1 second)
 
-        // Size fading - particles fade to 0 after 0.5 seconds (10 ticks)
+        // --- EaseOutExpo on upward movement ---
+        double easedY = this.y + easeOutExpo(progress) * 1.0; // up to 2 blocks high
+
+        // --- EaseOutExpo inverse for size fade ---
         float sizeProgress = Math.min((float) this.age / 10.0f, 1.0f);
-        float sizeFade = 1.0f - sizeProgress; // Fade from 1.0 to 0.0
-        this.quadSize = this.initialQuadSize * sizeFade;
+        float sizeFade = 1.0f - easeOutExpo(sizeProgress);
+        // this.quadSize = this.initialQuadSize * sizeFade;
 
-        this.setPos(x, y, z);
+        this.setPos(x, easedY, z);
+    }
+
+    // --- Utility easing ---
+    private static float easeOutExpo(float t) {
+        return (t == 1.0f) ? 1.0f : (float)(1 - Math.pow(2, -10 * t));
     }
 
 

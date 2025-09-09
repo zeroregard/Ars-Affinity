@@ -1,10 +1,9 @@
 package com.github.ars_affinity.registry;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.client.particles.SpiralParticleProvider;
+import com.github.ars_affinity.client.particles.SpiralParticleWrapper;
 import com.github.ars_affinity.client.particles.SpiralParticleTypeData;
 import com.github.ars_affinity.client.particles.SpiralParticleType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.api.distmarker.Dist;
@@ -23,6 +22,7 @@ public class ParticleRegistry {
 
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent evt) {
-        evt.registerSpriteSet(SPIRAL_PARTICLE_TYPE.get(), SpiralParticleProvider::new);
+        evt.registerSpriteSet(SPIRAL_PARTICLE_TYPE.get(), SpiralParticleWrapper::new);
     }
 }
+
