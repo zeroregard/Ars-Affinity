@@ -1,0 +1,39 @@
+{
+  "perks": [
+    {
+      "id": "air_free_jump_1",
+      "perk": "PASSIVE_FREE_JUMP",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1
+    },
+    {
+      "id": "air_free_jump_2",
+      "perk": "PASSIVE_FREE_JUMP",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["air_free_jump_1"]
+    },
+    {
+      "id": "air_free_jump_3",
+      "perk": "PASSIVE_FREE_JUMP",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 3,
+      "prerequisites": ["air_free_jump_2"]
+    },
+    {
+      "id": "air_dash_1",
+      "perk": "ACTIVE_AIR_DASH",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "ACTIVE",
+      "level": 1,
+      "prerequisites": ["air_buried_2", "air_free_jump_2"]
+    }
+  ]
+}

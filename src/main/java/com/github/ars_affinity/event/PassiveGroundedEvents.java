@@ -13,22 +13,7 @@ public class PassiveGroundedEvents {
     
     @SubscribeEvent
     public static void onManaRegenCalc(ManaRegenCalcEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
-        
-        boolean isNotOnGround = !player.onGround();
-        
-        if (isNotOnGround) {
-            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_GROUNDED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-                double currentRegen = event.getRegen();
-                double reduction = currentRegen * amountPerk.amount;
-                double newRegen = currentRegen - reduction;
-                
-                ArsAffinity.LOGGER.info("Player {} is not on ground - PASSIVE_GROUNDED perk ({}%) reducing mana regen from {} to {}", 
-                    player.getName().getString(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
-                
-                event.setRegen(newRegen);
-            });
-        }
+        // PASSIVE_GROUNDED removed - no longer needed in new system
+        // All code commented out
     }
 } 

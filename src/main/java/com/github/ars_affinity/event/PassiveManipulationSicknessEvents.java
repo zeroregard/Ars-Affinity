@@ -30,13 +30,8 @@ public class PassiveManipulationSicknessEvents {
             return;
         }
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_MANIPULATION_SICKNESS, AffinityPerk.ManipulationSicknessPerk.class, sicknessPerk -> {
-            if (containsManipulationGlyph(event.spell)) {
-                applyManipulationSickness(player, sicknessPerk.duration, sicknessPerk.hunger);
-                ArsAffinity.LOGGER.info("Player {} cast manipulation spell with PASSIVE_MANIPULATION_SICKNESS perk for {} seconds with {} hunger",
-                    player.getName().getString(), sicknessPerk.duration / 20, sicknessPerk.hunger);
-            }
-        });
+        // PASSIVE_MANIPULATION_SICKNESS removed - no longer needed in new system
+        // All code commented out
     }
 
     private static boolean containsManipulationGlyph(com.hollingsworth.arsnouveau.api.spell.Spell spell) {

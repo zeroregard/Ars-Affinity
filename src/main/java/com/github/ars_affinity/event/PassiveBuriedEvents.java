@@ -18,17 +18,18 @@ public class PassiveBuriedEvents {
         
         boolean isDeepUnderground = player.getEyePosition().y() < ArsAffinityConfig.DEEP_UNDERGROUND_Y_THRESHOLD.get();
         
-        if (isDeepUnderground) {
-            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_BURIED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-                double currentRegen = event.getRegen();
-                double reduction = currentRegen * amountPerk.amount;
-                double newRegen = currentRegen - reduction;
-                
-                ArsAffinity.LOGGER.info("Player {} is deep underground (Y={}) - PASSIVE_BURIED perk ({}%) reducing mana regen from {} to {}", 
-                    player.getName().getString(), (int)player.getEyePosition().y(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
-                
-                event.setRegen(newRegen);
-            });
-        }
+        // PASSIVE_BURIED removed - no longer needed in new system
+        // if (isDeepUnderground) {
+        //     AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_BURIED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+        //         double currentRegen = event.getRegen();
+        //         double reduction = currentRegen * amountPerk.amount;
+        //         double newRegen = currentRegen - reduction;
+        //         
+        //         ArsAffinity.LOGGER.info("Player {} is deep underground (Y={}) - PASSIVE_BURIED perk ({}%) reducing mana regen from {} to {}", 
+        //             player.getName().getString(), (int)player.getEyePosition().y(), (int)(amountPerk.amount * 100), currentRegen, newRegen);
+        //         
+        //         event.setRegen(newRegen);
+        //     });
+        // }
     }
 } 

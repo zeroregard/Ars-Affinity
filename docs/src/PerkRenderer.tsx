@@ -17,6 +17,13 @@ interface Perk {
     freezeTime?: number
     radius?: number
     duration?: number
+    // New perk tree structure
+    id?: string
+    tier?: number
+    pointCost?: number
+    category?: 'PASSIVE' | 'ACTIVE'
+    level?: number
+    prerequisites?: string[]
 }
 
 interface PerkRendererProps {

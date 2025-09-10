@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const src = path.resolve(__dirname, '../config')
-const dest = path.resolve(__dirname, 'public/config')
+const src = path.resolve(__dirname, '../config/ars_affinity')
+const dest = path.resolve(__dirname, 'public/config/ars_affinity')
 
 const langSrc = path.resolve(__dirname, '../src/main/resources/assets/ars_affinity/lang')
 const langDest = path.resolve(__dirname, 'public/lang')
@@ -20,7 +20,7 @@ if (existsSync(langDest)) {
   rmSync(langDest, { recursive: true })
 }
 
-await cpy(`${src}/**`, dest, {
+await cpy(`${src}/**/*.json`, dest, {
   parents: true
 })
 

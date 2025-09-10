@@ -12,21 +12,7 @@ public class PassivePacifistEvents {
     
     @SubscribeEvent
     public static void onSpellDamage(SpellDamageEvent.Pre event) {
-        if (!(event.context.getCaster() instanceof PlayerCaster playerCaster)) {
-            return;
-        }
-        var player = playerCaster.player;
-        if (player.level().isClientSide()) return;
-        
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_PACIFIST, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-            float reduction = amountPerk.amount;
-            float originalDamage = event.damage;
-            float newDamage = originalDamage * (1.0f - reduction);
-            
-            event.damage = newDamage;
-            
-            ArsAffinity.LOGGER.info("Player {} spell damage reduced from {} to {} due to PASSIVE_PACIFIST ({}% reduction)", 
-                player.getName().getString(), originalDamage, newDamage, (int)(reduction * 100));
-        });
+        // PASSIVE_PACIFIST removed - no longer needed in new system
+        // All code commented out
     }
 }

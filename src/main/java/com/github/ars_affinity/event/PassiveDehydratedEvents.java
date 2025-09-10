@@ -12,24 +12,7 @@ public class PassiveDehydratedEvents {
 
     @SubscribeEvent
     public static void onManaRegenCalc(ManaRegenCalcEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.level().isClientSide()) return;
-
-        boolean isInNether = player.level().dimension().location().getPath().equals("the_nether");
-        boolean isOnFire = player.isOnFire();
-
-        if (isInNether || isOnFire) {
-            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_DEHYDRATED, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-                double currentRegen = event.getRegen();
-                double reduction = currentRegen * amountPerk.amount;
-                double newRegen = currentRegen - reduction;
-
-                String condition = isInNether ? "Nether" : "on fire";
-                ArsAffinity.LOGGER.info("Player {} is in {} - PASSIVE_DEHYDRATED perk ({}%) reducing mana regen from {} to {}",
-                    player.getName().getString(), condition, (int)(amountPerk.amount * 100), currentRegen, newRegen);
-
-                event.setRegen(newRegen);
-            });
-        }
+        // PASSIVE_DEHYDRATED removed - no longer needed in new system
+        // All code commented out
     }
 } 

@@ -1,0 +1,48 @@
+{
+  "perks": [
+    {
+      "id": "abjuration_healing_amplification_1",
+      "perk": "PASSIVE_HEALING_AMPLIFICATION",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1
+    },
+    {
+      "id": "abjuration_healing_amplification_2",
+      "perk": "PASSIVE_HEALING_AMPLIFICATION",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["abjuration_healing_amplification_1"]
+    },
+    {
+      "id": "abjuration_healing_amplification_3",
+      "perk": "PASSIVE_HEALING_AMPLIFICATION",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 3,
+      "prerequisites": ["abjuration_healing_amplification_2"]
+    },
+    {
+      "id": "abjuration_ghost_step_1",
+      "perk": "PASSIVE_GHOST_STEP",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["abjuration_healing_amplification_2"]
+    },
+    {
+      "id": "abjuration_sanctuary_1",
+      "perk": "ACTIVE_SANCTUARY",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "ACTIVE",
+      "level": 1,
+      "prerequisites": ["abjuration_ghost_step_1"]
+    }
+  ]
+}
