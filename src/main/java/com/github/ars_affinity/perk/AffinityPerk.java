@@ -25,16 +25,10 @@ public abstract class AffinityPerk {
             boolean isBuff = jsonObject.get("isBuff").getAsBoolean();
 
             switch (perkType) {
-                case PASSIVE_DOUSED:
-                case PASSIVE_DEHYDRATED:
-                case PASSIVE_BURIED:
-                case PASSIVE_GROUNDED:
                 case PASSIVE_FIRE_THORNS:
                 case PASSIVE_MANA_TAP:
                 case PASSIVE_HEALING_AMPLIFICATION:
-                case PASSIVE_BLIGHTED:
                 case PASSIVE_FREE_JUMP:
-                case PASSIVE_PACIFIST:
                 case PASSIVE_SOULSPIKE:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
@@ -53,9 +47,6 @@ public abstract class AffinityPerk {
                     float healthRestore = jsonObject.get("health").getAsFloat();
                     float hungerRestore = jsonObject.get("hunger").getAsFloat();
                     return new LichFeastPerk(perkType, healthRestore, hungerRestore, isBuff);
-                case PASSIVE_MOB_PACIFICATION:
-                    java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
-                    return new EntityBasedPerk(perkType, isBuff, entities);
                 case ACTIVE_ICE_BLAST:
                     float manaCost = jsonObject.get("manaCost").getAsFloat();
                     int cooldown = jsonObject.get("cooldown").getAsInt();
@@ -100,10 +91,6 @@ public abstract class AffinityPerk {
                     int invisibilityTime = jsonObject.get("time").getAsInt();
                     int cooldownTime = jsonObject.get("cooldown").getAsInt();
                     return new GhostStepPerk(perkType, healAmount, invisibilityTime, cooldownTime, isBuff);
-                case PASSIVE_MANIPULATION_SICKNESS:
-                    int sicknessDuration = jsonObject.get("duration").getAsInt();
-                    int hungerAmount = jsonObject.get("hunger").getAsInt();
-                    return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
                 case PASSIVE_HYDRATION:
                     float maxAmplification = jsonObject.get("amount").getAsFloat();
                     int countdownTicks = jsonObject.get("time").getAsInt();

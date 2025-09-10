@@ -8,7 +8,7 @@ import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.registry.ModPotions;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -28,13 +28,13 @@ public class PassiveHydrationEvents {
         if (player.tickCount % 20 != 0) return;
         
         // Get player's affinity progress
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
             return;
         }
         
-        int waterTier = progress.getTier(SpellSchools.ELEMENTAL_WATER);
-        if (waterTier == 0) {
+        int waterPoints = data.getSchoolPoints(SpellSchools.ELEMENTAL_WATER);
+        if (waterPoints == 0) {
             return;
         }
 

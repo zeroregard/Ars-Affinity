@@ -89,13 +89,17 @@ function UnifiedPerkTreeViewer() {
             const validTrees = results.filter((tree): tree is { school: School, data: PerkTreeData } => tree !== null)
             
             const schoolTreesData = validTrees.map(({ school, data }, index) => {
-                const nodePositions = calculateNodePositions(data, school, index)
-                
                 // Calculate circular positions (starting from top with -90 degree offset)
                 const angle = (index * Math.PI * 2) / validTrees.length - Math.PI / 2
-                const radius = SCHOOL_SPACING * 1.5
-                const centerX = Math.cos(angle) * radius
-                const centerY = Math.sin(angle) * radius
+                const labelRadius = SCHOOL_SPACING * 1.2 // Smaller radius for labels
+                const centerX = Math.cos(angle) * labelRadius
+                const centerY = Math.sin(angle) * labelRadius
+                
+                // Calculate outward direction vector for positioning trees
+                const outwardX = Math.cos(angle)
+                const outwardY = Math.sin(angle)
+                
+                const nodePositions = calculateNodePositions(data, school, index, outwardX, outwardY)
                 
                 return {
                     school,
@@ -126,7 +130,7 @@ function UnifiedPerkTreeViewer() {
     }, [])
 
     // Calculate node positions for a specific school
-    const calculateNodePositions = (data: PerkTreeData, school: School, schoolIndex: number) => {
+    const calculateNodePositions = (data: PerkTreeData, school: School, schoolIndex: number, outwardX: number, outwardY: number) => {
         const positions = new Map<string, NodePosition>()
         const tiers = new Map<number, PerkNode[]>()
         
@@ -143,13 +147,24 @@ function UnifiedPerkTreeViewer() {
             nodes.sort((a, b) => a.id.localeCompare(b.id))
         })
 
-        // Calculate positions relative to (0,0) since we translate each school to its circular position
+        // Calculate positions at a fixed radius from the global center
+        // Position trees "outside" the circle (further from center than labels)
+        const treeRadius = 300 // Distance from center for the tree (larger than label radius)
         tiers.forEach((nodes, tier) => {
             const startX = -(nodes.length - 1) * NODE_SPACING / 2
             nodes.forEach((node, index) => {
+                // Position nodes in local coordinates first
+                const localX = startX + index * NODE_SPACING
+                const localY = tier * TIER_SPACING
+                
+                // Calculate the tree center at the correct radius
+                const treeCenterX = outwardX * treeRadius
+                const treeCenterY = outwardY * treeRadius
+                
+                // Position nodes relative to the tree center
                 positions.set(node.id, {
-                    x: startX + index * NODE_SPACING,
-                    y: tier * TIER_SPACING,
+                    x: treeCenterX + localX,
+                    y: treeCenterY + localY,
                     tier,
                     index,
                     school
@@ -605,35 +620,34 @@ function UnifiedPerkTreeViewer() {
                     </defs>
                     <rect x="-2000" y="-2000" width="4000" height="4000" fill="url(#grid)" />
 
-                    {/* School trees */}
+                    {/* School labels */}
                     {schoolTrees.map(schoolTree => (
-                        <g 
-                            key={schoolTree.school}
-                            transform={`translate(${schoolTree.centerX}, ${schoolTree.centerY})`}
-                        >
-                            {/* School label */}
-                            <g>
-                                <rect
-                                    x={-80}
-                                    y={-100 - 15}
-                                    width="160"
-                                    height="30"
-                                    fill="rgba(0, 0, 0, 0.7)"
-                                    rx="5"
-                                />
-                                <text
-                                    x={0}
-                                    y={-100 + 5}
-                                    textAnchor="middle"
-                                    fill="white"
-                                    fontSize="16"
-                                    fontFamily="Minecraft, monospace"
-                                    fontWeight="bold"
-                                >
-                                    {titleCase(schoolTree.school)}
-                                </text>
-                            </g>
+                        <g key={`label-${schoolTree.school}`}>
+                            <rect
+                                x={schoolTree.centerX - 80}
+                                y={schoolTree.centerY - 15}
+                                width="160"
+                                height="30"
+                                fill="rgba(0, 0, 0, 0.7)"
+                                rx="5"
+                            />
+                            <text
+                                x={schoolTree.centerX}
+                                y={schoolTree.centerY + 5}
+                                textAnchor="middle"
+                                fill="white"
+                                fontSize="16"
+                                fontFamily="Minecraft, monospace"
+                                fontWeight="bold"
+                            >
+                                {titleCase(schoolTree.school)}
+                            </text>
+                        </g>
+                    ))}
 
+                    {/* School trees - positioned at global coordinates */}
+                    {schoolTrees.map(schoolTree => (
+                        <g key={`tree-${schoolTree.school}`}>
                             {/* Connections */}
                             {renderSchoolConnections(schoolTree)}
 

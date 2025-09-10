@@ -1,7 +1,7 @@
 package com.github.ars_affinity.common.ability;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.common.ability.field.SanctuaryHelper;
 import com.github.ars_affinity.common.ability.field.CurseFieldHelper;
 import com.github.ars_affinity.common.ability.SwarmHelper;
@@ -32,9 +32,9 @@ public class ActiveAbilityManager {
 
 	public static void triggerActiveAbility(ServerPlayer player) {
 		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Trigger requested by {}", player.getName().getString());
-		var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-		if (progress == null) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No progress capability for {}", player.getName().getString());
+		var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+		if (data == null) {
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No affinity data for {}", player.getName().getString());
 			return;
 		}
 
@@ -45,7 +45,7 @@ public class ActiveAbilityManager {
 			AffinityPerkType perkType = entry.getValue();
 
 			// O(1) perk lookup using the new perk index
-			AffinityPerk perk = AffinityPerkHelper.getActivePerk(progress, perkType);
+			AffinityPerk perk = AffinityPerkHelper.getActivePerk(player, perkType);
 			if (perk != null) {
 				activePerk = perk;
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Selected perk {} for school {}", ((AffinityPerk.ActiveAbilityPerk) activePerk).perk, school.getId());

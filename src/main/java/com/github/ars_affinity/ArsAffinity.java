@@ -1,14 +1,14 @@
 package com.github.ars_affinity;
 
-import com.github.ars_affinity.capability.SchoolAffinityProgressCapability;
-import com.github.ars_affinity.capability.SchoolAffinityProgressProvider;
+import com.github.ars_affinity.capability.PlayerAffinityDataCapability;
+import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
 import com.github.ars_affinity.capability.WetTicksCapability;
 import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.event.*;
-import com.github.ars_affinity.perk.AffinityPerkManager;
+import com.github.ars_affinity.perk.PerkTreeManager;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModItems;
@@ -68,7 +68,7 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
-        NeoForge.EVENT_BUS.register(TierChangeEffectsEvents.class);
+        NeoForge.EVENT_BUS.register(SchoolAffinityPointAllocatedEvents.class);
         
         // Register event classes
         NeoForge.EVENT_BUS.register(PassiveLichFeastEvents.class);
@@ -76,15 +76,8 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(DeflectionEvents.class);
         NeoForge.EVENT_BUS.register(FieldAbilityTicker.class);
         NeoForge.EVENT_BUS.register(FireThornsEvents.class);
-        NeoForge.EVENT_BUS.register(ManaRegenCalcEvents.class);
-        NeoForge.EVENT_BUS.register(MobPacificationEvents.class);
-        NeoForge.EVENT_BUS.register(PassiveBuriedEvents.class);
-        NeoForge.EVENT_BUS.register(PassiveDehydratedEvents.class);
         NeoForge.EVENT_BUS.register(PassiveFreeJumpEvents.class);
-        NeoForge.EVENT_BUS.register(PassiveGroundedEvents.class);
         NeoForge.EVENT_BUS.register(PassiveManaTapEvents.class);
-        NeoForge.EVENT_BUS.register(PassiveManipulationSicknessEvents.class);
-        NeoForge.EVENT_BUS.register(PassivePacifistEvents.class);
         NeoForge.EVENT_BUS.register(PassiveSoulspikeEvents.class);
         NeoForge.EVENT_BUS.register(PassiveStoneSkinEvents.class);
         NeoForge.EVENT_BUS.register(PassiveSummonDefenseEvents.class);
@@ -92,24 +85,23 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(PassiveSummoningPowerEvents.class);
         NeoForge.EVENT_BUS.register(PassiveUnstableSummoningEvents.class);
         NeoForge.EVENT_BUS.register(SpellAmplificationEvents.class);
-        NeoForge.EVENT_BUS.register(SpellBlightEvents.class);
         NeoForge.EVENT_BUS.register(PassiveHydrationEvents.class);
         NeoForge.EVENT_BUS.register(SanctuaryEvents.class);
         NeoForge.EVENT_BUS.register(SilencedEvents.class);
 
 
 
-        AffinityPerkManager.loadConfig();
+        PerkTreeManager.loadPerkTrees();
         
     }
     
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerEntity(
-            SchoolAffinityProgressCapability.SCHOOL_AFFINITY_PROGRESS,
+            PlayerAffinityDataCapability.PLAYER_AFFINITY_DATA,
             EntityType.PLAYER,
             (entity, context) -> {
                 if (entity instanceof Player player) {
-                    return SchoolAffinityProgressProvider.getAffinityProgress(player);
+                    return PlayerAffinityDataProvider.getPlayerAffinityData(player);
                 }
                 return null;
             }
@@ -126,7 +118,7 @@ public class ArsAffinity {
             }
         );
         
-        LOGGER.info("Registered SchoolAffinityProgress capability");
+        LOGGER.info("Registered PlayerAffinityData capability");
         LOGGER.info("Registered WetTicks capability");
     }
     
@@ -136,18 +128,18 @@ public class ArsAffinity {
     }
     
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        SchoolAffinityProgressProvider.loadPlayerProgress(event.getEntity());
+        PlayerAffinityDataProvider.loadPlayerData(event.getEntity());
         WetTicksProvider.loadPlayerWetTicks(event.getEntity());
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        SchoolAffinityProgressProvider.savePlayerProgress(event.getEntity());
+        PlayerAffinityDataProvider.savePlayerData(event.getEntity());
         WetTicksProvider.savePlayerWetTicks(event.getEntity());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
-        SchoolAffinityProgressProvider.saveAllProgress();
-        SchoolAffinityProgressProvider.clearCache();
+        PlayerAffinityDataProvider.saveAllData();
+        PlayerAffinityDataProvider.clearCache();
         WetTicksProvider.clearCache();
     }
 

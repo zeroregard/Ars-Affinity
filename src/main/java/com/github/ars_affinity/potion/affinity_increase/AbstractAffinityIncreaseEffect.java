@@ -1,8 +1,8 @@
 package com.github.ars_affinity.potion.affinity_increase;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgress;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityData;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.registry.ModPotions;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
@@ -12,6 +12,8 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Map;
 
 public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
     
@@ -34,8 +36,8 @@ public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
                 return;
             }
             
-            SchoolAffinityProgress affinityProgress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-            if (affinityProgress != null) {
+            PlayerAffinityData affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+            if (affinityData != null) {
                 // Calculate the increase amount
                 float increaseAmount = ArsAffinityConfig.AFFINITY_POTION_INCREASE_PERCENTAGE.get().floatValue();
                 
@@ -43,7 +45,15 @@ public abstract class AbstractAffinityIncreaseEffect extends MobEffect {
                 java.util.Map<SpellSchool, Float> changes = calculatePotionAffinityChanges(targetSchool, increaseAmount);
                 
                 // Apply changes with proper opposing school logic
-                affinityProgress.applyChanges(changes);
+                // Convert percentage changes to point changes
+                for (Map.Entry<SpellSchool, Float> entry : changes.entrySet()) {
+                    SpellSchool school = entry.getKey();
+                    float percentageChange = entry.getValue();
+                    int pointChange = Math.round(percentageChange * 10); // Assuming 10 total perks per school
+                    if (pointChange > 0) {
+                        affinityData.addSchoolPoints(school, pointChange);
+                    }
+                }
                 
                 ArsAffinity.LOGGER.info("{} AFFINITY - Applied {} affinity potion effect for player: {} - increased by {}%", 
                     schoolName.toUpperCase(), schoolName, player.getName().getString(), increaseAmount * 100.0f);

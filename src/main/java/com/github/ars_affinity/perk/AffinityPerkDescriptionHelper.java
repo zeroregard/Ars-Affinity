@@ -3,7 +3,6 @@ package com.github.ars_affinity.perk;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EntityType;
-import com.github.ars_affinity.perk.AffinityPerk;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +14,9 @@ public class AffinityPerkDescriptionHelper {
 		String translationKey = "ars_affinity.perk." + perk.perk.name();
 
 		switch (perk.perk) {
-			case PASSIVE_DOUSED:
-			case PASSIVE_DEHYDRATED:
-			case PASSIVE_BURIED:
-			case PASSIVE_GROUNDED:
 			case PASSIVE_MANA_TAP:
 			case PASSIVE_FIRE_THORNS:
 			case PASSIVE_HEALING_AMPLIFICATION:
-			case PASSIVE_BLIGHTED:
 			case PASSIVE_FREE_JUMP:
 			case PASSIVE_COLD_WALKER:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
@@ -65,16 +59,6 @@ public class AffinityPerkDescriptionHelper {
 					return Component.translatable(translationKey, (int)(ghostStepPerk.amount * 100), ghostStepPerk.time, ghostStepPerk.cooldown);
 				}
 				return Component.translatable(translationKey, 0, 0, 0);
-			case PASSIVE_MOB_PACIFICATION:
-				if (perk instanceof AffinityPerk.EntityBasedPerk entityPerk) {
-					if (entityPerk.entities != null && !entityPerk.entities.isEmpty()) {
-						String entityNames = getEntityNames(entityPerk.entities);
-						return Component.translatable(translationKey, entityNames);
-					} else {
-						return Component.translatable(translationKey, "unknown entities");
-					}
-				}
-				return Component.translatable(translationKey, "unknown entities");
 			case ACTIVE_ICE_BLAST:
 				if (perk instanceof AffinityPerk.ActiveAbilityPerk activePerk) {
 					return Component.translatable(translationKey, (int)(activePerk.manaCost * 100), activePerk.cooldown / 20);
@@ -100,11 +84,12 @@ public class AffinityPerkDescriptionHelper {
 					}
 				}
 				return Component.translatable(translationKey, 0, "unknown entities");
-			case PASSIVE_MANIPULATION_SICKNESS:
-				if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
-					return Component.translatable(translationKey, sicknessPerk.duration / 20, sicknessPerk.hunger);
-				}
-				return Component.translatable(translationKey, 0, 0);
+			// PASSIVE_MANIPULATION_SICKNESS removed - no longer needed in new system
+			// case PASSIVE_MANIPULATION_SICKNESS:
+			//     if (perk instanceof AffinityPerk.ManipulationSicknessPerk sicknessPerk) {
+			//         return Component.translatable(translationKey, sicknessPerk.duration / 20, sicknessPerk.hunger);
+			//     }
+			//     return Component.translatable(translationKey, 0, 0);
 			default:
 				return Component.translatable(translationKey, 0);
 		}

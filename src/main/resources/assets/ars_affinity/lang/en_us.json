@@ -108,7 +108,9 @@
   "tooltip.ars_affinity.anchor_charm.charging_progress": "Charging... %d%%",
 
   "ars_affinity.source_per_charge": "Source per charge: %d",
-  "ars_affinity.tier_change.message": "Your affinity towards %s changed to %s",
+  "ars_affinity.point_allocated.message": "Your affinity in %s has increased by %s %s",
+  
+  "ars_affinity.screen.perk_tree.title": "%s Perk Tree",
 
   "itemGroup.ars_affinity": "Ars Affinity"
 }

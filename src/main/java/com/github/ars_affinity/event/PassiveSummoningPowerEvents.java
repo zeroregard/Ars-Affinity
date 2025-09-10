@@ -2,7 +2,7 @@ package com.github.ars_affinity.event;
 
 import com.alexthw.sauce.registry.ModRegistry;
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;

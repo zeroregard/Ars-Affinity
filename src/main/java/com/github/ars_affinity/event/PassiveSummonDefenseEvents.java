@@ -1,7 +1,7 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -20,13 +20,14 @@ public class PassiveSummonDefenseEvents {
         if (!(event.shooter instanceof Player player)) return;
         if (event.world.isClientSide()) return;
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress != null) {
-            int conjurationTier = progress.getTier(SpellSchools.CONJURATION);
-            if (conjurationTier > 0) { // Any tier above 0
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data != null) {
+            // Check if player has any conjuration points (equivalent to tier > 0)
+            int conjurationPoints = data.getSchoolPoints(SpellSchools.CONJURATION);
+            if (conjurationPoints > 0) { // Any points above 0
                 AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SUMMON_DEFENSE, AffinityPerk.AmountBasedPerk.class, perk -> {
                     if (event.summon.getLivingEntity() != null) {
-                        equipArmorToSummon(event.summon.getLivingEntity(), conjurationTier, event.world);
+                        equipArmorToSummon(event.summon.getLivingEntity(), conjurationPoints, event.world);
                         ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMON_DEFENSE perk",
                             player.getName().getString());
                     }

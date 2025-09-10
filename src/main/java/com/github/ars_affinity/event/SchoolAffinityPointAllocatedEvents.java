@@ -1,7 +1,6 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.registry.ModSounds;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
@@ -14,11 +13,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TierChangeEffectsEvents {
+public class SchoolAffinityPointAllocatedEvents {
     
-    // Map of schools to their corresponding tier change sounds
+    // Map of schools to their corresponding point allocation sounds
     private static final Map<SpellSchool, SoundEvent> SCHOOL_SOUNDS = new HashMap<>();
-    private static final Map<Integer, SoundEvent> TIER_SOUNDS = new HashMap<>();
     
     static {
         SCHOOL_SOUNDS.put(SpellSchools.ELEMENTAL_FIRE, ModSounds.TIER_CHANGE_FIRE.get());
@@ -30,54 +28,28 @@ public class TierChangeEffectsEvents {
         SCHOOL_SOUNDS.put(SpellSchools.NECROMANCY, ModSounds.TIER_CHANGE_NECROMANCY.get());
         SCHOOL_SOUNDS.put(SpellSchools.MANIPULATION, ModSounds.TIER_CHANGE_MANIPULATION.get());
     }
-
-    static {
-        TIER_SOUNDS.put(1, ModSounds.TIER_CHANGE_ONE.get());
-        TIER_SOUNDS.put(2, ModSounds.TIER_CHANGE_TWO.get());
-        TIER_SOUNDS.put(3, ModSounds.TIER_CHANGE_THREE.get());
-    }
     
     @SubscribeEvent
-    public static void onTierChange(TierChangeEvent event) {
-        if (!event.hasTierChanged()) {
+    public static void onPointAllocated(SchoolAffinityPointAllocatedEvent event) {
+        if (!event.hasPointsGained()) {
             return;
         }
         
         Player player = event.getPlayer();
         SpellSchool school = event.getSchool();
-        int oldTier = event.getOldTier();
-        int newTier = event.getNewTier();
+        int pointsGained = event.getPointsGained();
+        int totalPoints = event.getTotalPoints();
         
         // Only handle server-side events
         if (player.level().isClientSide()) {
             return;
         }
         
-
-        if (newTier > oldTier) {
-            playTierChangeSound(player, school, newTier);
-            sendTierChangeMessage(player, school, newTier);
-        }
-        
-        SchoolAffinityProgressHelper.getAffinityProgress(player).rebuildPerkIndex();
+        playPointAllocatedSound(player, school);
+        sendPointAllocatedMessage(player, school, pointsGained, totalPoints);
     }
     
-    private static void playTierChangeSound(Player player, SpellSchool school, int tier) {
-        SoundEvent tierSound = TIER_SOUNDS.get(tier);
-        if (tierSound == null) {
-            ArsAffinity.LOGGER.warn("No tier sound found for tier: " + tier);
-            return;
-        }
-
-        player.level().playSound(
-                null,
-                player.getX(), player.getY(), player.getZ(),
-                tierSound,
-                SoundSource.BLOCKS,
-                1.0f,
-                1.0f
-        );
-
+    private static void playPointAllocatedSound(Player player, SpellSchool school) {
         SoundEvent schoolSound = SCHOOL_SOUNDS.get(school);
         if (schoolSound == null) {
             ArsAffinity.LOGGER.warn("No sound found for school: " + school.getId());
@@ -95,16 +67,18 @@ public class TierChangeEffectsEvents {
         );
     }
     
-    private static void sendTierChangeMessage(Player player, SpellSchool school, int newTier) {
+    private static void sendPointAllocatedMessage(Player player, SpellSchool school, int pointsGained, int totalPoints) {
         // Create the message components
         Component schoolName = school.getTextComponent();
-        Component tierText = Component.literal("Tier " + newTier);
+        Component pointsText = Component.literal("+" + pointsGained + " points");
+        Component totalText = Component.literal("(" + totalPoints + " total)");
         
-        // Create the full message: "Your affinity towards [School] changed to [Tier]"
+        // Create the full message: "Your affinity in %s has increased by +X points (Y total)"
         Component message = Component.translatable(
-            "ars_affinity.tier_change.message",
+            "ars_affinity.point_allocated.message",
             schoolName,
-            tierText
+            pointsText,
+            totalText
         );
         
         // Send the message to the player

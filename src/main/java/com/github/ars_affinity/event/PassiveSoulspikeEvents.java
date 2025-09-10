@@ -1,7 +1,7 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -50,11 +50,11 @@ public class PassiveSoulspikeEvents {
             return;
         }
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) return;
 
-        int animaTier = progress.getTier(SpellSchools.NECROMANCY);
-        if (animaTier > 0) {
+        int animaPoints = data.getSchoolPoints(SpellSchools.NECROMANCY);
+        if (animaPoints > 0) {
             AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
                 if (RANDOM.nextFloat() < amountPerk.amount) {
                     applySoulspike(player, attacker, false);
@@ -79,11 +79,11 @@ public class PassiveSoulspikeEvents {
         var hitEntity = entityHitResult.getEntity();
         if (!(hitEntity instanceof Player player)) return;
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) return;
 
-        int animaTier = progress.getTier(SpellSchools.NECROMANCY);
-        if (animaTier > 0) {
+        int animaPoints = data.getSchoolPoints(SpellSchools.NECROMANCY);
+        if (animaPoints > 0) {
             AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
                 float rangedChance = amountPerk.amount * 0.5f;
                 if (RANDOM.nextFloat() < rangedChance) {
