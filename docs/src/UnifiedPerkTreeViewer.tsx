@@ -50,14 +50,14 @@ const DEFAULT_ZOOM = 2.0  // 200% (new "100%")
 const ZOOM_SPEED = 0.1
 
 const schools: School[] = [
-    'abjuration',
-    'earth', 
-    'manipulation',
-    'fire',
-    'necromancy',
-    'air',
-    'conjuration',
-    'water'
+    'abjuration',    // Top (upside down)
+    'earth',         // Top-right
+    'manipulation',  // Right
+    'fire',          // Bottom-right
+    'necromancy',    // Bottom
+    'air',           // Bottom-left
+    'conjuration',   // Left
+    'water'          // Top-left
 ]
 
 function UnifiedPerkTreeViewer() {
@@ -90,32 +90,32 @@ function UnifiedPerkTreeViewer() {
             
             const schoolTreesData = validTrees.map(({ school, data }, index) => {
                 const nodePositions = calculateNodePositions(data, school, index)
+                
+                // Calculate circular positions (starting from top with -90 degree offset)
+                const angle = (index * Math.PI * 2) / validTrees.length - Math.PI / 2
+                const radius = SCHOOL_SPACING * 1.5
+                const centerX = Math.cos(angle) * radius
+                const centerY = Math.sin(angle) * radius
+                
                 return {
                     school,
                     data,
                     nodePositions,
-                    centerX: (index % 4) * SCHOOL_SPACING - SCHOOL_SPACING * 1.5,
-                    centerY: Math.floor(index / 4) * SCHOOL_SPACING - SCHOOL_SPACING * 0.5
+                    centerX,
+                    centerY
                 }
             })
 
-            // Calculate the center of the content grid
-            const schoolCount = schoolTreesData.length
-            const cols = Math.min(4, schoolCount)
-            const rows = Math.ceil(schoolCount / 4)
-            const contentCenterX = -((cols - 1) * SCHOOL_SPACING) / 2
-            const contentCenterY = -((rows - 1) * SCHOOL_SPACING) / 2
-            
+            // For circular layout, the content center is at (0, 0)
             // To center content on screen: translate so content center appears at screen center
-            // Screen center in SVG coordinates = (screenWidth/2, screenHeight/2) / zoom
             const screenWidth = window.innerWidth
             const screenHeight = window.innerHeight
             const screenCenterX = screenWidth / 2 / DEFAULT_ZOOM
             const screenCenterY = screenHeight / 2 / DEFAULT_ZOOM
             
             // Translate to put content center at screen center
-            const centerX = screenCenterX - contentCenterX
-            const centerY = screenCenterY - contentCenterY
+            const centerX = screenCenterX
+            const centerY = screenCenterY
             
             setViewport(prev => ({ ...prev, x: centerX, y: centerY, zoom: DEFAULT_ZOOM }))
 
@@ -143,16 +143,13 @@ function UnifiedPerkTreeViewer() {
             nodes.sort((a, b) => a.id.localeCompare(b.id))
         })
 
-        // Calculate positions relative to school center
-        const schoolCenterX = (schoolIndex % 4) * SCHOOL_SPACING - SCHOOL_SPACING * 1.5
-        const schoolCenterY = Math.floor(schoolIndex / 4) * SCHOOL_SPACING - SCHOOL_SPACING * 0.5
-
+        // Calculate positions relative to (0,0) since we translate each school to its circular position
         tiers.forEach((nodes, tier) => {
-            const startX = schoolCenterX - (nodes.length - 1) * NODE_SPACING / 2
+            const startX = -(nodes.length - 1) * NODE_SPACING / 2
             nodes.forEach((node, index) => {
                 positions.set(node.id, {
                     x: startX + index * NODE_SPACING,
-                    y: schoolCenterY + tier * TIER_SPACING,
+                    y: tier * TIER_SPACING,
                     tier,
                     index,
                     school
@@ -608,19 +605,39 @@ function UnifiedPerkTreeViewer() {
                     </defs>
                     <rect x="-2000" y="-2000" width="4000" height="4000" fill="url(#grid)" />
 
-                    {/* School labels */}
-                    {renderSchoolLabels()}
-
-                    {/* Connections for all schools */}
+                    {/* School trees */}
                     {schoolTrees.map(schoolTree => (
-                        <g key={`connections-${schoolTree.school}`}>
+                        <g 
+                            key={schoolTree.school}
+                            transform={`translate(${schoolTree.centerX}, ${schoolTree.centerY})`}
+                        >
+                            {/* School label */}
+                            <g>
+                                <rect
+                                    x={-80}
+                                    y={-100 - 15}
+                                    width="160"
+                                    height="30"
+                                    fill="rgba(0, 0, 0, 0.7)"
+                                    rx="5"
+                                />
+                                <text
+                                    x={0}
+                                    y={-100 + 5}
+                                    textAnchor="middle"
+                                    fill="white"
+                                    fontSize="16"
+                                    fontFamily="Minecraft, monospace"
+                                    fontWeight="bold"
+                                >
+                                    {titleCase(schoolTree.school)}
+                                </text>
+                            </g>
+
+                            {/* Connections */}
                             {renderSchoolConnections(schoolTree)}
-                        </g>
-                    ))}
 
-                    {/* Nodes for all schools */}
-                    {schoolTrees.map(schoolTree => (
-                        <g key={`nodes-${schoolTree.school}`}>
+                            {/* Nodes */}
                             {renderSchoolNodes(schoolTree)}
                         </g>
                     ))}

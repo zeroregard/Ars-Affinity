@@ -1,0 +1,31 @@
+{
+  "perks": [
+    {
+      "id": "earth_stone_skin_1",
+      "perk": "PASSIVE_STONE_SKIN",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["earth_mob_pacification_1"]
+    },
+    {
+      "id": "earth_ground_slam_1",
+      "perk": "ACTIVE_GROUND_SLAM",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "ACTIVE",
+      "level": 1,
+      "prerequisites": ["earth_mob_pacification_2", "earth_stone_skin_1"]
+    },
+    {
+      "id": "earth_stone_skin_2",
+      "perk": "PASSIVE_STONE_SKIN",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["earth_stone_skin_1"]
+    }
+  ]
+}

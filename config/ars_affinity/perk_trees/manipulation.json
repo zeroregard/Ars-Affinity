@@ -1,0 +1,57 @@
+{
+  "perks": [
+    {
+      "id": "manipulation_mana_tap_1",
+      "perk": "PASSIVE_MANA_TAP",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1
+    },
+    {
+      "id": "manipulation_mana_tap_2",
+      "perk": "PASSIVE_MANA_TAP",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["manipulation_mana_tap_1"]
+    },
+    {
+      "id": "manipulation_deflection_1",
+      "perk": "PASSIVE_DEFLECTION",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["manipulation_mana_tap_1"]
+    },
+    {
+      "id": "manipulation_mana_tap_3",
+      "perk": "PASSIVE_MANA_TAP",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 3,
+      "prerequisites": ["manipulation_mana_tap_2"]
+    },
+    {
+      "id": "manipulation_swap_ability_1",
+      "perk": "ACTIVE_SWAP_ABILITY",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "ACTIVE",
+      "level": 1,
+      "prerequisites": ["manipulation_mana_tap_2"]
+    },
+    {
+      "id": "manipulation_deflection_2",
+      "perk": "PASSIVE_DEFLECTION",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["manipulation_deflection_1"]
+    }
+  ]
+}
