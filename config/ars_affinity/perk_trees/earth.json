@@ -7,7 +7,7 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "level": 1,
-      "prerequisites": ["earth_mob_pacification_1"]
+      "prerequisites": []
     },
     {
       "id": "earth_ground_slam_1",
@@ -16,7 +16,7 @@
       "pointCost": 1,
       "category": "ACTIVE",
       "level": 1,
-      "prerequisites": ["earth_mob_pacification_2", "earth_stone_skin_1"]
+      "prerequisites": ["earth_stone_skin_1"]
     },
     {
       "id": "earth_stone_skin_2",

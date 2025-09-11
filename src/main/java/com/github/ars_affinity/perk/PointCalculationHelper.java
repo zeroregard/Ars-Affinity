@@ -16,21 +16,40 @@ public class PointCalculationHelper {
      * 
      * @param mana The mana cost of the spell
      * @param currentPoints The current total points in this school
+     * @param totalPointsAcrossAllSchools The total points across all schools
      * @return The points to add to this school
      */
-    public static int calculatePointsGained(float mana, int currentPoints) {
+    public static int calculatePointsGained(float mana, int currentPoints, int totalPointsAcrossAllSchools) {
         float multiplier = ArsAffinityConfig.AFFINITY_GAIN_MULTIPLIER.get().floatValue();
         float basePoints = mana * multiplier;
         
-        // Apply scaling decay - points become harder to gain as you have more
-        float decayStrength = ArsAffinityConfig.AFFINITY_SCALING_DECAY_STRENGTH.get().floatValue();
-        float minimumFactor = ArsAffinityConfig.AFFINITY_SCALING_MINIMUM_FACTOR.get().floatValue();
+        // Apply school-specific scaling decay - points become harder to gain as you have more in this school
+        float schoolDecayStrength = ArsAffinityConfig.AFFINITY_SCALING_DECAY_STRENGTH.get().floatValue();
+        float schoolMinimumFactor = ArsAffinityConfig.AFFINITY_SCALING_MINIMUM_FACTOR.get().floatValue();
+        float schoolScalingFactor = calculateScalingFactor(currentPoints, schoolDecayStrength, schoolMinimumFactor);
         
-        // Calculate scaling factor using the same formula as the old system
-        // This ensures 0-100% affinity maps to the same progression curve
-        float scalingFactor = calculateScalingFactor(currentPoints, decayStrength, minimumFactor);
+        // Apply global scaling decay - points become harder to gain as you have more total points across all schools
+        float globalDecayStrength = ArsAffinityConfig.GLOBAL_SCALING_DECAY_STRENGTH.get().floatValue();
+        float globalMinimumFactor = ArsAffinityConfig.GLOBAL_SCALING_MINIMUM_FACTOR.get().floatValue();
+        float globalScalingFactor = calculateScalingFactor(totalPointsAcrossAllSchools, globalDecayStrength, globalMinimumFactor);
         
-        return Math.max(1, Math.round(basePoints * scalingFactor));
+        // Combine both scaling factors (multiplicative)
+        float combinedScalingFactor = schoolScalingFactor * globalScalingFactor;
+        
+        return Math.max(1, Math.round(basePoints * combinedScalingFactor));
+    }
+    
+    /**
+     * Calculate the base points gained from mana usage for a specific school.
+     * This is a convenience method for backward compatibility.
+     * 
+     * @param mana The mana cost of the spell
+     * @param currentPoints The current total points in this school
+     * @return The points to add to this school
+     */
+    public static int calculatePointsGained(float mana, int currentPoints) {
+        // Use 0 total points for backward compatibility (no global scaling)
+        return calculatePointsGained(mana, currentPoints, 0);
     }
     
     /**

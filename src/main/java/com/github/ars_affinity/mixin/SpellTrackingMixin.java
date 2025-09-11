@@ -7,7 +7,6 @@ import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.event.SchoolAffinityPointAllocatedEvent;
 import com.github.ars_affinity.perk.PointCalculationHelper;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
-import com.github.ars_affinity.util.CuriosHelper;
 import com.github.ars_affinity.util.GlyphBlacklistHelper;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
@@ -132,12 +131,6 @@ public abstract class SpellTrackingMixin {
     }
 
     private void trackSchoolProgress(Player player, AbstractSpellPart glyph, List<AbstractAugment> augments) {
-        if (CuriosHelper.hasActiveAnchorCharm(player)) {
-            ArsAffinity.LOGGER.info("Player {} has active Anchor Charm - preventing affinity changes", player.getName().getString());
-            CuriosHelper.consumeAnchorCharmCharge(player);
-            return;
-        }
-        
         // Check if the glyph is blacklisted
         if (GlyphBlacklistHelper.isGlyphBlacklisted(glyph)) {
             ArsAffinity.LOGGER.info("Glyph {} is blacklisted - skipping affinity progress tracking", 
@@ -231,7 +224,10 @@ public abstract class SpellTrackingMixin {
             return changes;
         }
         
-        int pointsGained = PointCalculationHelper.calculatePointsGained(mana, currentPoints);
+        // Calculate total points across all schools for global scaling
+        int totalPointsAcrossAllSchools = affinityData.getTotalPointsAcrossAllSchools();
+        
+        int pointsGained = PointCalculationHelper.calculatePointsGained(mana, currentPoints, totalPointsAcrossAllSchools);
         
         // Ensure we don't exceed the maximum points
         int newTotalPoints = currentPoints + pointsGained;

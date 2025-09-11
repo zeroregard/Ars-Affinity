@@ -145,9 +145,6 @@ body {
   transition: filter 0.2s ease;
 }
 
-.perk-node:hover {
-  filter: brightness(1.2);
-}
 
 .perk-connection {
   stroke: #888;

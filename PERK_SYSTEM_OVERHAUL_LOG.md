@@ -135,8 +135,16 @@ public class PerkAllocation {
 ### Point Gain Formula:
 ```
 baseGain = manaCost * schoolMultiplier
-scaledGain = baseGain * (1 - (totalPoints / maxPoints)^scalingFactor)
+schoolScaling = 1 / (1 + currentSchoolPoints^schoolDecayStrength)
+globalScaling = 1 / (1 + totalPointsAcrossAllSchools^globalDecayStrength)
+finalGain = baseGain * schoolScaling * globalScaling
 ```
+
+### Scaling System:
+- **School-specific scaling**: Points become harder to gain as you have more points in that specific school
+- **Global scaling**: Points become harder to gain as you have more total points across all schools
+- **Combined effect**: Both scaling factors multiply together, creating exponential difficulty
+- **Configurable**: Both decay strength and minimum factors are configurable per server
 
 ### Perk Cost Formula:
 ```
@@ -230,6 +238,58 @@ config/ars_affinity/
 2. Comprehensive testing of all functionality
 3. Performance optimization if needed
 4. Documentation updates
+
+## Recent Changes
+
+### Removed Potions and Affinity Anchor Charm
+- [x] **Removed all affinity potions**: Deleted all potion effects and potions that increased affinity percentages
+- [x] **Removed Affinity Anchor Charm**: Deleted the charm item that prevented affinity changes
+- [x] **Cleaned up related files**: Removed all associated models, recipes, language entries, and configuration options
+- [x] **Updated spell tracking**: Removed anchor charm checks from spell tracking mixin
+- [x] **Simplified data generation**: Removed potion and charm recipe/model generation
+
+This removal aligns with the migration away from pure affinity-based progression to the new point-buy perk system.
+
+### Adjusted Point Gain Rate
+- [x] **Reduced affinity gain multiplier**: Changed from 0.0025 to 0.0001 (25x reduction)
+- [x] **Balanced progression**: Players now need ~10,000 mana worth of spells per point gained
+- [x] **Meaningful progression**: Maxing a school (4-8 perks) requires significant spell usage
+
+This ensures the perk system provides meaningful progression without being too easy to max out.
+
+### Implemented Global Scaling System
+- [x] **Added global scaling configuration**: New config options for global scaling decay strength and minimum factor
+- [x] **Implemented cross-school scaling**: The more total points you have across all schools, the harder it becomes to gain points in any school
+- [x] **Encourages specialization**: Players can still spread points across schools, but specializing in one school is more efficient
+- [x] **Configurable scaling**: Server admins can adjust how aggressive the global scaling is
+- [x] **Combined scaling**: Both school-specific and global scaling work together multiplicatively
+
+This creates meaningful choices between specializing in one school vs. spreading points across multiple schools, encouraging but not mandating specialization.
+
+### Enhanced Reset Command
+- [x] **Updated reset command syntax**: Now supports `/ars-affinity reset <school|all>` instead of just resetting all
+- [x] **Created reusable chat message system**: ChatMessageHelper class for consistent messaging
+- [x] **Added specific school reset**: Players can reset individual schools with `/ars-affinity reset fire`
+- [x] **Added all schools reset**: Players can reset all schools with `/ars-affinity reset all`
+- [x] **Enhanced feedback**: Chat messages show exactly how many points were reset
+- [x] **Prepared for consumables**: Chat message system is designed to be reusable for future consumable items
+
+This makes the reset functionality more flexible and prepares the foundation for consumable reset items.
+
+### Tablet of Amnesia
+- [x] **Created Tablet of Amnesia item**: A consumable tablet that resets affinity progress in a specific school
+- [x] **Essence-based school detection**: Tablet must be augmented with an essence to determine which school to reset
+- [x] **School-specific recipes**: Separate recipes for each school using their respective essences
+- [x] **Reusable chat messaging**: Uses the same ChatMessageHelper system as the reset command
+- [x] **Proper item properties**: Consumable food item with appropriate tooltips and usage instructions
+- [x] **Complete asset pipeline**: Textures, models, recipes, and language entries all created
+
+**Usage:**
+1. Craft base tablet using book + 4 paper (100 source cost)
+2. Augment with 4 essences of desired school (200 source cost)
+3. Right-click to consume and reset that school's affinity to 0 points
+
+This provides players with a consumable way to reset specific schools, encouraging strategic specialization choices.
 
 ## Notes
 - Keep existing perk effects, just change how they're allocated

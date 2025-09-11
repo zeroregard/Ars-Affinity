@@ -10,11 +10,11 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue AFFINITY_GAIN_MULTIPLIER;
     public static ModConfigSpec.DoubleValue AFFINITY_SCALING_DECAY_STRENGTH;
     public static ModConfigSpec.DoubleValue AFFINITY_SCALING_MINIMUM_FACTOR;
-    public static ModConfigSpec.DoubleValue AFFINITY_POTION_INCREASE_PERCENTAGE;
+    public static ModConfigSpec.DoubleValue GLOBAL_SCALING_DECAY_STRENGTH;
+    public static ModConfigSpec.DoubleValue GLOBAL_SCALING_MINIMUM_FACTOR;
     public static ModConfigSpec.IntValue AFFINITY_CONSUMABLE_COOLDOWN_DURATION;
     
     public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
-    public static ModConfigSpec.IntValue ANCHOR_CHARM_DEFAULT_CHARGES;
     
     // Tier Threshold Configuration
     public static ModConfigSpec.DoubleValue TIER_1_THRESHOLD_PERCENTAGE;
@@ -53,10 +53,7 @@ public class ArsAffinityConfig {
             .defineInRange("opposingSchoolPenaltyPercentage", 0.66, 0.0, 1.0);
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
-            .defineInRange("affinityGainMultiplier", 0.0025, 0.0001, 0.1);
-        AFFINITY_POTION_INCREASE_PERCENTAGE = SERVER_BUILDER
-            .comment("Percentage increase for affinity potions (0.0 to 1.0)")
-            .defineInRange("affinityPotionIncreasePercentage", 0.10, 0.01, 1.0);
+            .defineInRange("affinityGainMultiplier", 0.000001, 0.0001, 0.1);
         AFFINITY_CONSUMABLE_COOLDOWN_DURATION = SERVER_BUILDER
             .comment("Duration in seconds for affinity consumable cooldown effect (default 30 minutes = 1800 seconds)")
             .defineInRange("affinityConsumableCooldownDuration", 1800, 60, 7200);
@@ -78,13 +75,14 @@ public class ArsAffinityConfig {
         AFFINITY_SCALING_MINIMUM_FACTOR = SERVER_BUILDER
             .comment("Minimum percentage of original gain that can be applied (0.1 = 10%, 0.05 = 5%)")
             .defineInRange("affinityScalingMinimumFactor", 0.1, 0.01, 0.5);
+        GLOBAL_SCALING_DECAY_STRENGTH = SERVER_BUILDER
+            .comment("How quickly affinity gain decreases as total points across all schools increase (1.0 = linear, 2.0 = exponential, higher = more aggressive decay)")
+            .defineInRange("globalScalingDecayStrength", 2.0, 0.5, 5.0);
+        GLOBAL_SCALING_MINIMUM_FACTOR = SERVER_BUILDER
+            .comment("Minimum percentage of original gain when you have many total points (0.1 = 10%, 0.05 = 5%)")
+            .defineInRange("globalScalingMinimumFactor", 0.2, 0.01, 0.5);
         SERVER_BUILDER.pop();
         
-        SERVER_BUILDER.comment("Anchor Charm Configuration").push("anchor_charm");
-        ANCHOR_CHARM_DEFAULT_CHARGES = SERVER_BUILDER
-            .comment("Default number of charges for new Anchor Charms. Each spell cast consumes 1 charge when preventing affinity changes.")
-            .defineInRange("defaultCharges", 1000, 1, 10000);
-        SERVER_BUILDER.pop();
         
         SERVER_BUILDER.comment("ICE BLAST Active Ability Configuration").push("ice_blast");
         ICE_BLAST_DEFAULT_MANA_COST = SERVER_BUILDER

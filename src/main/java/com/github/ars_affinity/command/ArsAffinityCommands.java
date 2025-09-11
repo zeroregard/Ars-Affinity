@@ -8,6 +8,7 @@ import com.github.ars_affinity.perk.AffinityPerkType;
 
 import com.github.ars_affinity.perk.PerkAllocation;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
+import com.github.ars_affinity.util.ChatMessageHelper;
 import com.github.ars_affinity.util.GlyphBlacklistHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.mojang.brigadier.CommandDispatcher;
@@ -41,7 +42,9 @@ public class ArsAffinityCommands {
                     .suggests(getSchoolSuggestions())
                     .executes(ArsAffinityCommands::getAffinity)))
             .then(Commands.literal("reset")
-                .executes(ArsAffinityCommands::resetAllAffinities))
+                .then(Commands.argument("target", StringArgumentType.word())
+                    .suggests(getResetSuggestions())
+                    .executes(ArsAffinityCommands::resetAffinity)))
             .then(Commands.literal("list")
                 .executes(ArsAffinityCommands::listAllAffinities))
             .then(Commands.literal("list-perks")
@@ -109,25 +112,42 @@ public class ArsAffinityCommands {
         return 1;
     }
 
-    private static int resetAllAffinities(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int resetAffinity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         ServerPlayer player = source.getPlayerOrException();
+        String target = StringArgumentType.getString(context, "target");
 
         var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         if (data == null) {
-            source.sendFailure(Component.literal("Failed to get affinity data for player"));
+            ChatMessageHelper.sendAllSchoolsResetFailureMessage(player, "Failed to get affinity data for player");
             return 0;
         }
 
-        // Reset all schools to 0 points
-        for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
+        if (target.equalsIgnoreCase("all")) {
+            // Reset all schools
+            int totalPointsReset = 0;
+            for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
+                int currentPoints = data.getSchoolPoints(school);
+                totalPointsReset += currentPoints;
+                data.setSchoolPoints(school, 0);
+            }
+            
+            ChatMessageHelper.sendAllSchoolsResetMessage(player, totalPointsReset);
+            return 1;
+        } else {
+            // Reset specific school
+            SpellSchool school = parseSpellSchool(target);
+            if (school == null) {
+                source.sendFailure(Component.literal("Unknown school: " + target + ". Use 'all' to reset all schools or a valid school name."));
+                return 0;
+            }
+            
+            int currentPoints = data.getSchoolPoints(school);
             data.setSchoolPoints(school, 0);
+            
+            ChatMessageHelper.sendSchoolResetMessage(player, school, currentPoints);
+            return 1;
         }
-
-        source.sendSuccess(() -> Component.literal("Reset all affinities to 0 points"), true);
-        ArsAffinity.LOGGER.info("Player {} reset all affinities to 0 points", player.getName().getString());
-
-        return 1;
     }
 
     private static int listAllAffinities(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -216,6 +236,19 @@ public class ArsAffinityCommands {
 
     private static SuggestionProvider<CommandSourceStack> getSchoolSuggestions() {
         return (context, builder) -> {
+            String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
+                .map(SpellSchool::getId)
+                .toArray(String[]::new);
+            return SharedSuggestionProvider.suggest(schoolNames, builder);
+        };
+    }
+    
+    private static SuggestionProvider<CommandSourceStack> getResetSuggestions() {
+        return (context, builder) -> {
+            // Add "all" as the first suggestion
+            builder.suggest("all");
+            
+            // Add all school names
             String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
                 .map(SpellSchool::getId)
                 .toArray(String[]::new);

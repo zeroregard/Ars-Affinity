@@ -1,0 +1,29 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    },
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    },
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    },
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    }
+  ],
+  "reagent": {
+    "item": "ars_affinity:tablet_of_amnesia"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_affinity:tablet_of_amnesia",
+    "nbt": {
+      "school": "abjuration"
+    }
+  },
+  "sourceCost": 200
+}

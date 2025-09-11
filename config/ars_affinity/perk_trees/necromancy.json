@@ -60,7 +60,7 @@
       "pointCost": 1,
       "category": "ACTIVE",
       "level": 1,
-      "prerequisites": ["necromancy_soulspike_2", "necromancy_lich_feast_1"]
+      "prerequisites": ["necromancy_soulspike_3"]
     }
   ]
 }

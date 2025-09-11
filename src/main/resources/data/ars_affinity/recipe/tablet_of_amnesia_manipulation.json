@@ -1,0 +1,29 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:manipulation_essence"
+    },
+    {
+      "item": "ars_nouveau:manipulation_essence"
+    },
+    {
+      "item": "ars_nouveau:manipulation_essence"
+    },
+    {
+      "item": "ars_nouveau:manipulation_essence"
+    }
+  ],
+  "reagent": {
+    "item": "ars_affinity:tablet_of_amnesia"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_affinity:tablet_of_amnesia",
+    "nbt": {
+      "school": "manipulation"
+    }
+  },
+  "sourceCost": 200
+}

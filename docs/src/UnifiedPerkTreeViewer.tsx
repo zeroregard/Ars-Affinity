@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import PerkRenderer from './PerkRenderer'
+import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 
 // School Icon Component
@@ -13,18 +13,33 @@ interface SchoolIconProps {
 const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle }) => {
     const iconRadius = 122
     const iconSize = 32
+    const circleRadius = 20
     const iconX = centerX + (iconRadius * Math.cos(angle)) - (iconSize / 2)
     const iconY = centerY + (iconRadius * Math.sin(angle)) - (iconSize / 2)
+    const circleX = centerX + (iconRadius * Math.cos(angle))
+    const circleY = centerY + (iconRadius * Math.sin(angle))
 
     return (
-        <image
-            href={`/icons/${school}_tooltip.png`}
-            x={iconX}
-            y={iconY}
-            width={iconSize}
-            height={iconSize}
-            imageRendering="pixelated"
-        />
+        <g>
+            {/* Background circle */}
+            <circle
+                cx={circleX}
+                cy={circleY}
+                r={circleRadius}
+                fill="rgba(0, 0, 0, 0.6)"
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeWidth="2"
+            />
+            {/* School icon */}
+            <image
+                href={`/icons/${school}_tooltip.png`}
+                x={iconX}
+                y={iconY}
+                width={iconSize}
+                height={iconSize}
+                imageRendering="pixelated"
+            />
+        </g>
     )
 }
 
@@ -70,11 +85,33 @@ interface SchoolTreeData {
 const NODE_SIZE = 32
 const NODE_SPACING = 60
 const TIER_SPACING = 80
-const SCHOOL_SPACING = 64
-const MIN_ZOOM = 0.5  // 100% (half of default)
-const MAX_ZOOM = 4.0  // 400% (double of default)
-const DEFAULT_ZOOM = 2.0  // 200% (new "100%")
+const SCHOOL_SPACING = 150
+const MIN_ZOOM = 0.75  // 75% minimum zoom
+const MAX_ZOOM = 4.0   // 400% maximum zoom
+const DEFAULT_ZOOM = 2.0  // 200% default zoom
 const ZOOM_SPEED = 0.1
+
+// School-specific colors for perk nodes
+const SCHOOL_COLORS: Record<School, { 
+    primary: string; 
+    hover: string; 
+    allocated: string;
+    gradient?: { from: string; to: string };
+}> = {
+    'manipulation': { primary: '#e99a58', hover: '#f2b366', allocated: '#10B981' }, // Orange
+    'fire': { primary: '#f06666', hover: '#f58a8a', allocated: '#10B981' }, // Red
+    'necromancy': { 
+        primary: 'url(#necromancy-gradient)', 
+        hover: 'url(#necromancy-gradient-hover)', 
+        allocated: '#10B981',
+        gradient: { from: '#282828', to: '#8b0606' }
+    }, // Anima gradient
+    'air': { primary: '#d4cf5a', hover: '#e0dc7a', allocated: '#10B981' }, // Yellow
+    'conjuration': { primary: '#6ae3ce', hover: '#8ae9d6', allocated: '#10B981' }, // Teal
+    'water': { primary: '#82a2ed', hover: '#a1baf0', allocated: '#10B981' }, // Blue
+    'abjuration': { primary: '#eb7cce', hover: '#f099d9', allocated: '#10B981' }, // Pink
+    'earth': { primary: '#62e296', hover: '#7ee8a8', allocated: '#10B981' } // Green
+}
 
 const schools: School[] = [
     'manipulation',  // Right (0°)
@@ -160,35 +197,67 @@ function UnifiedPerkTreeViewer() {
     // Calculate node positions for a specific school
     const calculateNodePositions = (data: PerkTreeData, school: School, outwardX: number, outwardY: number) => {
         const positions = new Map<string, NodePosition>()
-        const tiers = new Map<number, PerkNode[]>()
         
-        // Group nodes by tier
+        // Calculate prerequisite depth for each node
+        const nodeDepths = new Map<string, number>()
+        
+        // First, find all nodes with no prerequisites (depth 0)
         data.perks.forEach(node => {
-            if (!tiers.has(node.tier)) {
-                tiers.set(node.tier, [])
+            if (!node.prerequisites || node.prerequisites.length === 0) {
+                nodeDepths.set(node.id, 0)
             }
-            tiers.get(node.tier)!.push(node)
+        })
+        
+        // Then calculate depths for remaining nodes using BFS
+        let changed = true
+        while (changed) {
+            changed = false
+            data.perks.forEach(node => {
+                if (!nodeDepths.has(node.id) && node.prerequisites) {
+                    // Check if all prerequisites have their depths calculated
+                    const prereqDepths = node.prerequisites
+                        .map(prereqId => nodeDepths.get(prereqId))
+                        .filter(depth => depth !== undefined)
+                    
+                    if (prereqDepths.length === node.prerequisites.length) {
+                        // All prerequisites have depths, this node's depth is max + 1
+                        const maxPrereqDepth = Math.max(...prereqDepths)
+                        nodeDepths.set(node.id, maxPrereqDepth + 1)
+                        changed = true
+                    }
+                }
+            })
+        }
+        
+        // Group nodes by their calculated depth
+        const depthGroups = new Map<number, PerkNode[]>()
+        data.perks.forEach(node => {
+            const depth = nodeDepths.get(node.id) || 0
+            if (!depthGroups.has(depth)) {
+                depthGroups.set(depth, [])
+            }
+            depthGroups.get(depth)!.push(node)
         })
 
-        // Sort nodes within each tier
-        tiers.forEach(nodes => {
+        // Sort nodes within each depth group
+        depthGroups.forEach(nodes => {
             nodes.sort((a, b) => a.id.localeCompare(b.id))
         })
 
         // Calculate positions at a fixed radius from the global center
         // Position trees "outside" the circle (further from center than labels)
-        const treeRadius = SCHOOL_SPACING * 1.8 // Distance from center for the tree (larger than label radius)
+        const treeRadius = SCHOOL_SPACING * 1.5 // Distance from center for the tree (larger than label radius)
         
         // Calculate rotation direction based on school
         // Each school should grow in a specific direction
         const rotationAngle = getSchoolRotationAngle(school)
         
-        tiers.forEach((nodes, tier) => {
+        depthGroups.forEach((nodes, depth) => {
             const startX = -(nodes.length - 1) * NODE_SPACING / 2
             nodes.forEach((node, index) => {
                 // Position nodes in local coordinates first (before rotation)
                 let localX = startX + index * NODE_SPACING
-                let localY = tier * TIER_SPACING
+                let localY = depth * TIER_SPACING
                 
                 // Apply rotation to local coordinates
                 const cos = Math.cos(rotationAngle)
@@ -204,7 +273,7 @@ function UnifiedPerkTreeViewer() {
                 positions.set(node.id, {
                     x: treeCenterX + rotatedX,
                     y: treeCenterY + rotatedY,
-                    tier,
+                    tier: depth, // Use calculated depth as tier
                     index,
                     school
                 })
@@ -325,6 +394,8 @@ function UnifiedPerkTreeViewer() {
 
     // Render nodes for a specific school
     const renderSchoolNodes = (schoolTree: SchoolTreeData) => {
+        const schoolColors = SCHOOL_COLORS[schoolTree.school]
+        
         return schoolTree.data.perks.map(node => {
             const position = schoolTree.nodePositions.get(node.id)
             if (!position) return null
@@ -333,31 +404,73 @@ function UnifiedPerkTreeViewer() {
             const isAllocated = false // TODO: Check if perk is allocated
             const canAllocate = true // TODO: Check if perk can be allocated
 
+            // Choose color based on state
+            let fillColor: string
+            if (isAllocated) {
+                fillColor = schoolColors.allocated
+            } else if (canAllocate) {
+                fillColor = 'rgba(0, 0, 0, 0.6)' // Dark gray background like school icons
+            } else {
+                fillColor = '#6b7280' // Gray for unavailable
+            }
+
+            // Choose stroke color
+            const strokeColor = isHovered ? schoolColors.hover : '#374151'
+
+            // Calculate icon size and position
+            const iconSize = NODE_SIZE * 0.6 // 60% of node size
+            const iconX = position.x - iconSize / 2
+            const iconY = position.y - iconSize / 2
+
+            // Calculate Roman numeral position (bottom right of node)
+            const romanNumeral = toRomanNumeral(node.level)
+            const textSize = NODE_SIZE * 0.3 // 30% of node size
+            const textX = position.x + (NODE_SIZE / 2) - textSize * 0.3 // Right side with small padding
+            const textY = position.y + (NODE_SIZE / 2) - textSize * 0.2 // Bottom side with small padding
+
             return (
                 <g key={node.id}>
                     <circle
                         cx={position.x}
                         cy={position.y}
                         r={NODE_SIZE / 2}
-                        fill={isAllocated ? '#4ade80' : canAllocate ? '#3b82f6' : '#6b7280'}
-                        stroke={isHovered ? '#fbbf24' : '#374151'}
+                        fill={fillColor}
+                        stroke={strokeColor}
                         strokeWidth={isHovered ? 3 : 2}
                         className="perk-node"
                         onClick={() => handleNodeClick(node, schoolTree.school)}
                         onMouseEnter={() => setHoveredNode({ node, school: schoolTree.school })}
                         onMouseLeave={() => setHoveredNode(null)}
                     />
-                    <text
-                        x={position.x}
-                        y={position.y + 3}
-                        textAnchor="middle"
-                        fill="white"
-                        fontSize="10"
-                        fontFamily="Minecraft, monospace"
-                        pointerEvents="none"
-                    >
-                        {node.level}
-                    </text>
+                    {/* Node icon */}
+                    <image
+                        href={`/icons/${node.perk.toLowerCase()}.png`}
+                        x={iconX}
+                        y={iconY}
+                        width={iconSize}
+                        height={iconSize}
+                        imageRendering="pixelated"
+                        className="perk-node-icon"
+                        style={{ pointerEvents: 'none' }}
+                    />
+                    {/* Roman numeral for non-active abilities */}
+                    {node.category !== 'ACTIVE' && (
+                        <text
+                            x={textX}
+                            y={textY}
+                            fontSize={textSize}
+                            fill="white"
+                            textAnchor="end"
+                            dominantBaseline="baseline"
+                            style={{ 
+                                pointerEvents: 'none',
+                                fontWeight: 'bold',
+                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                            }}
+                        >
+                            {romanNumeral}
+                        </text>
+                    )}
                 </g>
             )
         })
@@ -386,13 +499,8 @@ function UnifiedPerkTreeViewer() {
                         Cost: {hoveredNode.node.pointCost} points
                     </div>
                     <div style={{ marginBottom: '8px' }}>
-                        <PerkRenderer perk={getPerkDataForRenderer(hoveredNode.node)} />
+                        <PerkStringRenderer perk={getPerkDataForRenderer(hoveredNode.node)} />
                     </div>
-                    {hoveredNode.node.prerequisites && hoveredNode.node.prerequisites.length > 0 && (
-                        <div style={{ color: '#aaa', fontSize: '12px' }}>
-                            Prerequisites: {hoveredNode.node.prerequisites.length}
-                        </div>
-                    )}
                 </div>
             </div>
         )
@@ -485,6 +593,13 @@ function UnifiedPerkTreeViewer() {
                     radius: 3 * node.level,
                     duration: 200 * node.level, // 10 seconds per level
                 }
+            case 'ACTIVE_SANCTUARY':
+                return {
+                    ...baseData,
+                    manaCost: 40 * node.level,
+                    cooldown: 300 * node.level, // 15 seconds per level
+                    duration: 200 * node.level, // 10 seconds per level
+                }
             case 'PASSIVE_LICH_FEAST':
                 return {
                     ...baseData,
@@ -525,7 +640,7 @@ function UnifiedPerkTreeViewer() {
             {/* Header */}
             <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10 }}>
                 <div className="zoom-display">
-                    All Magic Schools - Perk Trees
+                    Ars Affinity - Perk Trees
                 </div>
             </div>
 
@@ -635,11 +750,23 @@ function UnifiedPerkTreeViewer() {
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
                 >
-                    {/* Grid background */}
+                    {/* Grid background and gradients */}
                     <defs>
                         <pattern id="grid" width="200" height="200" patternUnits="userSpaceOnUse">
                             <path d="M 200 0 L 0 0 0 200" fill="none" stroke="#374151" strokeWidth="1" opacity="0.1"/>
                         </pattern>
+                        
+                        {/* Necromancy (Anima) gradient */}
+                        <linearGradient id="necromancy-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#8b0606"/>
+                            <stop offset="100%" stopColor="#282828"/>
+                        </linearGradient>
+                        
+                        {/* Necromancy (Anima) hover gradient */}
+                        <linearGradient id="necromancy-gradient-hover" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#a00a0a"/>
+                            <stop offset="100%" stopColor="#404040"/>
+                        </linearGradient>
                     </defs>
                     <rect x="-2000" y="-2000" width="4000" height="4000" fill="url(#grid)" />
 

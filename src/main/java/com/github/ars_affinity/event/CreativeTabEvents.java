@@ -11,7 +11,7 @@ public class CreativeTabEvents {
     @SubscribeEvent
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey().location().toString().equals("ars_nouveau:general")) {
-            event.accept(ModItems.AFFINITY_ANCHOR_CHARM.get());
+            event.accept(ModItems.TABLET_OF_AMNESIA.get());
         }
     }
 } 

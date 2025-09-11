@@ -75,6 +75,16 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         return new HashMap<>(schoolPoints);
     }
     
+    /**
+     * Get the total points across all schools for global scaling calculations.
+     * This is used to determine how much global scaling should be applied.
+     * 
+     * @return Total points across all schools
+     */
+    public int getTotalPointsAcrossAllSchools() {
+        return schoolPoints.values().stream().mapToInt(Integer::intValue).sum();
+    }
+    
     // Percentage tracking methods for display purposes
     public float getSchoolAffinityPercentage(SpellSchool school) {
         int currentPoints = getSchoolPoints(school);
