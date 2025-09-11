@@ -2,6 +2,32 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import PerkRenderer from './PerkRenderer'
 import { titleCase } from './utils/string'
 
+// School Icon Component
+interface SchoolIconProps {
+    school: School
+    centerX: number
+    centerY: number
+    angle: number
+}
+
+const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle }) => {
+    const iconRadius = 122
+    const iconSize = 32
+    const iconX = centerX + (iconRadius * Math.cos(angle)) - (iconSize / 2)
+    const iconY = centerY + (iconRadius * Math.sin(angle)) - (iconSize / 2)
+
+    return (
+        <image
+            href={`/icons/${school}_tooltip.png`}
+            x={iconX}
+            y={iconY}
+            width={iconSize}
+            height={iconSize}
+            imageRendering="pixelated"
+        />
+    )
+}
+
 type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
 
 interface PerkNode {
@@ -38,26 +64,27 @@ interface SchoolTreeData {
     nodePositions: Map<string, NodePosition>
     centerX: number
     centerY: number
+    angle: number
 }
 
 const NODE_SIZE = 32
 const NODE_SPACING = 60
 const TIER_SPACING = 80
-const SCHOOL_SPACING = 400
+const SCHOOL_SPACING = 64
 const MIN_ZOOM = 0.5  // 100% (half of default)
 const MAX_ZOOM = 4.0  // 400% (double of default)
 const DEFAULT_ZOOM = 2.0  // 200% (new "100%")
 const ZOOM_SPEED = 0.1
 
 const schools: School[] = [
-    'abjuration',    // Top (upside down)
-    'earth',         // Top-right
-    'manipulation',  // Right
-    'fire',          // Bottom-right
-    'necromancy',    // Bottom
-    'air',           // Bottom-left
-    'conjuration',   // Left
-    'water'          // Top-left
+    'manipulation',  // Right (0°)
+    'fire',          // Bottom-right (45°)
+    'necromancy',    // Bottom (90°)
+    'air',           // Bottom-left (135°)
+    'conjuration',   // Left (180°)
+    'water',         // Top-left (225°)
+    'abjuration',    // Top (270°)
+    'earth'          // Top-right (315°)
 ]
 
 function UnifiedPerkTreeViewer() {
@@ -89,9 +116,9 @@ function UnifiedPerkTreeViewer() {
             const validTrees = results.filter((tree): tree is { school: School, data: PerkTreeData } => tree !== null)
             
             const schoolTreesData = validTrees.map(({ school, data }, index) => {
-                // Calculate circular positions (starting from top with -90 degree offset)
-                const angle = (index * Math.PI * 2) / validTrees.length - Math.PI / 2
-                const labelRadius = SCHOOL_SPACING * 1.2 // Smaller radius for labels
+                // Calculate circular positions (starting from right at 0 degrees)
+                const angle = (index * Math.PI * 2) / validTrees.length
+                const labelRadius = SCHOOL_SPACING * 1.2 // Radius for labels
                 const centerX = Math.cos(angle) * labelRadius
                 const centerY = Math.sin(angle) * labelRadius
                 
@@ -99,14 +126,15 @@ function UnifiedPerkTreeViewer() {
                 const outwardX = Math.cos(angle)
                 const outwardY = Math.sin(angle)
                 
-                const nodePositions = calculateNodePositions(data, school, index, outwardX, outwardY)
+                const nodePositions = calculateNodePositions(data, school, outwardX, outwardY)
                 
                 return {
                     school,
                     data,
                     nodePositions,
                     centerX,
-                    centerY
+                    centerY,
+                    angle
                 }
             })
 
@@ -130,7 +158,7 @@ function UnifiedPerkTreeViewer() {
     }, [])
 
     // Calculate node positions for a specific school
-    const calculateNodePositions = (data: PerkTreeData, school: School, schoolIndex: number, outwardX: number, outwardY: number) => {
+    const calculateNodePositions = (data: PerkTreeData, school: School, outwardX: number, outwardY: number) => {
         const positions = new Map<string, NodePosition>()
         const tiers = new Map<number, PerkNode[]>()
         
@@ -149,13 +177,24 @@ function UnifiedPerkTreeViewer() {
 
         // Calculate positions at a fixed radius from the global center
         // Position trees "outside" the circle (further from center than labels)
-        const treeRadius = 300 // Distance from center for the tree (larger than label radius)
+        const treeRadius = SCHOOL_SPACING * 1.8 // Distance from center for the tree (larger than label radius)
+        
+        // Calculate rotation direction based on school
+        // Each school should grow in a specific direction
+        const rotationAngle = getSchoolRotationAngle(school)
+        
         tiers.forEach((nodes, tier) => {
             const startX = -(nodes.length - 1) * NODE_SPACING / 2
             nodes.forEach((node, index) => {
-                // Position nodes in local coordinates first
-                const localX = startX + index * NODE_SPACING
-                const localY = tier * TIER_SPACING
+                // Position nodes in local coordinates first (before rotation)
+                let localX = startX + index * NODE_SPACING
+                let localY = tier * TIER_SPACING
+                
+                // Apply rotation to local coordinates
+                const cos = Math.cos(rotationAngle)
+                const sin = Math.sin(rotationAngle)
+                const rotatedX = localX * cos - localY * sin
+                const rotatedY = localX * sin + localY * cos
                 
                 // Calculate the tree center at the correct radius
                 const treeCenterX = outwardX * treeRadius
@@ -163,8 +202,8 @@ function UnifiedPerkTreeViewer() {
                 
                 // Position nodes relative to the tree center
                 positions.set(node.id, {
-                    x: treeCenterX + localX,
-                    y: treeCenterY + localY,
+                    x: treeCenterX + rotatedX,
+                    y: treeCenterY + rotatedY,
                     tier,
                     index,
                     school
@@ -173,6 +212,21 @@ function UnifiedPerkTreeViewer() {
         })
 
         return positions
+    }
+
+    // Get the rotation angle for each school so they grow in the correct direction
+    const getSchoolRotationAngle = (school: School): number => {
+        switch (school) {
+            case 'manipulation': return -Math.PI / 2  // Grow right (was 0, now -90°)
+            case 'fire': return -Math.PI / 4          // Grow bottom-right (was 45°, now -45°)
+            case 'necromancy': return 0               // Grow down (was 90°, now 0°)
+            case 'air': return Math.PI / 4            // Grow bottom-left (was 135°, now 45°)
+            case 'conjuration': return Math.PI / 2    // Grow left (was 180°, now 90°)
+            case 'water': return 3 * Math.PI / 4      // Grow top-left (was 225°, now 135°)
+            case 'abjuration': return Math.PI         // Grow up (was 270°, now 180°)
+            case 'earth': return -3 * Math.PI / 4     // Grow top-right (was 315°, now -135°)
+            default: return 0
+        }
     }
 
     // Handle mouse wheel zoom towards mouse cursor
@@ -192,8 +246,8 @@ function UnifiedPerkTreeViewer() {
         const svgMouseX = (mouseX - viewport.x) / viewport.zoom
         const svgMouseY = (mouseY - viewport.y) / viewport.zoom
         
-        // Calculate zoom factor
-        const zoomFactor = newZoom / viewport.zoom
+        // Calculate zoom factor (unused but kept for potential future use)
+        // const zoomFactor = newZoom / viewport.zoom
         
         // Adjust viewport to zoom towards mouse position
         const newX = mouseX - svgMouseX * newZoom
@@ -309,37 +363,6 @@ function UnifiedPerkTreeViewer() {
         })
     }
 
-    // Render school labels
-    const renderSchoolLabels = () => {
-        return schoolTrees.map((schoolTree, index) => {
-            const x = schoolTree.centerX
-            const y = schoolTree.centerY - 100
-
-            return (
-                <g key={schoolTree.school}>
-                    <rect
-                        x={x - 80}
-                        y={y - 15}
-                        width="160"
-                        height="30"
-                        fill="rgba(0, 0, 0, 0.7)"
-                        rx="5"
-                    />
-                    <text
-                        x={x}
-                        y={y + 5}
-                        textAnchor="middle"
-                        fill="white"
-                        fontSize="16"
-                        fontFamily="Minecraft, monospace"
-                        fontWeight="bold"
-                    >
-                        {titleCase(schoolTree.school)}
-                    </text>
-                </g>
-            )
-        })
-    }
 
     // Render tooltip
     const renderTooltip = () => {
@@ -620,29 +643,15 @@ function UnifiedPerkTreeViewer() {
                     </defs>
                     <rect x="-2000" y="-2000" width="4000" height="4000" fill="url(#grid)" />
 
-                    {/* School labels */}
+                    {/* School icons */}
                     {schoolTrees.map(schoolTree => (
-                        <g key={`label-${schoolTree.school}`}>
-                            <rect
-                                x={schoolTree.centerX - 80}
-                                y={schoolTree.centerY - 15}
-                                width="160"
-                                height="30"
-                                fill="rgba(0, 0, 0, 0.7)"
-                                rx="5"
-                            />
-                            <text
-                                x={schoolTree.centerX}
-                                y={schoolTree.centerY + 5}
-                                textAnchor="middle"
-                                fill="white"
-                                fontSize="16"
-                                fontFamily="Minecraft, monospace"
-                                fontWeight="bold"
-                            >
-                                {titleCase(schoolTree.school)}
-                            </text>
-                        </g>
+                        <SchoolIcon
+                            key={`icon-${schoolTree.school}`}
+                            school={schoolTree.school}
+                            centerX={0}
+                            centerY={0}
+                            angle={schoolTree.angle}
+                        />
                     ))}
 
                     {/* School trees - positioned at global coordinates */}
