@@ -681,7 +681,6 @@ function UnifiedPerkTreeViewer() {
                 style={{ 
                     width: '100%', 
                     height: '100%',
-                    transform: `scale(${viewport.zoom})`,
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -699,6 +698,7 @@ function UnifiedPerkTreeViewer() {
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
                 >
+                    <g transform={`translate(${viewport.x / viewport.zoom}, ${viewport.y / viewport.zoom}) scale(${viewport.zoom})`}>
                     {/* Grid background and gradients */}
                     <defs>
                         <pattern id="grid" width="200" height="200" patternUnits="userSpaceOnUse">
@@ -740,6 +740,7 @@ function UnifiedPerkTreeViewer() {
                             {renderSchoolNodes(schoolTree)}
                         </g>
                     ))}
+                    </g>
                 </svg>
             </div>
 
