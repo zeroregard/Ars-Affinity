@@ -16,6 +16,7 @@ import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
+import com.github.ars_affinity.potion.RootedEffect;
 import com.github.ars_affinity.potion.AffinityConsumableCooldownEffect;
 import com.github.ars_affinity.potion.affinity_increase.FireAffinityEffect;
 import com.github.ars_affinity.potion.affinity_increase.WaterAffinityEffect;
@@ -61,6 +62,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SwarmingEffect> SWARMING_EFFECT = EFFECTS.register("swarming", SwarmingEffect::new);
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
+    public static final DeferredHolder<MobEffect, RootedEffect> ROOTED_EFFECT = EFFECTS.register("rooted", RootedEffect::new);
     public static final DeferredHolder<MobEffect, AffinityConsumableCooldownEffect> AFFINITY_CONSUMABLE_COOLDOWN_EFFECT = EFFECTS.register("affinity_consumable_cooldown", AffinityConsumableCooldownEffect::new);
     
     // Affinity potion effects - organized by helper method

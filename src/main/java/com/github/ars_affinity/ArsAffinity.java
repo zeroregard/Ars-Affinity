@@ -94,6 +94,9 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(SpellAmplificationEvents.class);
         NeoForge.EVENT_BUS.register(SpellBlightEvents.class);
         NeoForge.EVENT_BUS.register(PassiveHydrationEvents.class);
+        NeoForge.EVENT_BUS.register(PassiveStonefootEvents.class);
+        NeoForge.EVENT_BUS.register(PassiveIronveinEvents.class);
+        NeoForge.EVENT_BUS.register(PassiveRootedEvents.class);
         NeoForge.EVENT_BUS.register(SanctuaryEvents.class);
         NeoForge.EVENT_BUS.register(SilencedEvents.class);
 
