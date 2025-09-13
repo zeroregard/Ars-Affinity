@@ -26,7 +26,7 @@ const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle
                 cx={circleX}
                 cy={circleY}
                 r={circleRadius}
-                fill="rgba(0, 0, 0, 0.6)"
+                fill="rgba(0, 0, 0, 1)"
                 stroke="rgba(255, 255, 255, 0.3)"
                 strokeWidth="2"
             />
@@ -51,8 +51,17 @@ interface PerkNode {
     tier: number
     pointCost: number
     category: 'PASSIVE' | 'ACTIVE'
-    level: number
     prerequisites?: string[]
+    // Configurable perk values
+    amount?: number
+    time?: number
+    cooldown?: number
+    manaCost?: number
+    damage?: number
+    freezeTime?: number
+    radius?: number
+    dashLength?: number
+    dashDuration?: number
 }
 
 interface PerkTreeData {
@@ -86,9 +95,9 @@ const NODE_SIZE = 32
 const NODE_SPACING = 60
 const TIER_SPACING = 80
 const SCHOOL_SPACING = 150
-const MIN_ZOOM = 0.75  // 75% minimum zoom
-const MAX_ZOOM = 4.0   // 400% maximum zoom
-const DEFAULT_ZOOM = 2.0  // 200% default zoom
+const MIN_ZOOM = 2.0  // 100%
+const MAX_ZOOM = 8.0   // 400% maximum zoom
+const DEFAULT_ZOOM = 2.0  // 100%
 const ZOOM_SPEED = 0.1
 
 // School-specific colors for perk nodes
@@ -420,9 +429,9 @@ function UnifiedPerkTreeViewer() {
             if (isAllocated) {
                 fillColor = schoolColors.allocated
             } else if (canAllocate) {
-                fillColor = 'rgba(0, 0, 0, 0.6)' // Dark gray background like school icons
+                fillColor = 'rgba(0, 0, 0, 1)' // Completely black background
             } else {
-                fillColor = '#6b7280' // Gray for unavailable
+                fillColor = 'rgba(0, 0, 0, 1)' // Completely black background for unavailable
             }
 
             // Choose stroke color
@@ -434,7 +443,7 @@ function UnifiedPerkTreeViewer() {
             const iconY = position.y - iconSize / 2
 
             // Calculate Roman numeral position (bottom right of node)
-            const romanNumeral = toRomanNumeral(node.level)
+            const romanNumeral = toRomanNumeral(node.tier)
             const textSize = NODE_SIZE * 0.3 // 30% of node size
             const textX = position.x + (NODE_SIZE / 2) - textSize * 0.3 // Right side with small padding
             const textY = position.y + (NODE_SIZE / 2) - textSize * 0.2 // Bottom side with small padding
@@ -540,97 +549,23 @@ function UnifiedPerkTreeViewer() {
 
     // Convert perk node data to the format expected by PerkRenderer
     const getPerkDataForRenderer = (node: PerkNode) => {
-        const baseData = {
+        const baseData: any = {
             perk: node.perk,
             isBuff: true, // Most perks are buffs
-            amount: node.level, // Use level as the base amount
         }
 
-        // Add specific values based on perk type
-        switch (node.perk) {
-            case 'PASSIVE_STONE_SKIN':
-                return {
-                    ...baseData,
-                    time: 20 * node.level, // 1 second per level
-                    cooldown: 20 * node.level, // 1 second cooldown per level
-                }
-            case 'ACTIVE_GROUND_SLAM':
-                return {
-                    ...baseData,
-                    manaCost: 50 * node.level,
-                    cooldown: 200 * node.level, // 10 seconds per level
-                    damage: 5 * node.level,
-                }
-            case 'PASSIVE_GHOST_STEP':
-                return {
-                    ...baseData,
-                    amount: 0.1 * node.level, // 10% per level
-                    time: 20 * node.level, // 1 second per level
-                    cooldown: 100 * node.level, // 5 seconds per level
-                }
-            case 'PASSIVE_SUMMONING_POWER':
-                return {
-                    ...baseData,
-                    amount: 0.2 * node.level, // 20% per level
-                }
-            case 'PASSIVE_SUMMON_HEALTH':
-                return {
-                    ...baseData,
-                    amount: 0.15 * node.level, // 15% per level
-                }
-            case 'PASSIVE_COLD_WALKER':
-                return {
-                    ...baseData,
-                    amount: 0.1 * node.level, // 10% per level
-                    time: 20 * node.level, // 1 second per level
-                }
-            case 'PASSIVE_HYDRATION':
-                return {
-                    ...baseData,
-                    amount: 0.05 * node.level, // 5% per level
-                }
-            case 'ACTIVE_ICE_BLAST':
-                return {
-                    ...baseData,
-                    manaCost: 40 * node.level,
-                    cooldown: 300 * node.level, // 15 seconds per level
-                    damage: 8 * node.level,
-                    freezeTime: 20 * node.level, // 1 second freeze per level
-                }
-            case 'ACTIVE_CURSE_FIELD':
-                return {
-                    ...baseData,
-                    manaCost: 60 * node.level,
-                    cooldown: 400 * node.level, // 20 seconds per level
-                    radius: 3 * node.level,
-                    duration: 200 * node.level, // 10 seconds per level
-                }
-            case 'ACTIVE_SANCTUARY':
-                return {
-                    ...baseData,
-                    manaCost: 40 * node.level,
-                    cooldown: 300 * node.level, // 15 seconds per level
-                    duration: 200 * node.level, // 10 seconds per level
-                }
-            case 'PASSIVE_LICH_FEAST':
-                return {
-                    ...baseData,
-                    health: 0.1 * node.level, // 10% health per level
-                    hunger: 0.05 * node.level, // 5% hunger per level
-                }
-            case 'PASSIVE_SUMMON_DEFENSE':
-                return {
-                    ...baseData,
-                    amount: 0.25 * node.level, // 25% per level
-                }
-            default:
-                // Default values for unknown perks
-                return {
-                    ...baseData,
-                    time: 20 * node.level,
-                    cooldown: 100 * node.level,
-                }
-        }
+        // Only include properties that actually exist in the PerkNode
+        if (node.amount !== undefined) baseData.amount = node.amount
+        if (node.time !== undefined) baseData.time = node.time
+        if (node.cooldown !== undefined) baseData.cooldown = node.cooldown
+        if (node.manaCost !== undefined) baseData.manaCost = node.manaCost
+        if (node.damage !== undefined) baseData.damage = node.damage
+        if (node.freezeTime !== undefined) baseData.freezeTime = node.freezeTime
+        if (node.radius !== undefined) baseData.radius = node.radius
+        if (node.dashLength !== undefined) baseData.dashLength = node.dashLength
+        if (node.dashDuration !== undefined) baseData.dashDuration = node.dashDuration
+
+        return baseData
     }
 
     if (schoolTrees.length === 0) {
@@ -649,6 +584,9 @@ function UnifiedPerkTreeViewer() {
 
     return (
         <div className={`perk-tree-container ${isDragging ? 'dragging' : ''}`}>
+            {/* Background */}
+            <div className="perk-tree-background"></div>
+            
             {/* Header */}
             <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10 }}>
                 <div className="zoom-display">

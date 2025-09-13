@@ -3,10 +3,10 @@
     {
       "id": "water_water_power_1",
       "perk": "PASSIVE_WATER_POWER",
-      "tier": 2,
+      "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
+      "amount": 1
     },
     {
       "id": "water_hydration_1",
@@ -14,7 +14,8 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 0.0,
+      "time": 600,
       "prerequisites": ["water_water_power_1"]
     },
     {
@@ -23,7 +24,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 0.0,
       "prerequisites": ["water_water_power_1"]
     },
     {
@@ -32,7 +33,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["water_water_power_1"]
     },
     {
@@ -41,7 +42,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["water_hydration_1"]
     },
     {
@@ -50,7 +51,8 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 1.0,
+      "time": 400,
       "prerequisites": ["water_hydration_1"]
     },
     {
@@ -59,7 +61,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 0.10,
       "prerequisites": ["water_cold_walker_1", "water_hydration_1"]
     },
 
@@ -69,7 +71,8 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 2.0,
+      "time": 200,
       "prerequisites": ["water_hydration_2"]
     },
     {
@@ -78,7 +81,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 0.3,
       "prerequisites": ["water_cold_walker_2"]
     },
     {
@@ -87,7 +90,11 @@
       "tier": 3,
       "pointCost": 1,
       "category": "ACTIVE",
-      "level": 1,
+      "manaCost": 0.2,
+      "cooldown": 200,
+      "damage": 8.0,
+      "freezeTime": 100,
+      "radius": 6.0,
       "prerequisites": ["water_water_power_2", "water_water_resistance_2"]
     },
     {
@@ -96,7 +103,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["water_water_resistance_1"]
     }
   ]

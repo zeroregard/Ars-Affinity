@@ -6,16 +6,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
-    },
-    {
-      "id": "air_free_jump_1",
-      "perk": "PASSIVE_FREE_JUMP",
-      "tier": 1,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 1,
-      "prerequisites": ["air_air_power_1"]
+      "amount": 1
     },
     {
       "id": "air_air_resistance_1",
@@ -23,26 +14,8 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["air_air_power_1"]
-    },
-    {
-      "id": "air_free_jump_2",
-      "perk": "PASSIVE_FREE_JUMP",
-      "tier": 2,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["air_free_jump_1"]
-    },
-    {
-      "id": "air_free_jump_3",
-      "perk": "PASSIVE_FREE_JUMP",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 3,
-      "prerequisites": ["air_free_jump_2"]
     },
     {
       "id": "air_air_power_2",
@@ -50,7 +23,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["air_air_power_1"]
     },
     {
@@ -59,7 +32,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["air_air_resistance_1"]
     },
     {
@@ -68,7 +41,10 @@
       "tier": 3,
       "pointCost": 1,
       "category": "ACTIVE",
-      "level": 1,
+      "manaCost": 0.2,
+      "cooldown": 100,
+      "dashLength": 10.0,
+      "dashDuration": 0.3,
       "prerequisites": ["air_air_power_2", "air_air_resistance_2"]
     }
   ]

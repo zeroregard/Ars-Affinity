@@ -62,8 +62,16 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
             .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
     }
+    // Handle power perks first (they have amount but time is 0)
+    else if (perkId.endsWith('_POWER') && perk.amount !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+    }
+    // Handle resistance perks (raw numbers, not percentages)
+    else if (perkId.endsWith('_RESISTANCE') && perk.amount !== undefined) {
+        formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
+    }
     // Handle passive perks with time and amount
-    else if (perk.time && perk.amount !== undefined) {
+    else if (perk.time !== undefined && perk.amount !== undefined) {
         formattedMessage = formattedMessage
             .replace(/%s/g, perk.amount.toString())
             .replace(/%d/g, (perk.time/20).toString())
@@ -71,10 +79,6 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
     // Handle passive perks with just time
     else if (perk.time !== undefined) {
         formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
-    }
-   
-    else if (perkId.endsWith('_POWER') && perk.amount !== undefined) {
-        formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
     }
     // Handle passive perks with just amount
     else if (perk.amount !== undefined) {

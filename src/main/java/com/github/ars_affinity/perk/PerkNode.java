@@ -16,11 +16,22 @@ public class PerkNode {
     private final int pointCost;
     private final List<String> prerequisites;
     private final PerkCategory category;
-    private final int level;
+    
+    // Configurable perk values
+    private final float amount;
+    private final int time;
+    private final int cooldown;
+    private final float manaCost;
+    private final float damage;
+    private final int freezeTime;
+    private final float radius;
+    private final float dashLength;
+    private final float dashDuration;
     
     public PerkNode(String id, AffinityPerkType perkType, SpellSchool school, int tier, 
-                   int pointCost, List<String> prerequisites, PerkCategory category, 
-                   int level) {
+                   int pointCost, List<String> prerequisites, PerkCategory category,
+                   float amount, int time, int cooldown, float manaCost, float damage,
+                   int freezeTime, float radius, float dashLength, float dashDuration) {
         this.id = id;
         this.perkType = perkType;
         this.school = school;
@@ -28,7 +39,15 @@ public class PerkNode {
         this.pointCost = pointCost;
         this.prerequisites = prerequisites != null ? new ArrayList<>(prerequisites) : new ArrayList<>();
         this.category = category;
-        this.level = level;
+        this.amount = amount;
+        this.time = time;
+        this.cooldown = cooldown;
+        this.manaCost = manaCost;
+        this.damage = damage;
+        this.freezeTime = freezeTime;
+        this.radius = radius;
+        this.dashLength = dashLength;
+        this.dashDuration = dashDuration;
     }
     
     // Getters
@@ -39,7 +58,17 @@ public class PerkNode {
     public int getPointCost() { return pointCost; }
     public List<String> getPrerequisites() { return new ArrayList<>(prerequisites); }
     public PerkCategory getCategory() { return category; }
-    public int getLevel() { return level; }
+    
+    // Configurable perk value getters
+    public float getAmount() { return amount; }
+    public int getTime() { return time; }
+    public int getCooldown() { return cooldown; }
+    public float getManaCost() { return manaCost; }
+    public float getDamage() { return damage; }
+    public int getFreezeTime() { return freezeTime; }
+    public float getRadius() { return radius; }
+    public float getDashLength() { return dashLength; }
+    public float getDashDuration() { return dashDuration; }
     
     // Utility methods
     public boolean hasPrerequisites() {
@@ -51,16 +80,16 @@ public class PerkNode {
     }
     
     public String getDisplayName() {
-        return "ars_affinity.perk." + perkType.name() + "_" + level;
+        return "ars_affinity.perk." + perkType.name();
     }
     
     public String getDescription() {
-        return "ars_affinity.perk." + perkType.name() + "_" + level + ".desc";
+        return "ars_affinity.perk." + perkType.name() + ".desc";
     }
     
-    // Generate a unique identifier for this specific level of the perk
+    // Generate a unique identifier for this specific tier of the perk
     public String getUniqueId() {
-        return school.getId().toString().toUpperCase().replace(":", "_") + "_" + perkType.name() + "_" + level;
+        return school.getId().toString().toUpperCase().replace(":", "_") + "_" + perkType.name() + "_" + tier;
     }
     
     // Serialization
@@ -72,7 +101,15 @@ public class PerkNode {
         tag.putInt("tier", tier);
         tag.putInt("pointCost", pointCost);
         tag.putString("category", category.name());
-        tag.putInt("level", level);
+        tag.putFloat("amount", amount);
+        tag.putInt("time", time);
+        tag.putInt("cooldown", cooldown);
+        tag.putFloat("manaCost", manaCost);
+        tag.putFloat("damage", damage);
+        tag.putInt("freezeTime", freezeTime);
+        tag.putFloat("radius", radius);
+        tag.putFloat("dashLength", dashLength);
+        tag.putFloat("dashDuration", dashDuration);
         
         ListTag prerequisitesTag = new ListTag();
         for (String prerequisite : prerequisites) {
@@ -90,7 +127,15 @@ public class PerkNode {
         int tier = tag.getInt("tier");
         int pointCost = tag.getInt("pointCost");
         PerkCategory category = PerkCategory.valueOf(tag.getString("category"));
-        int level = tag.getInt("level");
+        float amount = tag.getFloat("amount");
+        int time = tag.getInt("time");
+        int cooldown = tag.getInt("cooldown");
+        float manaCost = tag.getFloat("manaCost");
+        float damage = tag.getFloat("damage");
+        int freezeTime = tag.getInt("freezeTime");
+        float radius = tag.getFloat("radius");
+        float dashLength = tag.getFloat("dashLength");
+        float dashDuration = tag.getFloat("dashDuration");
         
         List<String> prerequisites = new ArrayList<>();
         ListTag prerequisitesTag = tag.getList("prerequisites", Tag.TAG_STRING);
@@ -101,7 +146,8 @@ public class PerkNode {
         }
         
         return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
-                           category, level);
+                           category, amount, time, cooldown, manaCost, damage,
+                           freezeTime, radius, dashLength, dashDuration);
     }
     
     private static SpellSchool parseSpellSchool(String schoolId) {
@@ -140,7 +186,7 @@ public class PerkNode {
                 ", tier=" + tier +
                 ", pointCost=" + pointCost +
                 ", category=" + category +
-                ", level=" + level +
+                ", amount=" + amount +
                 '}';
     }
 }

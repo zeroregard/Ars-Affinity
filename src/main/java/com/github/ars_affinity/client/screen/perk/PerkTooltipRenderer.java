@@ -29,8 +29,8 @@ public class PerkTooltipRenderer {
         
         tooltip.add(Component.literal("Cost: " + node.getPointCost() + " points").withStyle(style -> style.withColor(0xAAAAAA)));
         
-        if (node.getLevel() > 1) {
-            tooltip.add(Component.literal("Level: " + node.getLevel()).withStyle(style -> style.withColor(0xAAAAAA)));
+        if (node.getTier() > 1) {
+            tooltip.add(Component.literal("Tier: " + node.getTier()).withStyle(style -> style.withColor(0xAAAAAA)));
         }
         
         if (allocation != null) {

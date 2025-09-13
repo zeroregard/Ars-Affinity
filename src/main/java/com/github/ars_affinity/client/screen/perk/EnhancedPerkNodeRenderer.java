@@ -79,8 +79,8 @@ public class EnhancedPerkNodeRenderer {
         }
         
         // Render level indicator for multi-level perks
-        if (isAllocated && node.getLevel() > 1 && finalSize > 16) {
-            String levelText = "Lv." + String.valueOf(node.getLevel());
+        if (isAllocated && node.getTier() > 1 && finalSize > 16) {
+            String levelText = "Lv." + String.valueOf(node.getTier());
             float textSize = finalSize * 0.3f;
             int textX = (int) (x + finalSize * 0.3f);
             int textY = (int) (y + finalSize * 0.3f);

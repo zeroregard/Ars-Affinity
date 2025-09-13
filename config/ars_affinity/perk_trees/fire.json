@@ -6,7 +6,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
+      "amount": 1
     },
     {
       "id": "fire_thorns_1",
@@ -14,7 +14,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 0.25,
       "prerequisites": ["fire_fire_power_1"]
     },
     {
@@ -23,7 +23,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["fire_fire_power_1"]
     },
     {
@@ -32,7 +32,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 0.5,
       "prerequisites": ["fire_thorns_1"]
     },
     {
@@ -41,7 +41,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 1.0,
       "prerequisites": ["fire_thorns_2"]
     },
     {
@@ -50,7 +50,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["fire_fire_power_1"]
     },
     {
@@ -59,7 +59,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["fire_fire_resistance_1"]
     },
     {
@@ -68,7 +68,10 @@
       "tier": 3,
       "pointCost": 1,
       "category": "ACTIVE",
-      "level": 1,
+      "manaCost": 0.2,
+      "cooldown": 100,
+      "dashLength": 10.0,
+      "dashDuration": 0.3,
       "prerequisites": ["fire_fire_power_2", "fire_fire_resistance_2"]
     }
   ]

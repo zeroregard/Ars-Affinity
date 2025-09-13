@@ -6,7 +6,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
+      "amount": 1
     },
     {
       "id": "necromancy_soulspike_1",
@@ -14,7 +14,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 1,
       "prerequisites": ["necromancy_anima_power_1"]
     },
     {
@@ -23,7 +23,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["necromancy_anima_power_1"]
     },
     {
@@ -32,7 +32,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 1,
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
@@ -41,7 +41,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
@@ -50,7 +50,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 3,
       "prerequisites": ["necromancy_soulspike_2"]
     },
     {
@@ -59,7 +59,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["necromancy_lich_feast_1", "necromancy_anima_power_2"]
     },
     {
@@ -68,7 +68,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["necromancy_soulspike_1", "necromancy_anima_resistance_1"]
     },
     {
@@ -77,7 +77,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["necromancy_lich_feast_1"]
     },
     {
@@ -86,7 +86,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 1,
       "prerequisites": ["necromancy_soulspike_3", "necromancy_lich_feast_2"]
     },
     {
@@ -95,7 +95,8 @@
       "tier": 3,
       "pointCost": 1,
       "category": "ACTIVE",
-      "level": 1,
+      "manaCost": 0.2,
+      "cooldown": 200,
       "prerequisites": ["necromancy_anima_resistance_2", "necromancy_lich_feast_2"]
     }
   ]

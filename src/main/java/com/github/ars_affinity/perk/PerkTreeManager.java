@@ -98,7 +98,17 @@ public class PerkTreeManager {
         int tier = nodeData.get("tier").getAsInt();
         int pointCost = nodeData.get("pointCost").getAsInt();
         PerkCategory category = PerkCategory.valueOf(nodeData.get("category").getAsString());
-        int level = nodeData.get("level").getAsInt();
+        
+        // Parse configurable perk values with defaults
+        float amount = nodeData.has("amount") ? nodeData.get("amount").getAsFloat() : 0.0f;
+        int time = nodeData.has("time") ? nodeData.get("time").getAsInt() : 0;
+        int cooldown = nodeData.has("cooldown") ? nodeData.get("cooldown").getAsInt() : 0;
+        float manaCost = nodeData.has("manaCost") ? nodeData.get("manaCost").getAsFloat() : 0.0f;
+        float damage = nodeData.has("damage") ? nodeData.get("damage").getAsFloat() : 0.0f;
+        int freezeTime = nodeData.has("freezeTime") ? nodeData.get("freezeTime").getAsInt() : 0;
+        float radius = nodeData.has("radius") ? nodeData.get("radius").getAsFloat() : 0.0f;
+        float dashLength = nodeData.has("dashLength") ? nodeData.get("dashLength").getAsFloat() : 0.0f;
+        float dashDuration = nodeData.has("dashDuration") ? nodeData.get("dashDuration").getAsFloat() : 0.0f;
         
         List<String> prerequisites = new ArrayList<>();
         if (nodeData.has("prerequisites")) {
@@ -109,7 +119,8 @@ public class PerkTreeManager {
         }
         
         return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
-                           category, level);
+                           category, amount, time, cooldown, manaCost, damage,
+                           freezeTime, radius, dashLength, dashDuration);
     }
     
     public static PerkNode getNode(String nodeId) {

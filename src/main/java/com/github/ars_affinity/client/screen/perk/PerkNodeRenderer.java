@@ -41,8 +41,8 @@ public class PerkNodeRenderer {
         
         guiGraphics.fill(x + 4, y + 4, x + NODE_SIZE - 4, y + NODE_SIZE - 4, 0xFFFFFFFF);
         
-        if (isAllocated && node.getLevel() > 1) {
-            String levelText = "Lv." + String.valueOf(node.getLevel());
+        if (isAllocated && node.getTier() > 1) {
+            String levelText = "Lv." + String.valueOf(node.getTier());
             guiGraphics.drawString(font, levelText, x + NODE_SIZE - 8, y + NODE_SIZE - 8, 0xFFFFFF);
         }
         

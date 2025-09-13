@@ -76,7 +76,6 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(DeflectionEvents.class);
         NeoForge.EVENT_BUS.register(FieldAbilityTicker.class);
         NeoForge.EVENT_BUS.register(FireThornsEvents.class);
-        NeoForge.EVENT_BUS.register(PassiveFreeJumpEvents.class);
         NeoForge.EVENT_BUS.register(PassiveManaTapEvents.class);
         NeoForge.EVENT_BUS.register(PassiveSoulspikeEvents.class);
         NeoForge.EVENT_BUS.register(PassiveStoneSkinEvents.class);

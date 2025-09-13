@@ -6,7 +6,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
+      "amount": 1
     },
     {
       "id": "earth_stone_skin_1",
@@ -14,7 +14,8 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 100,
+      "time": 400,
       "prerequisites": ["earth_earth_power_1"]
     },
     {
@@ -23,7 +24,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["earth_earth_power_1"]
     },
     {
@@ -32,7 +33,8 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 100,
+      "time": 200,
       "prerequisites": ["earth_stone_skin_1"]
     },
     {
@@ -41,7 +43,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["earth_earth_power_1"]
     },
     {
@@ -50,7 +52,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["earth_earth_resistance_1"]
     },
     {
@@ -59,7 +61,8 @@
       "tier": 3,
       "pointCost": 1,
       "category": "ACTIVE",
-      "level": 1,
+      "manaCost": 0.2,
+      "cooldown": 200,
       "prerequisites": ["earth_earth_power_2", "earth_earth_resistance_2"]
     }
   ]

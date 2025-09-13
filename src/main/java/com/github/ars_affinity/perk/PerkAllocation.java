@@ -30,7 +30,6 @@ public class PerkAllocation {
     public int getPointsInvested() { return pointsInvested; }
     public boolean isActive() { return isActive; }
     public PerkCategory getCategory() { return node.getCategory(); }
-    public int getLevel() { return node.getLevel(); }
     
     // Utility methods
     public String getDisplayName() {
@@ -43,7 +42,7 @@ public class PerkAllocation {
     
     // Get the effective level for this allocation
     public int getEffectiveLevel() {
-        return node.getLevel();
+        return node.getTier();
     }
     
     // Serialization
@@ -89,7 +88,7 @@ public class PerkAllocation {
         return "PerkAllocation{" +
                 "node=" + node.getId() +
                 ", pointsInvested=" + pointsInvested +
-                ", level=" + node.getLevel() +
+                ", tier=" + node.getTier() +
                 ", isActive=" + isActive +
                 '}';
     }

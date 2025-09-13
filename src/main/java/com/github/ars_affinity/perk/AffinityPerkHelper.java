@@ -30,10 +30,9 @@ public class AffinityPerkHelper {
             .filter(allocation -> allocation.getPerkType() == perkType)
             .findFirst()
             .map(allocation -> {
-                // Create a basic AffinityPerk from the allocation
-                // This is a simplified approach - in a full implementation, you'd want to
-                // store the actual perk data in the allocation
-                return new AffinityPerk.AmountBasedPerk(perkType, 1.0f, true);
+                // Create AffinityPerk from the PerkNode data
+                PerkNode node = allocation.getNode();
+                return createAffinityPerkFromNode(node);
             })
             .orElse(null);
     }
@@ -52,7 +51,8 @@ public class AffinityPerkHelper {
             .filter(allocation -> allocation.getPerkType() == perkType)
             .findFirst()
             .map(allocation -> {
-                AffinityPerk perk = new AffinityPerk.AmountBasedPerk(perkType, 1.0f, true);
+                PerkNode node = allocation.getNode();
+                AffinityPerk perk = createAffinityPerkFromNode(node);
                 return new PerkData(perk, allocation.getSchool(), allocation.getTier());
             })
             .orElse(null);
@@ -110,5 +110,80 @@ public class AffinityPerkHelper {
     
     public static Set<PerkAllocation> getAllActivePerkAllocations(PlayerAffinityData data) {
         return data.getAllAllocatedPerks();
+    }
+    
+    /**
+     * Creates an AffinityPerk from a PerkNode using the node's configured values
+     */
+    public static AffinityPerk createAffinityPerkFromNode(PerkNode node) {
+        AffinityPerkType perkType = node.getPerkType();
+        boolean isBuff = true; // All perks in the new system are buffs
+        
+        switch (perkType) {
+            case PASSIVE_FIRE_THORNS:
+            case PASSIVE_MANA_TAP:
+            case PASSIVE_HEALING_AMPLIFICATION:
+            case PASSIVE_SOULSPIKE:
+            case PASSIVE_SUMMONING_POWER:
+            case PASSIVE_ABJURATION_POWER:
+            case PASSIVE_AIR_POWER:
+            case PASSIVE_EARTH_POWER:
+            case PASSIVE_FIRE_POWER:
+            case PASSIVE_MANIPULATION_POWER:
+            case PASSIVE_ANIMA_POWER:
+            case PASSIVE_WATER_POWER:
+            case PASSIVE_ABJURATION_RESISTANCE:
+            case PASSIVE_CONJURATION_RESISTANCE:
+            case PASSIVE_AIR_RESISTANCE:
+            case PASSIVE_EARTH_RESISTANCE:
+            case PASSIVE_FIRE_RESISTANCE:
+            case PASSIVE_MANIPULATION_RESISTANCE:
+            case PASSIVE_ANIMA_RESISTANCE:
+            case PASSIVE_WATER_RESISTANCE:
+            case PASSIVE_COLD_WALKER:
+                return new AffinityPerk.AmountBasedPerk(perkType, node.getAmount(), isBuff);
+                
+            case PASSIVE_SUMMON_HEALTH:
+            case PASSIVE_SUMMON_DEFENSE:
+            case PASSIVE_STONE_SKIN:
+            case PASSIVE_DEFLECTION:
+            case PASSIVE_HYDRATION:
+                return new AffinityPerk.DurationBasedPerk(perkType, node.getAmount(), node.getTime(), isBuff);
+                
+            case PASSIVE_LICH_FEAST:
+                // For Lich Feast, we need to calculate health and hunger from amount
+                float healthRestore = node.getAmount() * 0.1f; // 10% per amount
+                float hungerRestore = node.getAmount() * 0.05f; // 5% per amount
+                return new AffinityPerk.LichFeastPerk(perkType, healthRestore, hungerRestore, isBuff);
+                
+            case ACTIVE_ICE_BLAST:
+                return new AffinityPerk.ActiveAbilityPerk(perkType, node.getManaCost(), node.getCooldown(), 
+                    node.getDamage(), node.getFreezeTime(), node.getRadius(), isBuff);
+                    
+            case ACTIVE_GROUND_SLAM:
+            case ACTIVE_SWAP_ABILITY:
+            case ACTIVE_SANCTUARY:
+            case ACTIVE_CURSE_FIELD:
+            case ACTIVE_SWARM:
+                return new AffinityPerk.ActiveAbilityPerk(perkType, node.getManaCost(), node.getCooldown(), 
+                    0.0f, 0, 0.0f, isBuff);
+                    
+            case ACTIVE_AIR_DASH:
+            case ACTIVE_FIRE_DASH:
+            case ACTIVE_GHOST_STEP:
+                return new AffinityPerk.ActiveAbilityPerk(perkType, node.getManaCost(), node.getCooldown(), 
+                    0.0f, 0, 0.0f, node.getDashLength(), node.getDashDuration(), isBuff);
+                    
+            case PASSIVE_GHOST_STEP:
+                return new AffinityPerk.GhostStepPerk(perkType, node.getAmount(), node.getTime(), 
+                    node.getCooldown(), isBuff);
+                    
+            case PASSIVE_ROTTING_GUISE:
+                return new AffinityPerk.SimplePerk(perkType, isBuff);
+                
+            default:
+                com.github.ars_affinity.ArsAffinity.LOGGER.warn("Unknown perk type: {}, using default AmountBasedPerk", perkType);
+                return new AffinityPerk.AmountBasedPerk(perkType, node.getAmount(), isBuff);
+        }
     }
 } 

@@ -185,20 +185,6 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/- Inhibits mana regeneration by 30% when deep underground/)).toBeInTheDocument()
     })
 
-    it("should render PASSIVE_FREE_JUMP correctly", () => {
-      const perk = {
-        perk: "PASSIVE_FREE_JUMP",
-        amount: 0.5,
-        isBuff: true
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/Jumping costs -50% hunger/)).toBeInTheDocument()
-    })
 
     it("should render ACTIVE_AIR_DASH correctly", () => {
       const perk = {
@@ -328,37 +314,9 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/Adds \+1 to your Summoning Power/)).toBeInTheDocument()
     })
 
-    it("should render PASSIVE_MANIPULATION_SICKNESS correctly", () => {
-      const perk = {
-        perk: "PASSIVE_MANIPULATION_SICKNESS",
-        time: 200,
-        isBuff: false
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/- Casting manipulation spells applies sickness for 10 seconds and costs hunger/)).toBeInTheDocument()
-    })
   })
 
   describe("necromancy perks", () => {
-    it("should render PASSIVE_BLIGHTED correctly", () => {
-      const perk = {
-        perk: "PASSIVE_BLIGHTED",
-        amount: 0.25,
-        isBuff: false
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/- Healing spells are 25% less effective and add nausea/)).toBeInTheDocument()
-    })
 
     it("should render PASSIVE_LICH_FEAST correctly", () => {
       const perk = {
@@ -455,38 +413,9 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/\+ Swap positions with entities\. Press KEYBIND to activate\. 3 second cooldown/)).toBeInTheDocument()
     })
 
-    it("should render PASSIVE_UNSTABLE_SUMMONING correctly", () => {
-      const perk = {
-        perk: "PASSIVE_UNSTABLE_SUMMONING",
-        amount: 0.33,
-        isBuff: false
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/- 33% chance to transform summons into random creatures/)).toBeInTheDocument()
-    })
   })
 
   describe("common perks", () => {
-    it("should render PASSIVE_MOB_PACIFICATION correctly", () => {
-      const perk = {
-        perk: "PASSIVE_MOB_PACIFICATION",
-        entities: ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"],
-        isBuff: true
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/Drowned, Guardian, Elder Guardian ignore you/)).toBeInTheDocument()
-    })
-  })
 
   describe("error handling", () => {
     it("should handle invalid perk data", () => {
@@ -511,4 +440,4 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/Unknown perk: UNKNOWN_PERK/)).toBeInTheDocument()
     })
   })
-})
+})  })

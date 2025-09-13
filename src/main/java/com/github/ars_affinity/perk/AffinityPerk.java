@@ -28,7 +28,6 @@ public abstract class AffinityPerk {
                 case PASSIVE_FIRE_THORNS:
                 case PASSIVE_MANA_TAP:
                 case PASSIVE_HEALING_AMPLIFICATION:
-                case PASSIVE_FREE_JUMP:
                 case PASSIVE_SOULSPIKE:
                 case PASSIVE_SUMMONING_POWER:
                 case PASSIVE_ABJURATION_POWER:

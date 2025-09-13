@@ -6,7 +6,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1
+      "amount": 1
     },
     {
       "id": "conjuration_summon_health_1",
@@ -14,7 +14,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 1,
       "prerequisites": ["conjuration_summoning_power_1"]
     },
     {
@@ -23,7 +23,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 1,
       "prerequisites": ["conjuration_summoning_power_1"]
     },
     {
@@ -32,7 +32,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "amount": 200,
       "prerequisites": ["conjuration_summoning_power_1"]
     },
     {
@@ -41,7 +41,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["conjuration_summon_health_1"]
     },
     {
@@ -50,7 +50,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["conjuration_summon_defense_1"]
     },
     {
@@ -59,7 +59,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 3,
       "prerequisites": ["conjuration_summon_health_2"]
     },
     {
@@ -68,7 +68,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 3,
+      "amount": 3,
       "prerequisites": ["conjuration_summon_defense_2"]
     },
     {
@@ -77,7 +77,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 2,
       "prerequisites": ["conjuration_summoning_power_1"]
     },
     {
@@ -86,7 +86,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
+      "amount": 300,
       "prerequisites": ["conjuration_conjuration_resistance_1"]
     }
   ]
