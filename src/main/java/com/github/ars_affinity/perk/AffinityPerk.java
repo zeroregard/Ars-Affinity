@@ -108,6 +108,10 @@ public abstract class AffinityPerk {
                     float maxAmplification = jsonObject.get("amount").getAsFloat();
                     int countdownTicks = jsonObject.get("time").getAsInt();
                     return new DurationBasedPerk(perkType, maxAmplification, countdownTicks, isBuff);
+                case PASSIVE_STONEFOOT:
+                case PASSIVE_IRONVEIN:
+                case PASSIVE_ROOTED:
+                    return new SimplePerk(perkType, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -235,5 +239,10 @@ public abstract class AffinityPerk {
         }
     }
     
+    public static class SimplePerk extends AffinityPerk {
+        public SimplePerk(AffinityPerkType perk, boolean isBuff) {
+            super(perk, isBuff);
+        }
+    }
 
 }
