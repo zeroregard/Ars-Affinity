@@ -115,11 +115,10 @@ public abstract class AffinityPerk {
                     float retaliationChance = jsonObject.get("chance").getAsFloat();
                     return new AmountBasedPerk(perkType, retaliationChance, isBuff);
                 case PASSIVE_STATIC_CHARGE:
-                    float chargeRate = jsonObject.get("chargeRate").getAsFloat();
-                    float maxCharge = jsonObject.get("maxCharge").getAsFloat();
+                    int buildUpTime = jsonObject.get("buildUpTime").getAsInt();
                     float damage = jsonObject.get("damage").getAsFloat();
                     float aoeRadius = jsonObject.get("aoeRadius").getAsFloat();
-                    return new StaticChargePerk(perkType, chargeRate, maxCharge, damage, aoeRadius, isBuff);
+                    return new StaticChargePerk(perkType, buildUpTime, damage, aoeRadius, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -248,15 +247,13 @@ public abstract class AffinityPerk {
     }
 
     public static class StaticChargePerk extends AffinityPerk {
-        public float chargeRate;
-        public float maxCharge;
+        public int buildUpTime;
         public float damage;
         public float aoeRadius;
 
-        public StaticChargePerk(AffinityPerkType perk, float chargeRate, float maxCharge, float damage, float aoeRadius, boolean isBuff) {
+        public StaticChargePerk(AffinityPerkType perk, int buildUpTime, float damage, float aoeRadius, boolean isBuff) {
             super(perk, isBuff);
-            this.chargeRate = chargeRate;
-            this.maxCharge = maxCharge;
+            this.buildUpTime = buildUpTime;
             this.damage = damage;
             this.aoeRadius = aoeRadius;
         }

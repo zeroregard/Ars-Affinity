@@ -12,6 +12,7 @@ import com.github.ars_affinity.potion.GroundSlamCooldownEffect;
 import com.github.ars_affinity.potion.StoneSkinCooldownEffect;
 import com.github.ars_affinity.potion.AirDashCooldownEffect;
 import com.github.ars_affinity.potion.MidAirPhasingCooldownEffect;
+import com.github.ars_affinity.potion.StaticChargeEffect;
 import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
 import com.github.ars_affinity.potion.SwarmCooldownEffect;
 import com.github.ars_affinity.potion.SwarmingEffect;
@@ -53,6 +54,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, StoneSkinCooldownEffect> STONE_SKIN_COOLDOWN_EFFECT = EFFECTS.register("stone_skin_cooldown", StoneSkinCooldownEffect::new);
     public static final DeferredHolder<MobEffect, AirDashCooldownEffect> AIR_DASH_COOLDOWN_EFFECT = EFFECTS.register("air_dash_cooldown", AirDashCooldownEffect::new);
     public static final DeferredHolder<MobEffect, MidAirPhasingCooldownEffect> MID_AIR_PHASING_COOLDOWN_EFFECT = EFFECTS.register("mid_air_phasing_cooldown", MidAirPhasingCooldownEffect::new);
+    public static final DeferredHolder<MobEffect, StaticChargeEffect> STATIC_CHARGE_EFFECT = EFFECTS.register("static_charge", StaticChargeEffect::new);
     public static final DeferredHolder<MobEffect, FireDashCooldownEffect> FIRE_DASH_COOLDOWN_EFFECT = EFFECTS.register("fire_dash_cooldown", FireDashCooldownEffect::new);
 
     public static final DeferredHolder<MobEffect, SanctuaryEffect> SANCTUARY_EFFECT = EFFECTS.register("sanctuary", SanctuaryEffect::new);
