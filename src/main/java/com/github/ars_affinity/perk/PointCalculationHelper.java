@@ -36,7 +36,7 @@ public class PointCalculationHelper {
         // Combine both scaling factors (multiplicative)
         float combinedScalingFactor = schoolScalingFactor * globalScalingFactor;
         
-        return Math.max(1, Math.round(basePoints * combinedScalingFactor));
+        return Math.max(0, Math.round(basePoints * combinedScalingFactor));
     }
     
     /**

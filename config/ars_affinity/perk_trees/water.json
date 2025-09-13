@@ -35,6 +35,15 @@
       "prerequisites": ["water_cold_walker_1"]
     },
     {
+      "id": "water_water_power_1",
+      "perk": "PASSIVE_WATER_POWER",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["water_hydration_1", "water_cold_walker_1"]
+    },
+    {
       "id": "water_hydration_3",
       "perk": "PASSIVE_HYDRATION",
       "tier": 3,
@@ -53,13 +62,13 @@
       "prerequisites": ["water_cold_walker_2"]
     },
     {
-      "id": "water_mob_pacification_1",
-      "perk": "PASSIVE_MOB_PACIFICATION",
+      "id": "water_water_power_2",
+      "perk": "PASSIVE_WATER_POWER",
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
-      "prerequisites": ["water_hydration_2", "water_cold_walker_2"]
+      "level": 2,
+      "prerequisites": ["water_water_power_1"]
     },
     {
       "id": "water_ice_blast_1",

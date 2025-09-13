@@ -18,6 +18,15 @@
       "prerequisites": ["abjuration_healing_amplification_1"]
     },
     {
+      "id": "abjuration_abjuration_power_1",
+      "perk": "PASSIVE_ABJURATION_POWER",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["abjuration_healing_amplification_1"]
+    },
+    {
       "id": "abjuration_healing_amplification_3",
       "perk": "PASSIVE_HEALING_AMPLIFICATION",
       "tier": 3,
@@ -25,6 +34,15 @@
       "category": "PASSIVE",
       "level": 3,
       "prerequisites": ["abjuration_healing_amplification_2"]
+    },
+    {
+      "id": "abjuration_abjuration_power_2",
+      "perk": "PASSIVE_ABJURATION_POWER",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["abjuration_abjuration_power_1"]
     },
     {
       "id": "abjuration_ghost_step_1",

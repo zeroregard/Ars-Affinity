@@ -73,7 +73,7 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
         formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
     }
    
-    else if (perkId === 'PASSIVE_SUMMONING_POWER' && perk.amount !== undefined) {
+    else if (perkId.endsWith('_POWER') && perk.amount !== undefined) {
         formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
     }
     // Handle passive perks with just amount

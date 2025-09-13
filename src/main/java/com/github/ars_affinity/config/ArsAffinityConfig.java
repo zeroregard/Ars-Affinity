@@ -53,7 +53,7 @@ public class ArsAffinityConfig {
             .defineInRange("opposingSchoolPenaltyPercentage", 0.66, 0.0, 1.0);
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
-            .defineInRange("affinityGainMultiplier", 0.000001, 0.0001, 0.1);
+            .defineInRange("affinityGainMultiplier", 0.00001, 0.0001, 0.1);
         AFFINITY_CONSUMABLE_COOLDOWN_DURATION = SERVER_BUILDER
             .comment("Duration in seconds for affinity consumable cooldown effect (default 30 minutes = 1800 seconds)")
             .defineInRange("affinityConsumableCooldownDuration", 1800, 60, 7200);

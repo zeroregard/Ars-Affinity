@@ -2,6 +2,7 @@ package com.github.ars_affinity.client.screen;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
+import com.github.ars_affinity.client.screen.perk.PerkTreeScreen;
 import com.github.ars_affinity.perk.PerkAllocationManager;
 import com.github.ars_affinity.perk.PerkTreeManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;

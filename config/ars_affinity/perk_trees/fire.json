@@ -18,6 +18,15 @@
       "prerequisites": ["fire_thorns_1"]
     },
     {
+      "id": "fire_fire_power_1",
+      "perk": "PASSIVE_FIRE_POWER",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["fire_thorns_1"]
+    },
+    {
       "id": "fire_thorns_3",
       "perk": "PASSIVE_FIRE_THORNS",
       "tier": 3,
@@ -25,6 +34,15 @@
       "category": "PASSIVE",
       "level": 3,
       "prerequisites": ["fire_thorns_2"]
+    },
+    {
+      "id": "fire_fire_power_2",
+      "perk": "PASSIVE_FIRE_POWER",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["fire_fire_power_1"]
     },
     {
       "id": "fire_dash_1",

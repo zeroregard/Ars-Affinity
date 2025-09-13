@@ -299,24 +299,23 @@ function UnifiedPerkTreeViewer() {
     }
 
     // Handle mouse wheel zoom towards mouse cursor
-    const handleWheel = useCallback((e: React.WheelEvent) => {
+    const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault()
         const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED
         const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, viewport.zoom + delta))
         
         if (newZoom === viewport.zoom) return // No change in zoom
         
-        // Get mouse position relative to the SVG
-        const rect = e.currentTarget.getBoundingClientRect()
+        // Get mouse position relative to the container
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect) return
+        
         const mouseX = e.clientX - rect.left
         const mouseY = e.clientY - rect.top
         
         // Convert mouse position to SVG coordinates
         const svgMouseX = (mouseX - viewport.x) / viewport.zoom
         const svgMouseY = (mouseY - viewport.y) / viewport.zoom
-        
-        // Calculate zoom factor (unused but kept for potential future use)
-        // const zoomFactor = newZoom / viewport.zoom
         
         // Adjust viewport to zoom towards mouse position
         const newX = mouseX - svgMouseX * newZoom
@@ -329,6 +328,18 @@ function UnifiedPerkTreeViewer() {
             zoom: newZoom
         }))
     }, [viewport])
+
+    // Add wheel event listener with passive: false
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) return
+
+        container.addEventListener('wheel', handleWheel, { passive: false })
+        
+        return () => {
+            container.removeEventListener('wheel', handleWheel)
+        }
+    }, [handleWheel])
 
     // Handle mouse down for dragging
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -508,7 +519,8 @@ function UnifiedPerkTreeViewer() {
 
     const formatPerkName = (nodeId: string) => {
         const parts = nodeId.split('_')
-        return parts.map(part => 
+        // Skip the first part (school name) to avoid duplication
+        return parts.slice(1).map(part => 
             part.match(/\d+/) ? toRomanNumeral(parseInt(part)) : titleCase(part)
         ).join(' ')
     }
@@ -733,7 +745,6 @@ function UnifiedPerkTreeViewer() {
                     height: '100%',
                     transform: `scale(${viewport.zoom})`,
                 }}
-                onWheel={handleWheel}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}

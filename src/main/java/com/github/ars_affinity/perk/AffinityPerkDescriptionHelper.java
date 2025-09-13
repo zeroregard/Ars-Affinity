@@ -29,10 +29,17 @@ public class AffinityPerkDescriptionHelper {
 				}
 				return Component.translatable(translationKey, 0, 0);
 			case PASSIVE_SUMMONING_POWER:
-				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
-					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
+			case PASSIVE_ABJURATION_POWER:
+			case PASSIVE_AIR_POWER:
+			case PASSIVE_EARTH_POWER:
+			case PASSIVE_FIRE_POWER:
+			case PASSIVE_MANIPULATION_POWER:
+			case PASSIVE_ANIMA_POWER:
+			case PASSIVE_WATER_POWER:
+				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+					return Component.translatable(translationKey, (int)amountPerk.amount);
 				}
-				return Component.translatable(translationKey, 0, 0);
+				return Component.translatable(translationKey, 0);
 			case PASSIVE_SUMMON_DEFENSE:
 				if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
 					return Component.translatable(translationKey, (int)durationPerk.amount, durationPerk.time / 20);
@@ -90,6 +97,8 @@ public class AffinityPerkDescriptionHelper {
 			//         return Component.translatable(translationKey, sicknessPerk.duration / 20, sicknessPerk.hunger);
 			//     }
 			//     return Component.translatable(translationKey, 0, 0);
+			case PASSIVE_ROTTING_GUISE:
+				return Component.translatable(translationKey);
 			default:
 				return Component.translatable(translationKey, 0);
 		}
