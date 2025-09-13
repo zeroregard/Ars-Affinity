@@ -70,6 +70,24 @@
       "category": "PASSIVE",
       "level": 2,
       "prerequisites": ["manipulation_manipulation_power_1"]
+    },
+    {
+      "id": "manipulation_manipulation_resistance_1",
+      "perk": "PASSIVE_MANIPULATION_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["manipulation_mana_tap_1"]
+    },
+    {
+      "id": "manipulation_manipulation_resistance_2",
+      "perk": "PASSIVE_MANIPULATION_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["manipulation_manipulation_resistance_1"]
     }
   ]
 }

@@ -52,6 +52,24 @@
       "category": "ACTIVE",
       "level": 1,
       "prerequisites": ["air_buried_2", "air_free_jump_2"]
+    },
+    {
+      "id": "air_air_resistance_1",
+      "perk": "PASSIVE_AIR_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["air_free_jump_1"]
+    },
+    {
+      "id": "air_air_resistance_2",
+      "perk": "PASSIVE_AIR_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["air_air_resistance_1"]
     }
   ]
 }

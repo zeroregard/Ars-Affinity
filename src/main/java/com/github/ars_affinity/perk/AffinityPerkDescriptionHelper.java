@@ -36,6 +36,14 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_MANIPULATION_POWER:
 			case PASSIVE_ANIMA_POWER:
 			case PASSIVE_WATER_POWER:
+			case PASSIVE_ABJURATION_RESISTANCE:
+			case PASSIVE_CONJURATION_RESISTANCE:
+			case PASSIVE_AIR_RESISTANCE:
+			case PASSIVE_EARTH_RESISTANCE:
+			case PASSIVE_FIRE_RESISTANCE:
+			case PASSIVE_MANIPULATION_RESISTANCE:
+			case PASSIVE_ANIMA_RESISTANCE:
+			case PASSIVE_WATER_RESISTANCE:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)amountPerk.amount);
 				}

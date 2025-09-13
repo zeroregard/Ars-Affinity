@@ -61,6 +61,24 @@
       "category": "ACTIVE",
       "level": 1,
       "prerequisites": ["abjuration_ghost_step_1"]
+    },
+    {
+      "id": "abjuration_abjuration_resistance_1",
+      "perk": "PASSIVE_ABJURATION_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["abjuration_healing_amplification_1"]
+    },
+    {
+      "id": "abjuration_abjuration_resistance_2",
+      "perk": "PASSIVE_ABJURATION_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["abjuration_abjuration_resistance_1"]
     }
   ]
 }

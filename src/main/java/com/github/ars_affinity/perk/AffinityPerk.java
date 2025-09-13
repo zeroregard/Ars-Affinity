@@ -30,6 +30,22 @@ public abstract class AffinityPerk {
                 case PASSIVE_HEALING_AMPLIFICATION:
                 case PASSIVE_FREE_JUMP:
                 case PASSIVE_SOULSPIKE:
+                case PASSIVE_SUMMONING_POWER:
+                case PASSIVE_ABJURATION_POWER:
+                case PASSIVE_AIR_POWER:
+                case PASSIVE_EARTH_POWER:
+                case PASSIVE_FIRE_POWER:
+                case PASSIVE_MANIPULATION_POWER:
+                case PASSIVE_ANIMA_POWER:
+                case PASSIVE_WATER_POWER:
+                case PASSIVE_ABJURATION_RESISTANCE:
+                case PASSIVE_CONJURATION_RESISTANCE:
+                case PASSIVE_AIR_RESISTANCE:
+                case PASSIVE_EARTH_RESISTANCE:
+                case PASSIVE_FIRE_RESISTANCE:
+                case PASSIVE_MANIPULATION_RESISTANCE:
+                case PASSIVE_ANIMA_RESISTANCE:
+                case PASSIVE_WATER_RESISTANCE:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_COLD_WALKER:
@@ -37,7 +53,6 @@ public abstract class AffinityPerk {
                     return new AmountBasedPerk(perkType, perkAmount, isBuff);
                 case PASSIVE_DEFLECTION:
                 case PASSIVE_SUMMON_HEALTH:
-                case PASSIVE_SUMMONING_POWER:
                 case PASSIVE_SUMMON_DEFENSE:
                 case PASSIVE_STONE_SKIN:
                     float durationAmount = jsonObject.get("amount").getAsFloat();

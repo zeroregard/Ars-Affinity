@@ -52,6 +52,24 @@
       "category": "ACTIVE",
       "level": 1,
       "prerequisites": ["fire_thorns_2"]
+    },
+    {
+      "id": "fire_fire_resistance_1",
+      "perk": "PASSIVE_FIRE_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["fire_thorns_1"]
+    },
+    {
+      "id": "fire_fire_resistance_2",
+      "perk": "PASSIVE_FIRE_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["fire_fire_resistance_1"]
     }
   ]
 }

@@ -504,7 +504,7 @@ function UnifiedPerkTreeViewer() {
             >
                 <div className="perk-tooltip">
                     <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                        {formatPerkName(hoveredNode.node.id)} ({titleCase(hoveredNode.school)})
+                        {formatPerkName(hoveredNode.node.id)}
                     </div>
                     <div style={{ color: '#ccc', marginBottom: '8px' }}>
                         Cost: {hoveredNode.node.pointCost} points

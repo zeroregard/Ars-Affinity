@@ -69,6 +69,24 @@
       "category": "PASSIVE",
       "level": 2,
       "prerequisites": ["conjuration_summoning_power_1"]
+    },
+    {
+      "id": "conjuration_conjuration_resistance_1",
+      "perk": "PASSIVE_CONJURATION_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["conjuration_summon_health_1", "conjuration_summon_defense_1"]
+    },
+    {
+      "id": "conjuration_conjuration_resistance_2",
+      "perk": "PASSIVE_CONJURATION_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["conjuration_conjuration_resistance_1"]
     }
   ]
 }

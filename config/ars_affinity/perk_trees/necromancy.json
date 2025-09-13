@@ -54,8 +54,8 @@
       "prerequisites": ["necromancy_lich_feast_1"]
     },
     {
-      "id": "necromancy_mob_pacification_1",
-      "perk": "PASSIVE_MOB_PACIFICATION",
+      "id": "necromancy_rotting_guise_1",
+      "perk": "PASSIVE_ROTTING_GUISE",
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
@@ -79,6 +79,24 @@
       "category": "ACTIVE",
       "level": 1,
       "prerequisites": ["necromancy_soulspike_3"]
+    },
+    {
+      "id": "necromancy_anima_resistance_1",
+      "perk": "PASSIVE_ANIMA_RESISTANCE",
+      "tier": 2,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["necromancy_soulspike_1"]
+    },
+    {
+      "id": "necromancy_anima_resistance_2",
+      "perk": "PASSIVE_ANIMA_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["necromancy_anima_resistance_1"]
     }
   ]
 }
