@@ -1,21 +1,30 @@
 {
   "perks": [
     {
-      "id": "necromancy_soulspike_1",
-      "perk": "PASSIVE_SOULSPIKE",
+      "id": "necromancy_anima_power_1",
+      "perk": "PASSIVE_ANIMA_POWER",
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
       "level": 1
     },
     {
-      "id": "necromancy_soulspike_2",
+      "id": "necromancy_soulspike_1",
       "perk": "PASSIVE_SOULSPIKE",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["necromancy_anima_power_1"]
+    },
+    {
+      "id": "necromancy_anima_resistance_1",
+      "perk": "PASSIVE_ANIMA_RESISTANCE",
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["necromancy_soulspike_1"]
+      "level": 1,
+      "prerequisites": ["necromancy_anima_power_1"]
     },
     {
       "id": "necromancy_lich_feast_1",
@@ -27,12 +36,12 @@
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
-      "id": "necromancy_anima_power_1",
-      "perk": "PASSIVE_ANIMA_POWER",
+      "id": "necromancy_soulspike_2",
+      "perk": "PASSIVE_SOULSPIKE",
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "level": 2,
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
@@ -51,6 +60,24 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "level": 2,
+      "prerequisites": ["necromancy_lich_feast_1", "necromancy_anima_power_2"]
+    },
+    {
+      "id": "necromancy_anima_power_2",
+      "perk": "PASSIVE_ANIMA_POWER",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
+      "prerequisites": ["necromancy_soulspike_1", "necromancy_anima_resistance_1"]
+    },
+    {
+      "id": "necromancy_anima_resistance_2",
+      "perk": "PASSIVE_ANIMA_RESISTANCE",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 2,
       "prerequisites": ["necromancy_lich_feast_1"]
     },
     {
@@ -60,16 +87,7 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "level": 1,
-      "prerequisites": ["necromancy_soulspike_2", "necromancy_lich_feast_1"]
-    },
-    {
-      "id": "necromancy_anima_power_2",
-      "perk": "PASSIVE_ANIMA_POWER",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["necromancy_anima_power_1"]
+      "prerequisites": ["necromancy_soulspike_3", "necromancy_lich_feast_2"]
     },
     {
       "id": "necromancy_curse_field_1",
@@ -78,25 +96,7 @@
       "pointCost": 1,
       "category": "ACTIVE",
       "level": 1,
-      "prerequisites": ["necromancy_soulspike_3"]
-    },
-    {
-      "id": "necromancy_anima_resistance_1",
-      "perk": "PASSIVE_ANIMA_RESISTANCE",
-      "tier": 2,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 1,
-      "prerequisites": ["necromancy_soulspike_1"]
-    },
-    {
-      "id": "necromancy_anima_resistance_2",
-      "perk": "PASSIVE_ANIMA_RESISTANCE",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["necromancy_anima_resistance_1"]
+      "prerequisites": ["necromancy_anima_resistance_2", "necromancy_lich_feast_2"]
     }
   ]
 }

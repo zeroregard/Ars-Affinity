@@ -1,21 +1,30 @@
 {
   "perks": [
     {
-      "id": "manipulation_mana_tap_1",
-      "perk": "PASSIVE_MANA_TAP",
+      "id": "manipulation_manipulation_power_1",
+      "perk": "PASSIVE_MANIPULATION_POWER",
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
       "level": 1
     },
     {
-      "id": "manipulation_mana_tap_2",
+      "id": "manipulation_mana_tap_1",
       "perk": "PASSIVE_MANA_TAP",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "level": 1,
+      "prerequisites": ["manipulation_manipulation_power_1"]
+    },
+    {
+      "id": "manipulation_manipulation_resistance_1",
+      "perk": "PASSIVE_MANIPULATION_RESISTANCE",
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["manipulation_mana_tap_1"]
+      "level": 1,
+      "prerequisites": ["manipulation_manipulation_power_1"]
     },
     {
       "id": "manipulation_deflection_1",
@@ -27,12 +36,12 @@
       "prerequisites": ["manipulation_mana_tap_1"]
     },
     {
-      "id": "manipulation_manipulation_power_1",
-      "perk": "PASSIVE_MANIPULATION_POWER",
+      "id": "manipulation_mana_tap_2",
+      "perk": "PASSIVE_MANA_TAP",
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "level": 1,
+      "level": 2,
       "prerequisites": ["manipulation_mana_tap_1"]
     },
     {
@@ -45,24 +54,6 @@
       "prerequisites": ["manipulation_mana_tap_2"]
     },
     {
-      "id": "manipulation_swap_ability_1",
-      "perk": "ACTIVE_SWAP_ABILITY",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "ACTIVE",
-      "level": 1,
-      "prerequisites": ["manipulation_mana_tap_2"]
-    },
-    {
-      "id": "manipulation_deflection_2",
-      "perk": "PASSIVE_DEFLECTION",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 2,
-      "prerequisites": ["manipulation_deflection_1"]
-    },
-    {
       "id": "manipulation_manipulation_power_2",
       "perk": "PASSIVE_MANIPULATION_POWER",
       "tier": 3,
@@ -72,15 +63,6 @@
       "prerequisites": ["manipulation_manipulation_power_1"]
     },
     {
-      "id": "manipulation_manipulation_resistance_1",
-      "perk": "PASSIVE_MANIPULATION_RESISTANCE",
-      "tier": 2,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "level": 1,
-      "prerequisites": ["manipulation_mana_tap_1"]
-    },
-    {
       "id": "manipulation_manipulation_resistance_2",
       "perk": "PASSIVE_MANIPULATION_RESISTANCE",
       "tier": 3,
@@ -88,6 +70,15 @@
       "category": "PASSIVE",
       "level": 2,
       "prerequisites": ["manipulation_manipulation_resistance_1"]
+    },
+    {
+      "id": "manipulation_swap_ability_1",
+      "perk": "ACTIVE_SWAP_ABILITY",
+      "tier": 3,
+      "pointCost": 1,
+      "category": "ACTIVE",
+      "level": 1,
+      "prerequisites": ["manipulation_manipulation_power_2", "manipulation_manipulation_resistance_2"]
     }
   ]
 }
