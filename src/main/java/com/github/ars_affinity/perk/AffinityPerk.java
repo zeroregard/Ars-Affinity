@@ -108,6 +108,18 @@ public abstract class AffinityPerk {
                     float maxAmplification = jsonObject.get("amount").getAsFloat();
                     int countdownTicks = jsonObject.get("time").getAsInt();
                     return new DurationBasedPerk(perkType, maxAmplification, countdownTicks, isBuff);
+                case PASSIVE_MID_AIR_PHASING:
+                    int phasingCooldown = jsonObject.get("cooldown").getAsInt();
+                    return new DurationBasedPerk(perkType, 0.0f, phasingCooldown, isBuff);
+                case PASSIVE_BREEZE_RETALIATION:
+                    float retaliationChance = jsonObject.get("chance").getAsFloat();
+                    return new AmountBasedPerk(perkType, retaliationChance, isBuff);
+                case PASSIVE_STATIC_CHARGE:
+                    float chargeRate = jsonObject.get("chargeRate").getAsFloat();
+                    float maxCharge = jsonObject.get("maxCharge").getAsFloat();
+                    float damage = jsonObject.get("damage").getAsFloat();
+                    float aoeRadius = jsonObject.get("aoeRadius").getAsFloat();
+                    return new StaticChargePerk(perkType, chargeRate, maxCharge, damage, aoeRadius, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -232,6 +244,21 @@ public abstract class AffinityPerk {
             super(perk, isBuff);
             this.duration = duration;
             this.hunger = hunger;
+        }
+    }
+
+    public static class StaticChargePerk extends AffinityPerk {
+        public float chargeRate;
+        public float maxCharge;
+        public float damage;
+        public float aoeRadius;
+
+        public StaticChargePerk(AffinityPerkType perk, float chargeRate, float maxCharge, float damage, float aoeRadius, boolean isBuff) {
+            super(perk, isBuff);
+            this.chargeRate = chargeRate;
+            this.maxCharge = maxCharge;
+            this.damage = damage;
+            this.aoeRadius = aoeRadius;
         }
     }
     
