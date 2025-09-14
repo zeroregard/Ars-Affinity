@@ -2,43 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 import { toRomanNumeral } from './utils/romanNumerals'
-import { School, PerkNode, PerkTreeData, ViewportState, NodePosition, SchoolTreeData, SchoolIconProps } from './types/perkTree'
+import { School, PerkNode, PerkTreeData, ViewportState, NodePosition, SchoolTreeData } from './types/perkTree'
 import { NODE_SIZE, NODE_SPACING, TIER_SPACING, SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, ZOOM_SPEED, SCHOOL_COLORS, schools } from './constants/perkTree'
+import SchoolIcon from './components/SchoolIcon'
 
-// School Icon Component
-
-const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle }) => {
-    const iconRadius = 122
-    const iconSize = 32
-    const circleRadius = 20
-    const iconX = centerX + (iconRadius * Math.cos(angle)) - (iconSize / 2)
-    const iconY = centerY + (iconRadius * Math.sin(angle)) - (iconSize / 2)
-    const circleX = centerX + (iconRadius * Math.cos(angle))
-    const circleY = centerY + (iconRadius * Math.sin(angle))
-
-    return (
-        <g>
-            {/* Background circle */}
-            <circle
-                cx={circleX}
-                cy={circleY}
-                r={circleRadius}
-                fill="rgba(0, 0, 0, 1)"
-                stroke="rgba(255, 255, 255, 0.3)"
-                strokeWidth="2"
-            />
-            {/* School icon */}
-            <image
-                href={`/icons/${school}_tooltip.png`}
-                x={iconX}
-                y={iconY}
-                width={iconSize}
-                height={iconSize}
-                imageRendering="pixelated"
-            />
-        </g>
-    )
-}
 
 
 
