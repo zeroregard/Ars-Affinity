@@ -3,6 +3,7 @@ import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 import { toRomanNumeral } from './utils/romanNumerals'
 import { School, PerkNode, PerkTreeData, ViewportState, NodePosition, SchoolTreeData, SchoolIconProps } from './types/perkTree'
+import { NODE_SIZE, NODE_SPACING, TIER_SPACING, SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, ZOOM_SPEED, SCHOOL_COLORS, schools } from './constants/perkTree'
 
 // School Icon Component
 
@@ -40,47 +41,6 @@ const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle
 }
 
 
-const NODE_SIZE = 32
-const NODE_SPACING = 60
-const TIER_SPACING = 80
-const SCHOOL_SPACING = 150
-const MIN_ZOOM = 2.0  // 100%
-const MAX_ZOOM = 8.0   // 400% maximum zoom
-const DEFAULT_ZOOM = 2.0  // 100%
-const ZOOM_SPEED = 0.1
-
-// School-specific colors for perk nodes
-const SCHOOL_COLORS: Record<School, { 
-    primary: string; 
-    hover: string; 
-    allocated: string;
-    gradient?: { from: string; to: string };
-}> = {
-    'manipulation': { primary: '#e99a58', hover: '#f2b366', allocated: '#10B981' }, // Orange
-    'fire': { primary: '#f06666', hover: '#f58a8a', allocated: '#10B981' }, // Red
-    'necromancy': { 
-        primary: 'url(#necromancy-gradient)', 
-        hover: 'url(#necromancy-gradient-hover)', 
-        allocated: '#10B981',
-        gradient: { from: '#282828', to: '#8b0606' }
-    }, // Anima gradient
-    'air': { primary: '#d4cf5a', hover: '#e0dc7a', allocated: '#10B981' }, // Yellow
-    'conjuration': { primary: '#6ae3ce', hover: '#8ae9d6', allocated: '#10B981' }, // Teal
-    'water': { primary: '#82a2ed', hover: '#a1baf0', allocated: '#10B981' }, // Blue
-    'abjuration': { primary: '#eb7cce', hover: '#f099d9', allocated: '#10B981' }, // Pink
-    'earth': { primary: '#62e296', hover: '#7ee8a8', allocated: '#10B981' } // Green
-}
-
-const schools: School[] = [
-    'manipulation',  // Right (0°)
-    'fire',          // Bottom-right (45°)
-    'necromancy',    // Bottom (90°)
-    'air',           // Bottom-left (135°)
-    'conjuration',   // Left (180°)
-    'water',         // Top-left (225°)
-    'abjuration',    // Top (270°)
-    'earth'          // Top-right (315°)
-]
 
 function UnifiedPerkTreeViewer() {
     const [schoolTrees, setSchoolTrees] = useState<SchoolTreeData[]>([])

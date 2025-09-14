@@ -10,23 +10,29 @@ export const DEFAULT_ZOOM = 2.0  // 100%
 export const ZOOM_SPEED = 0.1
 
 export const SCHOOL_COLORS: Record<School, { 
-    primary: string
-    secondary: string
-    hover: string
+    primary: string; 
+    hover: string; 
+    allocated: string;
+    gradient?: { from: string; to: string };
 }> = {
-    'abjuration': { primary: '#3b82f6', secondary: '#1e40af', hover: '#60a5fa' },
-    'air': { primary: '#06b6d4', secondary: '#0891b2', hover: '#22d3ee' },
-    'conjuration': { primary: '#8b5cf6', secondary: '#7c3aed', hover: '#a78bfa' },
-    'earth': { primary: '#84cc16', secondary: '#65a30d', hover: '#a3e635' },
-    'fire': { primary: '#ef4444', secondary: '#dc2626', hover: '#f87171' },
-    'manipulation': { primary: '#f59e0b', secondary: '#d97706', hover: '#fbbf24' },
-    'necromancy': { primary: '#8b0606', secondary: '#282828', hover: '#a00a0a' },
-    'water': { primary: '#0ea5e9', secondary: '#0284c7', hover: '#38bdf8' }
+    'manipulation': { primary: '#e99a58', hover: '#f2b366', allocated: '#10B981' }, // Orange
+    'fire': { primary: '#f06666', hover: '#f58a8a', allocated: '#10B981' }, // Red
+    'necromancy': { 
+        primary: 'url(#necromancy-gradient)', 
+        hover: 'url(#necromancy-gradient-hover)', 
+        allocated: '#10B981',
+        gradient: { from: '#282828', to: '#8b0606' }
+    }, // Anima gradient
+    'air': { primary: '#d4cf5a', hover: '#e0dc7a', allocated: '#10B981' }, // Yellow
+    'conjuration': { primary: '#6ae3ce', hover: '#8ae9d6', allocated: '#10B981' }, // Teal
+    'water': { primary: '#82a2ed', hover: '#a1baf0', allocated: '#10B981' }, // Blue
+    'abjuration': { primary: '#eb7cce', hover: '#f099d9', allocated: '#10B981' }, // Pink
+    'earth': { primary: '#62e296', hover: '#7ee8a8', allocated: '#10B981' } // Green
 }
 
 export const schools: School[] = [
-    'fire',          // Right (0°)
-    'manipulation',  // Top-right (45°)
+    'manipulation',  // Right (0°)
+    'fire',          // Bottom-right (45°)
     'necromancy',    // Bottom (90°)
     'air',           // Bottom-left (135°)
     'conjuration',   // Left (180°)
