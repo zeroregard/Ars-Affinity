@@ -12,7 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Map;
 
 public class PerkNodeRenderer {
-    private static final ResourceLocation PERK_NODE_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_node.png");
+    private static final ResourceLocation PERK_BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_background.png");
+    private static final ResourceLocation PERK_BORDER_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_border.png");
     private static final int NODE_SIZE = 24;
     
     private final Player player;
@@ -30,15 +31,18 @@ public class PerkNodeRenderer {
         
         int color = getNodeColor(node, isAllocated, isAvailable);
         
-        // Render the node background
+        // Render the base background (no coloring)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        guiGraphics.blit(PERK_BACKGROUND_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
+        
+        // Render the colored border
         RenderSystem.setShaderColor(
             (color >> 16 & 0xFF) / 255.0f,
             (color >> 8 & 0xFF) / 255.0f,
             (color & 0xFF) / 255.0f,
             1.0f
         );
-        
-        guiGraphics.blit(PERK_NODE_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
+        guiGraphics.blit(PERK_BORDER_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
         
         // Reset color for icon rendering
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -55,12 +59,9 @@ public class PerkNodeRenderer {
     
     private void renderPerkIcon(GuiGraphics guiGraphics, PerkNode node, int nodeX, int nodeY, boolean isAllocated, boolean isAvailable) {
         ResourceLocation perkIcon = getPerkIcon(node);
-        int iconSize = 16; // Standard icon size
+        int iconSize = 18; // Standard icon size
         int iconX = nodeX + (NODE_SIZE - iconSize) / 2; // Center horizontally
         int iconY = nodeY + (NODE_SIZE - iconSize) / 2; // Center vertically on the node
-        
-        // Debug output
-        System.out.println("Rendering icon for node " + node.getId() + " at (" + iconX + ", " + iconY + ") with size " + iconSize);
         
         if (isAvailable && !isAllocated) {
             // Render grayscale for available but not allocated

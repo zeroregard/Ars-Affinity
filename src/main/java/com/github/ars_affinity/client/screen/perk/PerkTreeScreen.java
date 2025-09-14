@@ -62,6 +62,9 @@ public class PerkTreeScreen extends Screen {
     protected void init() {
         super.init();
         
+        // Center the view on the root node (column 0)
+        centerOnRootNode();
+        
         addRenderableWidget(Button.builder(
             Component.translatable("gui.back"),
             button -> {
@@ -69,6 +72,29 @@ public class PerkTreeScreen extends Screen {
                 onClose();
             }
         ).bounds(10, 10, 60, 20).build());
+    }
+    
+    private void centerOnRootNode() {
+        // Find the root node (column 0) and center the view on it
+        int rootX = 0; // Root nodes are at x=0 in our coordinate system
+        int rootY = 0; // We'll center vertically on the root nodes
+        
+        // Calculate the center of the root nodes
+        var rootNodes = schoolPerks.values().stream()
+            .filter(node -> node.getPrerequisites().isEmpty())
+            .toList();
+        
+        if (!rootNodes.isEmpty()) {
+            int totalY = 0;
+            for (PerkNode rootNode : rootNodes) {
+                totalY += layout.getNodeY(rootNode, 0);
+            }
+            rootY = totalY / rootNodes.size();
+        }
+        
+        // Center the view on the root node
+        scrollX = -rootX;
+        scrollY = -rootY + height / 2 - 50; // 50 is the base offset from getStartY
     }
     
     @Override
@@ -91,6 +117,11 @@ public class PerkTreeScreen extends Screen {
         
         // Disable scissor test
         guiGraphics.disableScissor();
+        
+        // Render tooltip outside the clipped area
+        if (hoveredNode != null) {
+            tooltipRenderer.renderNodeTooltip(guiGraphics, font, hoveredNode, hoveredAllocation, mouseX, mouseY);
+        }
         
         for (var renderable : this.renderables) {
             renderable.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -119,6 +150,11 @@ public class PerkTreeScreen extends Screen {
         
         // Disable scissor test
         guiGraphics.disableScissor();
+        
+        // Render tooltip outside the clipped area
+        if (hoveredNode != null) {
+            tooltipRenderer.renderNodeTooltip(guiGraphics, font, hoveredNode, hoveredAllocation, mouseX, mouseY);
+        }
     }
     
     private void renderCustomBackground(GuiGraphics guiGraphics) {
@@ -129,21 +165,23 @@ public class PerkTreeScreen extends Screen {
         guiGraphics.blit(BACKGROUND_TEXTURE, panelX, panelY, 0, 0, 256, 256, 256, 256);
     }
     
+    private PerkNode hoveredNode = null;
+    private PerkAllocation hoveredAllocation = null;
+    
     private void renderNodes(GuiGraphics guiGraphics, int startX, int startY, int mouseX, int mouseY) {
-        for (Map.Entry<Integer, List<PerkNode>> tierEntry : layout.getPerksByTier().entrySet()) {
-            List<PerkNode> nodes = tierEntry.getValue();
+        hoveredNode = null;
+        hoveredAllocation = null;
+        
+        // Use the new dependency-based positioning for all nodes
+        for (PerkNode node : schoolPerks.values()) {
+            int nodeX = layout.getNodeX(node, startX);
+            int nodeY = layout.getNodeY(node, startY);
             
-            for (int i = 0; i < nodes.size(); i++) {
-                PerkNode node = nodes.get(i);
-                int nodeX = startX + i * 40;
-                int nodeY = startY + node.getTier() * 60;
-                
-                nodeRenderer.renderNode(guiGraphics, font, node, nodeX, nodeY, mouseX, mouseY);
-                
-                if (nodeRenderer.isNodeHovered(node, nodeX, nodeY, mouseX, mouseY)) {
-                    PerkAllocation allocation = allocatedPerks.get(node.getId());
-                    tooltipRenderer.renderNodeTooltip(guiGraphics, font, node, allocation, mouseX, mouseY);
-                }
+            nodeRenderer.renderNode(guiGraphics, font, node, nodeX, nodeY, mouseX, mouseY);
+            
+            if (nodeRenderer.isNodeHovered(node, nodeX, nodeY, mouseX, mouseY)) {
+                hoveredNode = node;
+                hoveredAllocation = allocatedPerks.get(node.getId());
             }
         }
     }
@@ -180,8 +218,22 @@ public class PerkTreeScreen extends Screen {
         if (isDragging && button == 0) {
             scrollX += (int) deltaX;
             scrollY += (int) deltaY;
-            scrollX = Math.max(-200, Math.min(200, scrollX));
-            scrollY = Math.max(-200, Math.min(200, scrollY));
+            
+            // Clamp based on actual tree bounds
+            int treeMinX = layout.getTreeMinX();
+            int treeMaxX = layout.getTreeMaxX();
+            int treeMinY = layout.getTreeMinY();
+            int treeMaxY = layout.getTreeMaxY();
+            
+            // Calculate bounds with some padding
+            int padding = 50;
+            int minScrollX = -treeMaxX - padding;
+            int maxScrollX = -treeMinX + width - padding;
+            int minScrollY = -treeMaxY - padding;
+            int maxScrollY = -treeMinY + height - padding;
+            
+            scrollX = Math.max(minScrollX, Math.min(maxScrollX, scrollX));
+            scrollY = Math.max(minScrollY, Math.min(maxScrollY, scrollY));
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
