@@ -1,106 +1,33 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React from 'react'
 import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 import { toRomanNumeral } from './utils/romanNumerals'
-import { School, PerkNode, ViewportState, SchoolTreeData } from './types/perkTree'
-import { NODE_SIZE, SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, ZOOM_SPEED, SCHOOL_COLORS, schools } from './constants/perkTree'
+import { PerkNode, SchoolTreeData } from './types/perkTree'
+import { NODE_SIZE, SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, SCHOOL_COLORS, schools } from './constants/perkTree'
 import SchoolIcon from './components/SchoolIcon'
 import { usePerkTreeData } from './hooks/usePerkTreeData'
+import { usePerkTreeInteractions } from './hooks/usePerkTreeInteractions'
 
 
 
 
 function UnifiedPerkTreeViewer() {
     const schoolTrees = usePerkTreeData(schools)
-    const [hoveredNode, setHoveredNode] = useState<{ node: PerkNode, school: School } | null>(null)
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-    const [viewport, setViewport] = useState<ViewportState>({ x: 0, y: 0, zoom: DEFAULT_ZOOM })
-    const [isDragging, setIsDragging] = useState(false)
-    const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-    const containerRef = useRef<HTMLDivElement>(null)
+    const {
+        hoveredNode,
+        setHoveredNode,
+        mousePosition,
+        viewport,
+        setViewport,
+        isDragging,
+        containerRef,
+        handleMouseDown,
+        handleMouseMove,
+        handleMouseUp,
+        handleNodeClick
+    } = usePerkTreeInteractions()
 
 
-    // Handle mouse wheel zoom towards mouse cursor
-    const handleWheel = useCallback((e: WheelEvent) => {
-        e.preventDefault()
-        const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED
-        const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, viewport.zoom + delta))
-        
-        if (newZoom === viewport.zoom) return // No change in zoom
-        
-        // Get mouse position relative to the container
-        const rect = containerRef.current?.getBoundingClientRect()
-        if (!rect) return
-        
-        const mouseX = e.clientX - rect.left
-        const mouseY = e.clientY - rect.top
-        
-        // Convert mouse position to SVG coordinates
-        const svgMouseX = (mouseX - viewport.x) / viewport.zoom
-        const svgMouseY = (mouseY - viewport.y) / viewport.zoom
-        
-        // Adjust viewport to zoom towards mouse position
-        const newX = mouseX - svgMouseX * newZoom
-        const newY = mouseY - svgMouseY * newZoom
-        
-        setViewport(prev => ({
-            ...prev,
-            x: newX,
-            y: newY,
-            zoom: newZoom
-        }))
-    }, [viewport])
-
-    // Add wheel event listener with passive: false
-    useEffect(() => {
-        const container = containerRef.current
-        if (!container) return
-
-        container.addEventListener('wheel', handleWheel, { passive: false })
-        
-        return () => {
-            container.removeEventListener('wheel', handleWheel)
-        }
-    }, [handleWheel])
-
-    // Handle mouse down for dragging
-    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        // Start dragging if clicking on the background or SVG elements (but not on perk nodes)
-        const target = e.target as Element
-        const isPerkNode = target.classList.contains('perk-node') || target.closest('.perk-node')
-        
-        if (!isPerkNode) {
-            setIsDragging(true)
-            setDragStart({ x: e.clientX - viewport.x, y: e.clientY - viewport.y })
-            e.preventDefault()
-        }
-    }, [viewport.x, viewport.y])
-
-    // Handle mouse move for dragging
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        // Always update mouse position for tooltip positioning
-        setMousePosition({ x: e.clientX, y: e.clientY })
-        
-        if (isDragging) {
-            setViewport(prev => ({
-                ...prev,
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y
-            }))
-            e.preventDefault()
-        }
-    }, [isDragging, dragStart])
-
-    // Handle mouse up
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false)
-    }, [])
-
-    // Handle node click
-    const handleNodeClick = useCallback((node: PerkNode, school: School) => {
-        console.log('Clicked node:', node.id, 'in school:', school)
-        // TODO: Implement perk allocation/deallocation
-    }, [])
 
     // Render connections for a specific school
     const renderSchoolConnections = (schoolTree: SchoolTreeData) => {
