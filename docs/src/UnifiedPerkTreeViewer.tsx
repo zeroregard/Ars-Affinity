@@ -2,14 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 import { toRomanNumeral } from './utils/romanNumerals'
+import { School, PerkNode, PerkTreeData, ViewportState, NodePosition, SchoolTreeData, SchoolIconProps } from './types/perkTree'
 
 // School Icon Component
-interface SchoolIconProps {
-    school: School
-    centerX: number
-    centerY: number
-    angle: number
-}
 
 const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle }) => {
     const iconRadius = 122
@@ -44,55 +39,6 @@ const SchoolIcon: React.FC<SchoolIconProps> = ({ school, centerX, centerY, angle
     )
 }
 
-type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
-
-interface PerkNode {
-    id: string
-    perk: string
-    tier: number
-    pointCost: number
-    category: 'PASSIVE' | 'ACTIVE'
-    prerequisites?: string[]
-    // Configurable perk values
-    amount?: number
-    time?: number
-    cooldown?: number
-    manaCost?: number
-    damage?: number
-    freezeTime?: number
-    radius?: number
-    dashLength?: number
-    dashDuration?: number
-    health?: number
-    hunger?: number
-}
-
-interface PerkTreeData {
-    perks: PerkNode[]
-}
-
-interface ViewportState {
-    x: number
-    y: number
-    zoom: number
-}
-
-interface NodePosition {
-    x: number
-    y: number
-    tier: number
-    index: number
-    school: School
-}
-
-interface SchoolTreeData {
-    school: School
-    data: PerkTreeData
-    nodePositions: Map<string, NodePosition>
-    centerX: number
-    centerY: number
-    angle: number
-}
 
 const NODE_SIZE = 32
 const NODE_SPACING = 60
