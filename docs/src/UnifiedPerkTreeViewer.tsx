@@ -1,10 +1,8 @@
-import React from 'react'
-import { PerkStringRenderer } from './utils/PerkStringRenderer'
-import { titleCase } from './utils/string'
-import { toRomanNumeral } from './utils/romanNumerals'
-import { PerkNode, SchoolTreeData } from './types/perkTree'
-import { NODE_SIZE, SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, SCHOOL_COLORS, schools } from './constants/perkTree'
+import { SCHOOL_SPACING, MIN_ZOOM, MAX_ZOOM, DEFAULT_ZOOM, schools } from './constants/perkTree'
 import SchoolIcon from './components/SchoolIcon'
+import { PerkTreeConnections } from './components/PerkTreeConnections'
+import { PerkTreeNodes } from './components/PerkTreeNodes'
+import { PerkTooltip } from './components/PerkTooltip'
 import { usePerkTreeData } from './hooks/usePerkTreeData'
 import { usePerkTreeInteractions } from './hooks/usePerkTreeInteractions'
 
@@ -27,188 +25,6 @@ function UnifiedPerkTreeViewer() {
         handleNodeClick
     } = usePerkTreeInteractions()
 
-
-
-    // Render connections for a specific school
-    const renderSchoolConnections = (schoolTree: SchoolTreeData) => {
-        return schoolTree.data.perks.map(node => {
-            return node.prerequisites?.map(prereqId => {
-                const prereqPos = schoolTree.nodePositions.get(prereqId)
-                const nodePos = schoolTree.nodePositions.get(node.id)
-                
-                if (!prereqPos || !nodePos) return null
-
-                return (
-                    <line
-                        key={`${prereqId}-${node.id}`}
-                        x1={prereqPos.x}
-                        y1={prereqPos.y}
-                        x2={nodePos.x}
-                        y2={nodePos.y}
-                        className="perk-connection"
-                    />
-                )
-            }).filter(Boolean)
-        }).flat()
-    }
-
-    // Render nodes for a specific school
-    const renderSchoolNodes = (schoolTree: SchoolTreeData) => {
-        const schoolColors = SCHOOL_COLORS[schoolTree.school]
-        
-        return schoolTree.data.perks.map(node => {
-            const position = schoolTree.nodePositions.get(node.id)
-            if (!position) return null
-
-            const isHovered = hoveredNode?.node.id === node.id && hoveredNode?.school === schoolTree.school
-            const isAllocated = false // TODO: Check if perk is allocated
-            const canAllocate = true // TODO: Check if perk can be allocated
-
-            // Choose color based on state
-            let fillColor: string
-            if (isAllocated) {
-                fillColor = schoolColors.allocated
-            } else if (canAllocate) {
-                fillColor = 'rgba(0, 0, 0, 1)' // Completely black background
-            } else {
-                fillColor = 'rgba(0, 0, 0, 1)' // Completely black background for unavailable
-            }
-
-            // Choose stroke color
-            const strokeColor = isHovered ? schoolColors.hover : '#374151'
-
-            // Calculate icon size and position
-            const iconSize = NODE_SIZE * 0.6 // 60% of node size
-            const iconX = position.x - iconSize / 2
-            const iconY = position.y - iconSize / 2
-
-            // Calculate Roman numeral position (bottom right of node)
-            const romanNumeral = toRomanNumeral(node.tier)
-            const textSize = NODE_SIZE * 0.3 // 30% of node size
-            const textX = position.x + (NODE_SIZE / 2) - textSize * 0.3 // Right side with small padding
-            const textY = position.y + (NODE_SIZE / 2) - textSize * 0.2 // Bottom side with small padding
-
-            return (
-                <g key={node.id}>
-                    {/* Double outline for ACTIVE_ perks */}
-                    {node.perk.startsWith('ACTIVE_') && (
-                        <circle
-                            cx={position.x}
-                            cy={position.y}
-                            r={NODE_SIZE / 2 + 4}
-                            fill="none"
-                            stroke={strokeColor}
-                            strokeWidth={isHovered ? 4 : 3}
-                            className="perk-node-outline"
-                        />
-                    )}
-                    <circle
-                        cx={position.x}
-                        cy={position.y}
-                        r={NODE_SIZE / 2}
-                        fill={fillColor}
-                        stroke={strokeColor}
-                        strokeWidth={isHovered ? 3 : 2}
-                        className="perk-node"
-                        onClick={() => handleNodeClick(node, schoolTree.school)}
-                        onMouseEnter={() => setHoveredNode({ node, school: schoolTree.school })}
-                        onMouseLeave={() => setHoveredNode(null)}
-                    />
-                    {/* Node icon */}
-                    <image
-                        href={`/icons/${node.perk.toLowerCase()}.png`}
-                        x={iconX}
-                        y={iconY}
-                        width={iconSize}
-                        height={iconSize}
-                        imageRendering="pixelated"
-                        className="perk-node-icon"
-                        style={{ pointerEvents: 'none' }}
-                    />
-                    {/* Roman numeral for non-active abilities */}
-                    {node.category !== 'ACTIVE' && (
-                        <text
-                            x={textX}
-                            y={textY}
-                            fontSize={textSize}
-                            fill="white"
-                            textAnchor="end"
-                            dominantBaseline="baseline"
-                            style={{ 
-                                pointerEvents: 'none',
-                                fontWeight: 'bold',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
-                            }}
-                        >
-                            {romanNumeral}
-                        </text>
-                    )}
-                </g>
-            )
-        })
-    }
-
-
-    // Render tooltip
-    const renderTooltip = () => {
-        if (!hoveredNode) return null
-
-        return (
-            <div
-                style={{
-                    position: 'fixed',
-                    left: `${mousePosition.x + 10}px`,
-                    top: `${mousePosition.y - 10}px`,
-                    zIndex: 1000,
-                    pointerEvents: 'none'
-                }}
-            >
-                <div className="perk-tooltip">
-                    <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                        {formatPerkName(hoveredNode.node.id)}
-                    </div>
-                    <div style={{ color: '#ccc', marginBottom: '8px' }}>
-                        Cost: {hoveredNode.node.pointCost} points
-                    </div>
-                    <div style={{ marginBottom: '8px' }}>
-                        <PerkStringRenderer perk={getPerkDataForRenderer(hoveredNode.node)} />
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    const formatPerkName = (nodeId: string) => {
-        const parts = nodeId.split('_')
-        // Skip the first part (school name) to avoid duplication
-        return parts.slice(1).map(part => 
-            part.match(/\d+/) ? toRomanNumeral(parseInt(part)) : titleCase(part)
-        ).join(' ')
-    }
-
-
-    // Convert perk node data to the format expected by PerkRenderer
-    const getPerkDataForRenderer = (node: PerkNode) => {
-        const baseData: any = {
-            perk: node.perk,
-            isBuff: true, // Most perks are buffs
-        }
-
-        // Only include properties that actually exist in the PerkNode
-        if (node.amount !== undefined) baseData.amount = node.amount
-        if (node.time !== undefined) baseData.time = node.time
-        if (node.cooldown !== undefined) baseData.cooldown = node.cooldown
-        if (node.manaCost !== undefined) baseData.manaCost = node.manaCost
-        if (node.damage !== undefined) baseData.damage = node.damage
-        if (node.freezeTime !== undefined) baseData.freezeTime = node.freezeTime
-        if (node.radius !== undefined) baseData.radius = node.radius
-        if (node.dashLength !== undefined) baseData.dashLength = node.dashLength
-        if (node.dashDuration !== undefined) baseData.dashDuration = node.dashDuration
-        if (node.health !== undefined) baseData.health = node.health
-        if (node.hunger !== undefined) baseData.hunger = node.hunger
-
-        return baseData
-    }
 
     if (schoolTrees.length === 0) {
         return (
@@ -376,10 +192,15 @@ function UnifiedPerkTreeViewer() {
                     {schoolTrees.map(schoolTree => (
                         <g key={`tree-${schoolTree.school}`}>
                             {/* Connections */}
-                            {renderSchoolConnections(schoolTree)}
+                            <PerkTreeConnections schoolTree={schoolTree} />
 
                             {/* Nodes */}
-                            {renderSchoolNodes(schoolTree)}
+                            <PerkTreeNodes 
+                                schoolTree={schoolTree}
+                                hoveredNode={hoveredNode}
+                                setHoveredNode={setHoveredNode}
+                                handleNodeClick={handleNodeClick}
+                            />
                         </g>
                     ))}
                     </g>
@@ -387,7 +208,10 @@ function UnifiedPerkTreeViewer() {
             </div>
 
             {/* Tooltip */}
-            {renderTooltip()}
+            <PerkTooltip 
+                hoveredNode={hoveredNode}
+                mousePosition={mousePosition}
+            />
         </div>
     )
 }
