@@ -55,5 +55,4 @@ public enum AffinityPerkType {
     ACTIVE_CURSE_FIELD,
     ACTIVE_SANCTUARY,
     ACTIVE_SWAP_ABILITY,
-    ACTIVE_SWARM,
 } 

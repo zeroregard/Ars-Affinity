@@ -241,6 +241,23 @@ config/ars_affinity/
 
 ## Recent Changes
 
+### Active Ability Restriction System
+- [x] **Implemented one active ability limit**: Players can now only have one active ability at a time
+- [x] **Created ActiveAbilityCapability**: New capability system to track the currently active ability
+- [x] **Added ActiveAbilityData**: Stores the AffinityPerkType of the player's current active ability
+- [x] **Created ActiveAbilityProvider**: Manages loading, saving, and caching of active ability data
+- [x] **Added ActiveAbilityHelper**: Utility class to identify active ability perk types
+- [x] **Updated PlayerAffinityData**: Added validation to prevent multiple active ability selection
+- [x] **Modified ActiveAbilityManager**: Now uses the stored active ability type instead of searching
+- [x] **Integrated with player lifecycle**: Active ability data is loaded/saved on player login/logout
+- [x] **Removed Swarm functionality**: Completely removed all swarm-related code and assets
+
+**Technical Implementation:**
+- Uses NeoForge capabilities for persistent data storage
+- NBT serialization for save/load functionality
+- Real-time validation during perk allocation
+- Automatic cleanup on respec operations
+
 ### Removed Potions and Affinity Anchor Charm
 - [x] **Removed all affinity potions**: Deleted all potion effects and potions that increased affinity percentages
 - [x] **Removed Affinity Anchor Charm**: Deleted the charm item that prevented affinity changes
@@ -290,6 +307,164 @@ This makes the reset functionality more flexible and prepares the foundation for
 3. Right-click to consume and reset that school's affinity to 0 points
 
 This provides players with a consumable way to reset specific schools, encouraging strategic specialization choices.
+
+## Current System Architecture
+
+### Perk System Overview
+The current Ars-Affinity system has evolved into a sophisticated point-based perk allocation system with the following key components:
+
+#### 1. Perk Types and Categories
+**Perk Categories:**
+- `PASSIVE`: Always-active effects (e.g., Fire Thorns, Mana Tap)
+- `ACTIVE`: Triggered abilities with cooldowns (e.g., Ice Blast, Ground Slam)
+- `UTILITY`: Helper effects (e.g., Cold Walker, Hydration)
+- `STACKABLE`: Effects that can be improved multiple times
+
+**Perk Classes:**
+- `AmountBasedPerk`: Simple effects with a single amount value (e.g., Fire Thorns, Mana Tap)
+- `DurationBasedPerk`: Effects with amount and duration (e.g., Stone Skin, Summon Health)
+- `ActiveAbilityPerk`: Active abilities with mana cost, cooldown, and special parameters
+- `LichFeastPerk`: Special perk with health and hunger restoration
+- `UnstableSummoningPerk`: Special perk with chance and entity list
+- `GhostStepPerk`: Special perk with heal amount, invisibility time, and cooldown
+- `SimplePerk`: Basic perk with no additional parameters (e.g., Rotting Guise)
+
+#### 2. Active Ability System
+**Restriction System:**
+- Players can only have **one active ability** at a time
+- Enforced through `ActiveAbilityCapability` and `ActiveAbilityData`
+- Real-time validation during perk allocation
+- Automatic cleanup on respec operations
+
+**Active Abilities:**
+- `ACTIVE_GROUND_SLAM`: Earth school ground slam ability
+- `ACTIVE_ICE_BLAST`: Water school ice blast with damage and freeze
+- `ACTIVE_FIRE_DASH`: Fire school dash ability
+- `ACTIVE_AIR_DASH`: Air school dash ability
+- `ACTIVE_GHOST_STEP`: Manipulation school ghost step
+- `ACTIVE_CURSE_FIELD`: Necromancy school curse field
+- `ACTIVE_SANCTUARY`: Abjuration school sanctuary
+- `ACTIVE_SWAP_ABILITY`: Conjuration school swap ability
+
+#### 3. Data Storage System
+**PlayerAffinityData:**
+- Stores affinity points per school (not percentages)
+- Tracks allocated perks and their tiers
+- Manages available points for spending
+- Handles perk tree unlocks and prerequisites
+
+**ActiveAbilityData:**
+- Stores currently active ability type
+- Tracks dirty state for efficient saving
+- NBT serialization for persistence
+
+**Capability System:**
+- `PlayerAffinityDataCapability`: Main player data storage
+- `ActiveAbilityCapability`: Active ability tracking
+- `WetTicksCapability`: Water school effect tracking
+
+#### 4. Point System and Scaling
+**Point Gain Formula:**
+```
+baseGain = manaCost * schoolMultiplier
+schoolScaling = 1 / (1 + currentSchoolPoints^schoolDecayStrength)
+globalScaling = 1 / (1 + totalPointsAcrossAllSchools^globalDecayStrength)
+finalGain = baseGain * schoolScaling * globalScaling
+```
+
+**Scaling Configuration:**
+- School-specific scaling: Points become harder to gain in specific schools
+- Global scaling: Points become harder to gain across all schools
+- Configurable decay strength and minimum factors
+- Combined multiplicative effect
+
+#### 5. UI System
+**Perk Tree Viewer:**
+- React-based web interface at `https://ars-affinity.vercel.app/`
+- Interactive perk tree visualization
+- School-based organization with color coding
+- Zoom and pan functionality
+- Real-time perk allocation feedback
+
+**In-Game UI:**
+- Perk tree screens for individual schools
+- Point display and management
+- Respec functionality with confirmation dialogs
+- School tabs for navigation
+
+#### 6. Configuration System
+**JSON Structure:**
+```
+config/ars_affinity/perks/
+├── fire/
+│   ├── 1.json (Tier 1 perks)
+│   ├── 2.json (Tier 2 perks)
+│   └── 3.json (Tier 3 perks)
+├── water/
+├── earth/
+├── air/
+├── abjuration/
+├── necromancy/
+├── conjuration/
+└── manipulation/
+```
+
+**Perk Configuration Format:**
+```json
+{
+  "perk": "PASSIVE_FIRE_THORNS",
+  "amount": 0.25,
+  "isBuff": true
+}
+```
+
+**Active Ability Configuration:**
+```json
+{
+  "perk": "ACTIVE_ICE_BLAST",
+  "manaCost": 50.0,
+  "cooldown": 100,
+  "damage": 8.0,
+  "freezeTime": 60,
+  "radius": 3.0,
+  "isBuff": true
+}
+```
+
+#### 7. Commands and Items
+**Commands:**
+- `/ars-affinity set <school> <percentage>`: Set affinity for a school
+- `/ars-affinity get <school>`: Get current affinity for a school
+- `/ars-affinity list`: List all current affinities
+- `/ars-affinity reset <school|all>`: Reset specific school or all schools
+- `/ars-affinity blacklist`: Show current glyph blacklist
+
+**Items:**
+- **Tablet of Amnesia**: Consumable item to reset specific school affinity
+- **Base Tablet**: Book + 4 Paper (100 source cost) → 4 Tablets
+- **School-Specific**: Base Tablet + 1 Essence (200 source cost) → 1 School Tablet
+
+#### 8. Event System
+**Registered Events:**
+- `SchoolAffinityPointAllocatedEvents`: Point allocation tracking
+- `PassiveLichFeastEvents`: Lich Feast perk effects
+- `GhostStepEvents`: Ghost Step perk effects
+- `DeflectionEvents`: Deflection perk effects
+- `FieldAbilityTicker`: Field ability management
+- `FireThornsEvents`: Fire Thorns perk effects
+
+#### 9. Integration Points
+**Ars Nouveau Integration:**
+- Spell tracking through `SpellTrackingMixin`
+- Glyph blacklist system
+- School-based spell categorization
+- Mana cost calculation for point gain
+
+**NeoForge Integration:**
+- Capability system for data storage
+- Event bus for perk effects
+- Configuration system for server settings
+- Player lifecycle management
 
 ## Notes
 - Keep existing perk effects, just change how they're allocated

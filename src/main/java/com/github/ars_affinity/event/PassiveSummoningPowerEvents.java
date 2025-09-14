@@ -2,7 +2,6 @@ package com.github.ars_affinity.event;
 
 import com.alexthw.sauce.registry.ModRegistry;
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
@@ -10,7 +9,6 @@ import com.github.ars_affinity.perk.AffinityPerkType;
 import com.hollingsworth.arsnouveau.api.event.EventQueue;
 import com.hollingsworth.arsnouveau.api.event.ITimedEvent;
 import com.hollingsworth.arsnouveau.api.event.SummonEvent;
-import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -104,8 +102,8 @@ public class PassiveSummoningPowerEvents {
         goalSelector.getAvailableGoals().removeIf(goal -> goal.getGoal() instanceof FollowSummonerGoal);
 
         CustomExtendedDistanceGoal extendedGoal = new CustomExtendedDistanceGoal(followingSummon, player, 1.0,
-            ArsAffinityConfig.SWARM_SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE.get().floatValue(),
-            ArsAffinityConfig.SWARM_SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE.get().floatValue());
+            ArsAffinityConfig.SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE.get().floatValue(),
+            ArsAffinityConfig.SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE.get().floatValue());
         goalSelector.addGoal(2, extendedGoal);
 
         if (level instanceof ServerLevel) {
@@ -220,7 +218,7 @@ public class PassiveSummoningPowerEvents {
             if (--timeToRecalcPath <= 0) {
                 timeToRecalcPath = 10;
 
-                float teleportDistance = ArsAffinityConfig.SWARM_SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE.get().floatValue();
+                float teleportDistance = ArsAffinityConfig.SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE.get().floatValue();
                 if (summon.getSelfEntity().distanceToSqr(owner) > (teleportDistance * teleportDistance)) {
                     summon.getSelfEntity().moveTo(owner.getX(), owner.getY(), owner.getZ(), summon.getSelfEntity().getYRot(), summon.getSelfEntity().getXRot());
                     summon.getSelfEntity().getNavigation().stop();

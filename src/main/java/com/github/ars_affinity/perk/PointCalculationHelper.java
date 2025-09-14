@@ -11,24 +11,24 @@ public class PointCalculationHelper {
     private PointCalculationHelper() {}
     
     /**
-     * Calculate the base points gained from mana usage for a specific school.
-     * This replaces the old percentage-based affinity gain.
+     * Calculate the percentage increase for a school based on mana usage.
+     * This is the core method for percentage-based progression.
      * 
      * @param mana The mana cost of the spell
-     * @param currentPoints The current total points in this school
+     * @param currentPercentage The current percentage in this school (0.0 to 100.0)
      * @param totalPointsAcrossAllSchools The total points across all schools
-     * @return The points to add to this school
+     * @return The percentage increase (0.0 to 100.0)
      */
-    public static int calculatePointsGained(float mana, int currentPoints, int totalPointsAcrossAllSchools) {
+    public static float calculatePercentageIncrease(float mana, float currentPercentage, int totalPointsAcrossAllSchools) {
         float multiplier = ArsAffinityConfig.AFFINITY_GAIN_MULTIPLIER.get().floatValue();
-        float basePoints = mana * multiplier;
+        float basePercentageIncrease = mana * multiplier;
         
-        // Apply school-specific scaling decay - points become harder to gain as you have more in this school
+        // Apply school-specific scaling decay - percentage becomes harder to gain as you have more in this school
         float schoolDecayStrength = ArsAffinityConfig.AFFINITY_SCALING_DECAY_STRENGTH.get().floatValue();
         float schoolMinimumFactor = ArsAffinityConfig.AFFINITY_SCALING_MINIMUM_FACTOR.get().floatValue();
-        float schoolScalingFactor = calculateScalingFactor(currentPoints, schoolDecayStrength, schoolMinimumFactor);
+        float schoolScalingFactor = calculateScalingFactor((int) currentPercentage, schoolDecayStrength, schoolMinimumFactor);
         
-        // Apply global scaling decay - points become harder to gain as you have more total points across all schools
+        // Apply global scaling decay - percentage becomes harder to gain as you have more total points across all schools
         float globalDecayStrength = ArsAffinityConfig.GLOBAL_SCALING_DECAY_STRENGTH.get().floatValue();
         float globalMinimumFactor = ArsAffinityConfig.GLOBAL_SCALING_MINIMUM_FACTOR.get().floatValue();
         float globalScalingFactor = calculateScalingFactor(totalPointsAcrossAllSchools, globalDecayStrength, globalMinimumFactor);
@@ -36,7 +36,24 @@ public class PointCalculationHelper {
         // Combine both scaling factors (multiplicative)
         float combinedScalingFactor = schoolScalingFactor * globalScalingFactor;
         
-        return Math.max(0, Math.round(basePoints * combinedScalingFactor));
+        return Math.max(0.0f, basePercentageIncrease * combinedScalingFactor);
+    }
+    
+    /**
+     * Calculate the base points gained from mana usage for a specific school.
+     * This is now deprecated in favor of percentage-based progression.
+     * 
+     * @param mana The mana cost of the spell
+     * @param currentPoints The current total points in this school
+     * @param totalPointsAcrossAllSchools The total points across all schools
+     * @return The points to add to this school
+     */
+    @Deprecated
+    public static int calculatePointsGained(float mana, int currentPoints, int totalPointsAcrossAllSchools) {
+        // Convert to percentage-based calculation for backward compatibility
+        float percentageIncrease = calculatePercentageIncrease(mana, (float) currentPoints, totalPointsAcrossAllSchools);
+        // This is a rough approximation - the new system should use addSchoolProgress directly
+        return Math.max(0, Math.round(percentageIncrease / 10.0f)); // Rough conversion
     }
     
     /**

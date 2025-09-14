@@ -1,5 +1,7 @@
 package com.github.ars_affinity;
 
+import com.github.ars_affinity.capability.ActiveAbilityCapability;
+import com.github.ars_affinity.capability.ActiveAbilityProvider;
 import com.github.ars_affinity.capability.PlayerAffinityDataCapability;
 import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
 import com.github.ars_affinity.capability.WetTicksCapability;
@@ -117,6 +119,17 @@ public class ArsAffinity {
             }
         );
         
+        event.registerEntity(
+            ActiveAbilityCapability.ACTIVE_ABILITY_DATA,
+            EntityType.PLAYER,
+            (entity, context) -> {
+                if (entity instanceof Player player) {
+                    return ActiveAbilityProvider.getActiveAbilityData(player);
+                }
+                return null;
+            }
+        );
+        
         LOGGER.info("Registered PlayerAffinityData capability");
         LOGGER.info("Registered WetTicks capability");
     }
@@ -129,17 +142,21 @@ public class ArsAffinity {
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         PlayerAffinityDataProvider.loadPlayerData(event.getEntity());
         WetTicksProvider.loadPlayerWetTicks(event.getEntity());
+        ActiveAbilityProvider.loadPlayerData(event.getEntity());
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         PlayerAffinityDataProvider.savePlayerData(event.getEntity());
         WetTicksProvider.savePlayerWetTicks(event.getEntity());
+        ActiveAbilityProvider.savePlayerData(event.getEntity());
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
         PlayerAffinityDataProvider.saveAllData();
         PlayerAffinityDataProvider.clearCache();
         WetTicksProvider.clearCache();
+        ActiveAbilityProvider.saveAllData();
+        ActiveAbilityProvider.clearCache();
     }
 
     public static ResourceLocation prefix(String str) {

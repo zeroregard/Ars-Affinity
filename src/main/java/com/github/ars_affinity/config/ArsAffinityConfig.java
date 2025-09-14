@@ -32,14 +32,10 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue GROUND_SLAM_MAX_DROP_DISTANCE;
     public static ModConfigSpec.DoubleValue GROUND_SLAM_MAX_RADIUS;
     
-    // SWARM Active Ability Configuration
-    public static ModConfigSpec.DoubleValue SWARM_DEFAULT_RADIUS;
-    public static ModConfigSpec.DoubleValue SWARM_DEFAULT_TARGET_RANGE;
-    
     // Summon Distance Override Configuration
-    public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE;
-    public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE;
-    public static ModConfigSpec.DoubleValue SWARM_SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE;
+    public static ModConfigSpec.DoubleValue SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE;
+    public static ModConfigSpec.DoubleValue SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE;
+    public static ModConfigSpec.DoubleValue SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE;
     
     // Glyph Blacklist Configuration
     public static ModConfigSpec.ConfigValue<List<? extends String>> GLYPH_BLACKLIST;
@@ -53,7 +49,7 @@ public class ArsAffinityConfig {
             .defineInRange("opposingSchoolPenaltyPercentage", 0.66, 0.0, 1.0);
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
-            .defineInRange("affinityGainMultiplier", 0.00001, 0.0001, 0.1);
+            .defineInRange("affinityGainMultiplier", 0.001, 0.0001, 0.1);
         AFFINITY_CONSUMABLE_COOLDOWN_DURATION = SERVER_BUILDER
             .comment("Duration in seconds for affinity consumable cooldown effect (default 30 minutes = 1800 seconds)")
             .defineInRange("affinityConsumableCooldownDuration", 1800, 60, 7200);
@@ -111,23 +107,15 @@ public class ArsAffinityConfig {
             .defineInRange("maxRadius", 5.0, 1.0, 16.0);
         SERVER_BUILDER.pop();
         
-        SERVER_BUILDER.comment("SWARM Active Ability Configuration").push("swarm");
-        SWARM_DEFAULT_RADIUS = SERVER_BUILDER
-            .comment("Radius to search for player summons when using SWARM ability (blocks)")
-            .defineInRange("defaultRadius", 32.0, 16.0, 128.0);
-        SWARM_DEFAULT_TARGET_RANGE = SERVER_BUILDER
-            .comment("Maximum range to look for targets when using SWARM ability (blocks)")
-            .defineInRange("defaultTargetRange", 100.0, 50.0, 200.0);
-        SERVER_BUILDER.pop();
         
         SERVER_BUILDER.comment("Summon Distance Override Configuration").push("summon_distance_override");
-        SWARM_SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE = SERVER_BUILDER
+        SUMMON_DISTANCE_OVERRIDE_MIN_DISTANCE = SERVER_BUILDER
             .comment("Minimum distance before summons start following player when PASSIVE_SUMMONING_POWER is active (blocks)")
             .defineInRange("minDistance", 50.0, 25.0, 100.0);
-        SWARM_SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE = SERVER_BUILDER
+        SUMMON_DISTANCE_OVERRIDE_MAX_DISTANCE = SERVER_BUILDER
             .comment("Maximum distance before summons stop following player when PASSIVE_SUMMONING_POWER is active (blocks)")
             .defineInRange("maxDistance", 75.0, 50.0, 150.0);
-        SWARM_SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE = SERVER_BUILDER
+        SUMMON_DISTANCE_OVERRIDE_TELEPORT_DISTANCE = SERVER_BUILDER
             .comment("Distance at which summons teleport back to player when PASSIVE_SUMMONING_POWER is active (blocks)")
             .defineInRange("teleportDistance", 100.0, 75.0, 200.0);
         SERVER_BUILDER.pop();

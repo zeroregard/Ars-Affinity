@@ -124,18 +124,25 @@ public class ArsAffinityCommands {
         }
 
         if (target.equalsIgnoreCase("all")) {
-            // Reset all schools
+            // Reset all schools - deallocate all perks and reset points
             int totalPointsReset = 0;
             for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
                 int currentPoints = data.getSchoolPoints(school);
                 totalPointsReset += currentPoints;
+            }
+            
+            // Use respecAll to properly deallocate all perks
+            data.respecAll();
+            
+            // Reset all school points to 0
+            for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
                 data.setSchoolPoints(school, 0);
             }
             
             ChatMessageHelper.sendAllSchoolsResetMessage(player, totalPointsReset);
             return 1;
         } else {
-            // Reset specific school
+            // Reset specific school - deallocate perks and reset points
             SpellSchool school = parseSpellSchool(target);
             if (school == null) {
                 source.sendFailure(Component.literal("Unknown school: " + target + ". Use 'all' to reset all schools or a valid school name."));
@@ -143,6 +150,11 @@ public class ArsAffinityCommands {
             }
             
             int currentPoints = data.getSchoolPoints(school);
+            
+            // Use respecSchool to properly deallocate perks for this school
+            data.respecSchool(school);
+            
+            // Reset school points to 0
             data.setSchoolPoints(school, 0);
             
             ChatMessageHelper.sendSchoolResetMessage(player, school, currentPoints);
@@ -165,10 +177,11 @@ public class ArsAffinityCommands {
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
             int currentPoints = data.getSchoolPoints(school);
             int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
-            float percentage = data.getSchoolAffinityPercentage(school) * 100.0f;
+            float progressPercentage = data.getSchoolPercentage(school);
+            float displayPercentage = data.getSchoolAffinityPercentage(school) * 100.0f;
             
-            source.sendSuccess(() -> Component.literal(String.format("  %s: %d/%d points (%.1f%%)", 
-                school.getId(), currentPoints, maxPoints, percentage)), false);
+            source.sendSuccess(() -> Component.literal(String.format("  %s: %d/%d points (%.1f%% progress, %.1f%% display)", 
+                school.getId(), currentPoints, maxPoints, progressPercentage, displayPercentage)), false);
         }
 
         return 1;

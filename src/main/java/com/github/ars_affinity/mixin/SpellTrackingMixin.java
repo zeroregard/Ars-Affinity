@@ -21,9 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Mixin to track spell resolution for affinity.
@@ -67,7 +65,7 @@ public abstract class SpellTrackingMixin {
             }
             
             boolean hasElements = false;
-            for (var part : spell.recipe()) {
+            for (var ignored : spell.recipe()) {
                 hasElements = true;
                 break;
             }
@@ -152,33 +150,32 @@ public abstract class SpellTrackingMixin {
             return;
         }
         
-        // Calculate point changes for each school and combine them
+        // Calculate percentage increases for each school and apply them
         float distributedCost = manaCost / schools.size();
-        Map<SpellSchool, Integer> combinedChanges = new HashMap<>();
+        boolean hasChanges = false;
         
         for (SpellSchool school : schools) {
-            Map<SpellSchool, Integer> changes = calculatePointChanges(school, distributedCost, affinityData);
-            // Combine changes from all schools
-            for (Map.Entry<SpellSchool, Integer> entry : changes.entrySet()) {
-                combinedChanges.merge(entry.getKey(), entry.getValue(), Integer::sum);
-            }
-        }
-        
-        // Apply all point changes at once and fire events
-        boolean hasChanges = false;
-        for (Map.Entry<SpellSchool, Integer> entry : combinedChanges.entrySet()) {
-            if (entry.getValue() != 0) {
-                affinityData.addSchoolPoints(entry.getKey(), entry.getValue());
-                int newPoints = affinityData.getSchoolPoints(entry.getKey());
+            float currentPercentage = affinityData.getSchoolPercentage(school);
+            int totalPointsAcrossAllSchools = affinityData.getTotalPointsAcrossAllSchools();
+            
+            // Calculate percentage increase for this school
+            float percentageIncrease = PointCalculationHelper.calculatePercentageIncrease(
+                distributedCost, currentPercentage, totalPointsAcrossAllSchools);
+            
+            if (percentageIncrease > 0.0f) {
+                // Add progress to the school and get points awarded
+                int pointsAwarded = affinityData.addSchoolProgress(school, percentageIncrease);
                 
-                // Fire point allocation event
-                SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
-                    player, 
-                    entry.getKey(), 
-                    entry.getValue(), 
-                    newPoints
-                );
-                NeoForge.EVENT_BUS.post(event);
+                if (pointsAwarded > 0) {
+                    // Fire point allocation event
+                    SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                        player, 
+                        school, 
+                        pointsAwarded, 
+                        affinityData.getSchoolPoints(school)
+                    );
+                    NeoForge.EVENT_BUS.post(event);
+                }
                 
                 hasChanges = true;
             }
@@ -204,43 +201,5 @@ public abstract class SpellTrackingMixin {
         }
     }
     
-    /**
-     * Calculate point changes for a school based on mana usage.
-     * This replaces the old percentage-based affinity calculation.
-     * Now only increases points in the school being used - no penalties for other schools.
-     */
-    private Map<SpellSchool, Integer> calculatePointChanges(SpellSchool castSchool, float mana, PlayerAffinityData affinityData) {
-        Map<SpellSchool, Integer> changes = new HashMap<>();
-        
-        // Calculate points gained for the primary school only
-        int currentPoints = affinityData.getSchoolPoints(castSchool);
-        int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(castSchool);
-        
-        // Check if already at 100% (max points) - no further points should be gained
-        if (currentPoints >= maxPoints) {
-            ArsAffinity.LOGGER.debug("Player already at max points ({}/{}) for {} school - no further points gained", 
-                currentPoints, maxPoints, castSchool.getId());
-            changes.put(castSchool, 0);
-            return changes;
-        }
-        
-        // Calculate total points across all schools for global scaling
-        int totalPointsAcrossAllSchools = affinityData.getTotalPointsAcrossAllSchools();
-        
-        int pointsGained = PointCalculationHelper.calculatePointsGained(mana, currentPoints, totalPointsAcrossAllSchools);
-        
-        // Ensure we don't exceed the maximum points
-        int newTotalPoints = currentPoints + pointsGained;
-        if (newTotalPoints > maxPoints) {
-            pointsGained = maxPoints - currentPoints;
-            ArsAffinity.LOGGER.debug("Capped point gain to prevent exceeding max points: {} -> {} (max: {})", 
-                pointsGained + currentPoints, maxPoints, maxPoints);
-        }
-        
-        changes.put(castSchool, pointsGained);
-        
-        // No penalties for other schools - each school is independent
-        return changes;
-    }
 
 } 

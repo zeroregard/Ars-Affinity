@@ -12,8 +12,6 @@ import com.github.ars_affinity.potion.GroundSlamCooldownEffect;
 import com.github.ars_affinity.potion.StoneSkinCooldownEffect;
 import com.github.ars_affinity.potion.AirDashCooldownEffect;
 import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
-import com.github.ars_affinity.potion.SwarmCooldownEffect;
-import com.github.ars_affinity.potion.SwarmingEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
 import com.github.ars_affinity.potion.AffinityConsumableCooldownEffect;
@@ -41,8 +39,6 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SanctuaryCooldownEffect> SANCTUARY_COOLDOWN_EFFECT = EFFECTS.register("sanctuary_cooldown", SanctuaryCooldownEffect::new);
     public static final DeferredHolder<MobEffect, CurseFieldCooldownEffect> CURSE_FIELD_COOLDOWN_EFFECT = EFFECTS.register("curse_field_cooldown", CurseFieldCooldownEffect::new);
     public static final DeferredHolder<MobEffect, SilencedEffect> SILENCED_EFFECT = EFFECTS.register("silenced", SilencedEffect::new);
-    public static final DeferredHolder<MobEffect, SwarmCooldownEffect> SWARM_COOLDOWN_EFFECT = EFFECTS.register("swarm_cooldown", SwarmCooldownEffect::new);
-    public static final DeferredHolder<MobEffect, SwarmingEffect> SWARMING_EFFECT = EFFECTS.register("swarming", SwarmingEffect::new);
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
     public static final DeferredHolder<MobEffect, AffinityConsumableCooldownEffect> AFFINITY_CONSUMABLE_COOLDOWN_EFFECT = EFFECTS.register("affinity_consumable_cooldown", AffinityConsumableCooldownEffect::new);

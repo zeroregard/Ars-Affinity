@@ -1,6 +1,8 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.perk.ActiveAbilityHelper;
+import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.perk.PerkAllocation;
 import com.github.ars_affinity.perk.PerkNode;
 import com.github.ars_affinity.perk.PerkTreeManager;
@@ -20,8 +22,11 @@ import java.util.HashSet;
 
 public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     
-    // Points per school (earned by casting spells)
+    // Points per school (awarded at percentage thresholds)
     private final Map<SpellSchool, Integer> schoolPoints = new HashMap<>();
+    
+    // Percentage progress per school (0.0 to 100.0)
+    private final Map<SpellSchool, Float> schoolPercentages = new HashMap<>();
     
     // Available points to spend (schoolPoints - allocatedPoints)
     private final Map<SpellSchool, Integer> availablePoints = new HashMap<>();
@@ -47,9 +52,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     };
     
     public PlayerAffinityData() {
-        // Initialize all schools with 0 points
+        // Initialize all schools with 0 points and 0% progress
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
             schoolPoints.put(school, 0);
+            schoolPercentages.put(school, 0.0f);
             availablePoints.put(school, 0);
         }
     }
@@ -71,8 +77,53 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         return availablePoints.getOrDefault(school, 0);
     }
     
+    // Percentage Management
+    public float getSchoolPercentage(SpellSchool school) {
+        return schoolPercentages.getOrDefault(school, 0.0f);
+    }
+    
+    public Map<SpellSchool, Float> getAllSchoolPercentages() {
+        return new HashMap<>(schoolPercentages);
+    }
+    
     public Map<SpellSchool, Integer> getAllSchoolPoints() {
         return new HashMap<>(schoolPoints);
+    }
+    
+    /**
+     * Add percentage progress to a school and award points at thresholds.
+     * This is the core method for percentage-based progression.
+     * 
+     * @param school The school to add progress to
+     * @param percentageIncrease The percentage increase (0.0 to 100.0)
+     * @return The number of points awarded (if any)
+     */
+    public int addSchoolProgress(SpellSchool school, float percentageIncrease) {
+        float currentPercentage = getSchoolPercentage(school);
+        float newPercentage = Math.min(100.0f, currentPercentage + percentageIncrease);
+        
+        // Update the percentage
+        schoolPercentages.put(school, newPercentage);
+        
+        // Calculate how many points should be awarded based on percentage thresholds
+        int maxPoints = PerkTreeManager.getMaxPointsForSchool(school);
+        int thresholdInterval = 100 / maxPoints; // e.g., 10% per point for 10 points
+        
+        int oldPoints = getSchoolPoints(school);
+        int newPoints = (int) (newPercentage / thresholdInterval);
+        int pointsAwarded = Math.max(0, newPoints - oldPoints);
+        
+        if (pointsAwarded > 0) {
+            // Award the points
+            schoolPoints.put(school, newPoints);
+            updateAvailablePoints(school);
+            markDirty();
+            
+            ArsAffinity.LOGGER.info("Awarded {} points to {} school ({}% -> {} points)", 
+                pointsAwarded, school.getId(), newPercentage, newPoints);
+        }
+        
+        return pointsAwarded;
     }
     
     /**
@@ -185,6 +236,14 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             }
         }
         
+        // Check if this is an active ability and if player already has one
+        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType())) {
+            if (hasAnyActiveAbility()) {
+                ArsAffinity.LOGGER.debug("Cannot allocate active ability {} - player already has an active ability", node.getPerkType());
+                return false;
+            }
+        }
+        
         return true;
     }
     
@@ -208,6 +267,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         // Update available points
         updateAvailablePoints(node.getSchool());
         markDirty();
+        
+        // If this is an active ability, update the active ability data
+        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType())) {
+            updateActiveAbilityData();
+        }
         
         ArsAffinity.LOGGER.info("Allocated perk: {} for {} points", nodeId, node.getPointCost());
         return true;
@@ -235,6 +299,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         updateAvailablePoints(allocation.getSchool());
         markDirty();
         
+        // If this was an active ability, update the active ability data
+        if (ActiveAbilityHelper.isActiveAbility(allocation.getPerkType())) {
+            updateActiveAbilityData();
+        }
+        
         ArsAffinity.LOGGER.info("Deallocated perk: {}", nodeId);
         return true;
     }
@@ -257,6 +326,38 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             .collect(java.util.stream.Collectors.toSet());
     }
     
+    // Active Ability Management
+    public boolean hasAnyActiveAbility() {
+        return allocatedPerks.values().stream()
+            .anyMatch(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()));
+    }
+    
+    public AffinityPerkType getCurrentActiveAbilityType() {
+        return allocatedPerks.values().stream()
+            .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
+            .findFirst()
+            .map(PerkAllocation::getPerkType)
+            .orElse(null);
+    }
+    
+    public PerkAllocation getCurrentActiveAbilityAllocation() {
+        return allocatedPerks.values().stream()
+            .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
+            .findFirst()
+            .orElse(null);
+    }
+    
+    private void updateActiveAbilityData() {
+        if (player != null) {
+            var activeAbilityData = ActiveAbilityProvider.getActiveAbilityData(player);
+            if (activeAbilityData != null) {
+                AffinityPerkType currentType = getCurrentActiveAbilityType();
+                activeAbilityData.setActiveAbilityType(currentType);
+                ActiveAbilityProvider.savePlayerData(player);
+            }
+        }
+    }
+    
     // Respec System
     public boolean canRespec() {
         // TODO: Add cooldown and cost checking
@@ -267,6 +368,9 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         if (!canRespec()) {
             return;
         }
+        
+        // Check if we're removing an active ability
+        boolean hadActiveAbility = hasAnyActiveAbility();
         
         // Remove all allocated perks for this school
         allocatedPerks.entrySet().removeIf(entry -> 
@@ -279,6 +383,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         // Reset available points
         updateAvailablePoints(school);
         markDirty();
+        
+        // Update active ability data if we removed an active ability
+        if (hadActiveAbility) {
+            updateActiveAbilityData();
+        }
         
         ArsAffinity.LOGGER.info("Respeced {} school", school.getId());
     }
@@ -296,6 +405,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         }
         
         markDirty();
+        
+        // Clear active ability data since all perks are removed
+        updateActiveAbilityData();
+        
         ArsAffinity.LOGGER.info("Respeced all schools");
     }
     
@@ -345,6 +458,14 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         }
         tag.put("schoolPoints", schoolPointsTag);
         
+        // Serialize school percentages
+        CompoundTag schoolPercentagesTag = new CompoundTag();
+        for (Map.Entry<SpellSchool, Float> entry : schoolPercentages.entrySet()) {
+            String schoolId = getShortSchoolId(entry.getKey());
+            schoolPercentagesTag.putFloat(schoolId, entry.getValue());
+        }
+        tag.put("schoolPercentages", schoolPercentagesTag);
+        
         // Serialize available points
         CompoundTag availablePointsTag = new CompoundTag();
         for (Map.Entry<SpellSchool, Integer> entry : availablePoints.entrySet()) {
@@ -380,6 +501,24 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             if (school != null) {
                 int points = schoolPointsTag.getInt(key);
                 schoolPoints.put(school, points);
+            }
+        }
+        
+        // Deserialize school percentages
+        CompoundTag schoolPercentagesTag = tag.getCompound("schoolPercentages");
+        schoolPercentages.clear();
+        for (String key : schoolPercentagesTag.getAllKeys()) {
+            SpellSchool school = getSpellSchoolFromId(key);
+            if (school != null) {
+                float percentage = schoolPercentagesTag.getFloat(key);
+                schoolPercentages.put(school, percentage);
+            }
+        }
+        
+        // If no percentage data exists (backward compatibility), initialize with 0%
+        if (schoolPercentages.isEmpty()) {
+            for (SpellSchool school : SUPPORTED_SCHOOLS) {
+                schoolPercentages.put(school, 0.0f);
             }
         }
         

@@ -64,7 +64,8 @@ public class TabletOfAmnesia extends Item {
             return InteractionResultHolder.fail(stack);
         }
         
-        // Reset the school
+        // Reset the school - deallocate perks and reset points
+        data.respecSchool(targetSchool);
         data.setSchoolPoints(targetSchool, 0);
         
         // Send success message

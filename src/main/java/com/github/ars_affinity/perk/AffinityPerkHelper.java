@@ -164,7 +164,6 @@ public class AffinityPerkHelper {
             case ACTIVE_SWAP_ABILITY:
             case ACTIVE_SANCTUARY:
             case ACTIVE_CURSE_FIELD:
-            case ACTIVE_SWARM:
                 return new AffinityPerk.ActiveAbilityPerk(perkType, node.getManaCost(), node.getCooldown(), 
                     0.0f, 0, 0.0f, isBuff);
                     
