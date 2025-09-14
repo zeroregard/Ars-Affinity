@@ -105,15 +105,13 @@ public class TabletOfAmnesia extends Item {
     
     /**
      * Determine which school this tablet is for based on the essence used.
-     * This would be set when the tablet is crafted with an essence.
+     * This is set when the tablet is crafted with an essence in the enchanting apparatus.
      */
     private SpellSchool getSchoolFromTablet(ItemStack stack) {
-        // For now, we'll use NBT data to store the school
-        // In a full implementation, this would be set during crafting
         var customData = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-        if (customData != null && customData.getUnsafe().contains("school")) {
-            String schoolId = customData.getUnsafe().getString("school");
-            return parseSchoolId(schoolId);
+        if (customData != null && customData.copyTag().contains("essence_type")) {
+            String essenceType = customData.copyTag().getString("essence_type");
+            return parseSchoolId(essenceType);
         }
         return null;
     }
@@ -147,12 +145,13 @@ public class TabletOfAmnesia extends Item {
     
     /**
      * Create a tablet for a specific school.
-     * This would be used during crafting.
+     * This is used during crafting in the enchanting apparatus.
      */
     public static ItemStack createTabletForSchool(SpellSchool school) {
         ItemStack stack = new ItemStack(com.github.ars_affinity.registry.ModItems.TABLET_OF_AMNESIA.get());
+        String essenceType = school.getId().toString().replace("ars_nouveau:", "");
         var tag = new net.minecraft.nbt.CompoundTag();
-        tag.putString("school", school.getId().toString().replace("ars_nouveau:", ""));
+        tag.putString("essence_type", essenceType);
         stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return stack;
     }

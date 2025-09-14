@@ -1,0 +1,20 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:necromancy_essence"
+    }
+  ],
+  "reagent": {
+    "item": "ars_affinity:tablet_of_amnesia"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_affinity:tablet_of_amnesia",
+    "nbt": {
+      "essence_type": "necromancy"
+    }
+  },
+  "sourceCost": 200
+}

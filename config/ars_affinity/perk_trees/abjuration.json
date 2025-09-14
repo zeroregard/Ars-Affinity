@@ -58,7 +58,7 @@
     {
       "id": "abjuration_abjuration_power_2",
       "perk": "PASSIVE_ABJURATION_POWER",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
@@ -67,7 +67,7 @@
     {
       "id": "abjuration_abjuration_resistance_2",
       "perk": "PASSIVE_ABJURATION_RESISTANCE",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 300,

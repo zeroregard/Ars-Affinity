@@ -27,7 +27,7 @@ A consumable tablet that allows you to reset your affinity progress in a specifi
 
 **Crafting:**
 1. **Base Tablet**: Book + 4 Paper (100 source cost) → 4 Tablets of Amnesia
-2. **School-Specific**: Base Tablet + 4 Essences of desired school (200 source cost) → 1 School-Specific Tablet
+2. **School-Specific**: Base Tablet + 1 Essence of desired school (200 source cost) → 1 School-Specific Tablet
 
 **Usage:**
 - Right-click to consume the tablet

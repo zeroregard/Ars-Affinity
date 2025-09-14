@@ -34,7 +34,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Water Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Water Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_HYDRATION correctly", () => {
@@ -133,7 +133,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Fire Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Fire Resistance/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_FIRE_DASH correctly", () => {
@@ -185,7 +185,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Earth Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Earth Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_STONE_SKIN correctly", () => {
@@ -250,7 +250,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Air Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Air Resistance/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_AIR_DASH correctly", () => {
@@ -298,7 +298,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_HEALING_AMPLIFICATION correctly", () => {
@@ -363,7 +363,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Conjuration Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Conjuration Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SUMMON_HEALTH correctly", () => {
@@ -455,7 +455,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Anima Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Anima Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_ROTTING_GUISE correctly", () => {
@@ -563,7 +563,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Spell Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_MANA_TAP correctly", () => {

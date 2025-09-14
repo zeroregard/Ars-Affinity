@@ -67,7 +67,7 @@
     {
       "id": "necromancy_anima_power_2",
       "perk": "PASSIVE_ANIMA_POWER",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
@@ -76,7 +76,7 @@
     {
       "id": "necromancy_anima_resistance_2",
       "perk": "PASSIVE_ANIMA_RESISTANCE",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 300,

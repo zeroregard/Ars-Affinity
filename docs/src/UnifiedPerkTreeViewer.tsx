@@ -62,6 +62,8 @@ interface PerkNode {
     radius?: number
     dashLength?: number
     dashDuration?: number
+    health?: number
+    hunger?: number
 }
 
 interface PerkTreeData {

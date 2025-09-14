@@ -47,7 +47,7 @@
     {
       "id": "fire_fire_power_2",
       "perk": "PASSIVE_FIRE_POWER",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
@@ -56,7 +56,7 @@
     {
       "id": "fire_fire_resistance_2",
       "perk": "PASSIVE_FIRE_RESISTANCE",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 300,
@@ -72,7 +72,7 @@
       "cooldown": 100,
       "dashLength": 10.0,
       "dashDuration": 0.3,
-      "prerequisites": ["fire_fire_power_2", "fire_fire_resistance_2"]
+      "prerequisites": ["fire_fire_power_2", "fire_fire_resistance_2", "fire_thorns_2"]
     }
   ]
 }

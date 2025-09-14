@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import PerkRenderer from './PerkRenderer'
+import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
 
 type School = 'abjuration' | 'air' | 'conjuration' | 'earth' | 'fire' | 'manipulation' | 'necromancy' | 'water'
@@ -49,6 +49,7 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
     const [viewport, setViewport] = useState<ViewportState>({ x: 0, y: 0, zoom: 1.0 })
     const [isDragging, setIsDragging] = useState(false)
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+    const dragSensitivity = 1.5 // Increase this value to make dragging more sensitive
     const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map())
     const containerRef = useRef<HTMLDivElement>(null)
 
@@ -127,8 +128,8 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         if (isDragging) {
             setViewport(prev => ({
                 ...prev,
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y
+                x: (e.clientX - dragStart.x) * dragSensitivity,
+                y: (e.clientY - dragStart.y) * dragSensitivity
             }))
         }
     }, [isDragging, dragStart])
@@ -239,7 +240,7 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
                         Cost: {hoveredNode.pointCost} points
                     </div>
                     <div style={{ marginBottom: '8px' }}>
-                        <PerkRenderer perk={{ perk: hoveredNode.perk }} />
+                        <PerkStringRenderer perk={{ perk: hoveredNode.perk }} />
                     </div>
                     {hoveredNode.prerequisites && hoveredNode.prerequisites.length > 0 && (
                         <div style={{ color: '#aaa', fontSize: '12px' }}>

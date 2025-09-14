@@ -77,7 +77,7 @@
     {
       "id": "conjuration_summoning_power_2",
       "perk": "PASSIVE_SUMMONING_POWER",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
@@ -86,7 +86,7 @@
     {
       "id": "conjuration_conjuration_resistance_2",
       "perk": "PASSIVE_CONJURATION_RESISTANCE",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 300,

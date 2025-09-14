@@ -20,7 +20,7 @@
     {
       "id": "air_air_power_2",
       "perk": "PASSIVE_AIR_POWER",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
@@ -29,7 +29,7 @@
     {
       "id": "air_air_resistance_2",
       "perk": "PASSIVE_AIR_RESISTANCE",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 300,
