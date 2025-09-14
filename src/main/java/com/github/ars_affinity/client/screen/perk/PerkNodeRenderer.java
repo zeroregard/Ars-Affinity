@@ -14,7 +14,9 @@ import java.util.Map;
 public class PerkNodeRenderer {
     private static final ResourceLocation PERK_BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_background.png");
     private static final ResourceLocation PERK_BORDER_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_border.png");
+    private static final ResourceLocation PERK_BORDER_ACTIVE_TEXTURE = ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perk_border_active.png");
     private static final int NODE_SIZE = 24;
+    private static final int ACTIVE_NODE_SIZE = 28;
     
     private final Player player;
     private final Map<String, PerkAllocation> allocatedPerks;
@@ -28,12 +30,14 @@ public class PerkNodeRenderer {
         PerkAllocation allocation = allocatedPerks.get(node.getId());
         boolean isAllocated = allocation != null && allocation.isActive();
         boolean isAvailable = PerkAllocationManager.canAllocate(player, node.getId());
+        boolean isActiveAbility = node.getPerkType().name().startsWith("ACTIVE_");
         
+        int nodeSize = isActiveAbility ? ACTIVE_NODE_SIZE : NODE_SIZE;
         int color = getNodeColor(node, isAllocated, isAvailable);
         
         // Render the base background (no coloring)
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        guiGraphics.blit(PERK_BACKGROUND_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
+        guiGraphics.blit(PERK_BACKGROUND_TEXTURE, x, y, 0, 0, nodeSize, nodeSize, nodeSize, nodeSize);
         
         // Render the colored border
         RenderSystem.setShaderColor(
@@ -42,26 +46,28 @@ public class PerkNodeRenderer {
             (color & 0xFF) / 255.0f,
             1.0f
         );
-        guiGraphics.blit(PERK_BORDER_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
+        
+        ResourceLocation borderTexture = isActiveAbility ? PERK_BORDER_ACTIVE_TEXTURE : PERK_BORDER_TEXTURE;
+        guiGraphics.blit(borderTexture, x, y, 0, 0, nodeSize, nodeSize, nodeSize, nodeSize);
         
         // Reset color for icon rendering
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         
         // Render the perk icon on top of the node background
-        renderPerkIcon(guiGraphics, node, x, y, isAllocated, isAvailable);
+        renderPerkIcon(guiGraphics, node, x, y, isAllocated, isAvailable, nodeSize);
         
         // Render tier level if allocated and tier > 1
         if (isAllocated && node.getTier() > 1) {
             String levelText = toRomanNumeral(node.getTier());
-            guiGraphics.drawString(font, levelText, x + NODE_SIZE - 8, y + NODE_SIZE - 8, 0xFFFFFF);
+            guiGraphics.drawString(font, levelText, x + nodeSize - 8, y + nodeSize - 8, 0xFFFFFF);
         }
     }
     
-    private void renderPerkIcon(GuiGraphics guiGraphics, PerkNode node, int nodeX, int nodeY, boolean isAllocated, boolean isAvailable) {
+    private void renderPerkIcon(GuiGraphics guiGraphics, PerkNode node, int nodeX, int nodeY, boolean isAllocated, boolean isAvailable, int nodeSize) {
         ResourceLocation perkIcon = getPerkIcon(node);
         int iconSize = 18; // Standard icon size
-        int iconX = nodeX + (NODE_SIZE - iconSize) / 2; // Center horizontally
-        int iconY = nodeY + (NODE_SIZE - iconSize) / 2; // Center vertically on the node
+        int iconX = nodeX + (nodeSize - iconSize) / 2; // Center horizontally
+        int iconY = nodeY + (nodeSize - iconSize) / 2; // Center vertically on the node
         
         if (isAvailable && !isAllocated) {
             // Render grayscale for available but not allocated
@@ -86,7 +92,9 @@ public class PerkNodeRenderer {
     
     public boolean isNodeHovered(PerkNode node, int x, int y, int mouseX, int mouseY) {
         // Check if mouse is over the node box (which now includes the icon)
-        return mouseX >= x && mouseX < x + NODE_SIZE && mouseY >= y && mouseY < y + NODE_SIZE;
+        boolean isActiveAbility = node.getPerkType().name().startsWith("ACTIVE_");
+        int nodeSize = isActiveAbility ? ACTIVE_NODE_SIZE : NODE_SIZE;
+        return mouseX >= x && mouseX < x + nodeSize && mouseY >= y && mouseY < y + nodeSize;
     }
     
     private int getNodeColor(PerkNode node, boolean isAllocated, boolean isAvailable) {

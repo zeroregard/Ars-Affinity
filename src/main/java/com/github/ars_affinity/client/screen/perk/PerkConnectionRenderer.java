@@ -127,6 +127,12 @@ public class PerkConnectionRenderer {
     }
     
     private void renderBresenhamLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color) {
+        // Handle edge case where start and end are the same
+        if (x1 == x2 && y1 == y2) {
+            guiGraphics.fill(x1, y1, x1 + 1, y1 + 1, color);
+            return;
+        }
+        
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);
         int sx = x1 < x2 ? 1 : -1;
@@ -136,12 +142,11 @@ public class PerkConnectionRenderer {
         int x = x1;
         int y = y1;
         
-        while (true) {
-            // Draw a single pixel
-            guiGraphics.fill(x, y, x + 1, y + 1, color);
-            
-            if (x == x2 && y == y2) break;
-            
+        // Always draw the first pixel
+        guiGraphics.fill(x, y, x + 1, y + 1, color);
+        
+        // Continue until we reach the end point
+        while (x != x2 || y != y2) {
             int e2 = 2 * err;
             if (e2 > -dy) {
                 err -= dy;
@@ -151,6 +156,9 @@ public class PerkConnectionRenderer {
                 err += dx;
                 y += sy;
             }
+            
+            // Draw the current pixel
+            guiGraphics.fill(x, y, x + 1, y + 1, color);
         }
     }
     

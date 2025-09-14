@@ -42,6 +42,14 @@ public class PerkTreeScreen extends Screen {
     private int scrollY = 0;
     private boolean isDragging = false;
     
+    // Smooth camera system
+    private float targetScrollX = 0;
+    private float targetScrollY = 0;
+    private boolean isLerping = false;
+    private static final float LERP_SPEED = 0.15f; // Adjust for faster/slower lerping
+    private long lastDragTime = 0;
+    private static final long LERP_DELAY = 500; // Start lerping 500ms after drag ends
+    
     public PerkTreeScreen(Player player, SpellSchool school, Screen previousScreen) {
         super(Component.translatable("ars_affinity.screen.perk_tree.title", school.getTextComponent()));
         this.player = player;
@@ -56,6 +64,7 @@ public class PerkTreeScreen extends Screen {
         this.connectionRenderer = new PerkConnectionRenderer(player, allocatedPerks, school, layout);
         this.tooltipRenderer = new PerkTooltipRenderer(player, allocatedPerks);
         this.infoPanel = new PerkInfoPanel(school, affinityData, allocatedPerks);
+        this.galaxyBackground = new GalaxyBackgroundRenderer();
     }
     
     @Override
@@ -106,16 +115,15 @@ public class PerkTreeScreen extends Screen {
         int panelX = centerX - 256 / 2;
         int panelY = centerY - 256 / 2;
         
-        // Enable scissor test to clip content to the background panel
-        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
-        
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
+        // Render connections without scissor test to prevent clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
-        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
         
-        // Disable scissor test
+        // Enable scissor test only for nodes to keep them within the background panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
         guiGraphics.disableScissor();
         
         // Render tooltip outside the clipped area
@@ -139,16 +147,15 @@ public class PerkTreeScreen extends Screen {
         int panelX = centerX - 256 / 2;
         int panelY = centerY - 256 / 2;
         
-        // Enable scissor test to clip content to the background panel
-        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
-        
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
+        // Render connections without scissor test to prevent clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
-        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
         
-        // Disable scissor test
+        // Enable scissor test only for nodes to keep them within the background panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
         guiGraphics.disableScissor();
         
         // Render tooltip outside the clipped area
@@ -162,7 +169,12 @@ public class PerkTreeScreen extends Screen {
         int centerY = this.height / 2;
         int panelX = centerX - 256 / 2;
         int panelY = centerY - 256 / 2;
-        guiGraphics.blit(BACKGROUND_TEXTURE, panelX, panelY, 0, 0, 256, 256, 256, 256);
+        
+        // Render the dynamic galaxy background
+        galaxyBackground.render(guiGraphics, panelX, panelY, 256, 256, 0.016f); // ~60 FPS delta time
+        
+        // Add a subtle overlay to maintain the original panel feel
+        guiGraphics.fill(panelX, panelY, panelX + 256, panelY + 256, 0x20000000);
     }
     
     private PerkNode hoveredNode = null;
@@ -208,6 +220,8 @@ public class PerkTreeScreen extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0) {
             isDragging = false;
+            // Start the lerping process after a delay
+            lastDragTime = System.currentTimeMillis();
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
@@ -216,6 +230,9 @@ public class PerkTreeScreen extends Screen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (isDragging && button == 0) {
+            // Stop any ongoing lerping when user starts dragging
+            isLerping = false;
+            
             scrollX += (int) deltaX;
             scrollY += (int) deltaY;
             
@@ -278,5 +295,90 @@ public class PerkTreeScreen extends Screen {
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    
+    private void updateSmoothCamera() {
+        if (isDragging) {
+            // Don't lerp while dragging
+            return;
+        }
+        
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastDragTime < LERP_DELAY) {
+            // Wait for the delay before starting lerping
+            return;
+        }
+        
+        // Find the closest perk node to the current view center
+        PerkNode closestNode = findClosestNodeToViewCenter();
+        if (closestNode != null) {
+            // Calculate target position to center the closest node
+            int nodeX = layout.getNodeX(closestNode, 0);
+            int nodeY = layout.getNodeY(closestNode, 0);
+            
+            // Target scroll position to center the node on screen
+            targetScrollX = -nodeX;
+            targetScrollY = -nodeY + height / 2 - 50; // 50 is the base offset from getStartY
+            
+            // Clamp target position to valid bounds
+            int treeMinX = layout.getTreeMinX();
+            int treeMaxX = layout.getTreeMaxX();
+            int treeMinY = layout.getTreeMinY();
+            int treeMaxY = layout.getTreeMaxY();
+            
+            int padding = 50;
+            int minScrollX = -treeMaxX - padding;
+            int maxScrollX = -treeMinX + width - padding;
+            int minScrollY = -treeMaxY - padding;
+            int maxScrollY = -treeMinY + height - padding;
+            
+            targetScrollX = Math.max(minScrollX, Math.min(maxScrollX, targetScrollX));
+            targetScrollY = Math.max(minScrollY, Math.min(maxScrollY, targetScrollY));
+            
+            isLerping = true;
+        }
+        
+        if (isLerping) {
+            // Lerp towards the target position
+            float deltaX = targetScrollX - scrollX;
+            float deltaY = targetScrollY - scrollY;
+            
+            // Check if we're close enough to stop lerping
+            if (Math.abs(deltaX) < 1.0f && Math.abs(deltaY) < 1.0f) {
+                scrollX = (int) targetScrollX;
+                scrollY = (int) targetScrollY;
+                isLerping = false;
+            } else {
+                scrollX += (int) (deltaX * LERP_SPEED);
+                scrollY += (int) (deltaY * LERP_SPEED);
+            }
+        }
+    }
+    
+    private PerkNode findClosestNodeToViewCenter() {
+        // Get the current view center in world coordinates
+        int viewCenterX = width / 2 - scrollX; // Convert screen center to world coordinates
+        int viewCenterY = height / 2 - scrollY + 50; // Account for getStartY offset
+        
+        PerkNode closestNode = null;
+        double closestDistance = Double.MAX_VALUE;
+        
+        for (PerkNode node : schoolPerks.values()) {
+            int nodeX = layout.getNodeX(node, 0);
+            int nodeY = layout.getNodeY(node, 0);
+            
+            // Calculate distance from view center to node center
+            double distance = Math.sqrt(
+                Math.pow(nodeX - viewCenterX, 2) + 
+                Math.pow(nodeY - viewCenterY, 2)
+            );
+            
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestNode = node;
+            }
+        }
+        
+        return closestNode;
     }
 }

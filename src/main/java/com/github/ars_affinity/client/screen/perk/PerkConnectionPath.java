@@ -29,17 +29,9 @@ public class PerkConnectionPath {
     }
     
     private BezierCurve createCurve(int fromX, int fromY, int toX, int toY) {
-        // Add some curve to make it look more organic
-        int offsetX = (int) ((toY - fromY) * 0.3f);
-        int offsetY = (int) ((fromX - toX) * 0.3f);
-        
-        BezierCurve.Point control1 = new BezierCurve.Point(fromX + offsetX, fromY + offsetY);
-        BezierCurve.Point control2 = new BezierCurve.Point(toX + offsetX, toY + offsetY);
-        
+        // Create straight line by using only start and end points
         return new BezierCurve(
             new BezierCurve.Point(fromX, fromY),
-            control1,
-            control2,
             new BezierCurve.Point(toX, toY)
         );
     }

@@ -6,9 +6,8 @@ import java.util.*;
 
 public class PerkTreeLayout {
     private static final int NODE_SIZE = 24;
-    private static final int NODE_SPACING = 80;  // Horizontal spacing between nodes in same column
-    private static final int COLUMN_SPACING = 120; // Horizontal spacing between columns
-    private static final int VERTICAL_SPACING = 60; // Vertical spacing between nodes in same column
+    private static final int COLUMN_SPACING = 80; // Horizontal spacing between columns
+    private static final int VERTICAL_SPACING = 40; // Vertical spacing between nodes in same column
     
     private final Map<String, PerkNode> schoolPerks;
     private final Map<String, NodePosition> nodePositions;
