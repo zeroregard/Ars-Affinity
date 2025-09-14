@@ -41,7 +41,9 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 1,
+      "amount": 0.20,
+      "time": 200,
+      "cooldown": 6000,
       "prerequisites": ["abjuration_abjuration_resistance_1"]
     },
     {

@@ -5,11 +5,13 @@ import { PerkStringRenderer, formatPerkString } from './PerkStringRenderer'
 
 describe("PerkStringRenderer", () => {
   describe("water perks", () => {
-    it("should render PASSIVE_DEHYDRATED correctly", () => {
+    // PASSIVE_DEHYDRATED has been removed from the perk system
+
+    it("should render PASSIVE_WATER_POWER correctly", () => {
       const perk = {
-        perk: "PASSIVE_DEHYDRATED",
-        amount: 0.3,
-        isBuff: false
+        perk: "PASSIVE_WATER_POWER",
+        amount: 1,
+        isBuff: true
       }
       render(
         <TestWrapper>
@@ -17,7 +19,22 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/- Inhibits mana regeneration by 30% in the Nether or when on fire/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Water Power/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_WATER_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_WATER_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Water Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_HYDRATION correctly", () => {
@@ -72,11 +89,13 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("fire perks", () => {
-    it("should render PASSIVE_DOUSED correctly", () => {
+    // PASSIVE_DOUSED has been removed from the perk system
+
+    it("should render PASSIVE_FIRE_POWER correctly", () => {
       const perk = {
-        perk: "PASSIVE_DOUSED",
-        amount: 0.3,
-        isBuff: false
+        perk: "PASSIVE_FIRE_POWER",
+        amount: 1,
+        isBuff: true
       }
       render(
         <TestWrapper>
@@ -84,7 +103,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/- Inhibits mana regeneration by 30% in rain or when in water/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Fire Power/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_FIRE_THORNS correctly", () => {
@@ -100,6 +119,21 @@ describe("PerkStringRenderer", () => {
       )
       
       expect(screen.getByText(/\+ 25% chance to ignite enemies when attacked/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_FIRE_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_FIRE_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Fire Resistance/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_FIRE_DASH correctly", () => {
@@ -122,11 +156,13 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("earth perks", () => {
-    it("should render PASSIVE_GROUNDED correctly", () => {
+    // PASSIVE_GROUNDED has been removed from the perk system
+
+    it("should render PASSIVE_EARTH_POWER correctly", () => {
       const perk = {
-        perk: "PASSIVE_GROUNDED",
-        amount: 0.3,
-        isBuff: false
+        perk: "PASSIVE_EARTH_POWER",
+        amount: 1,
+        isBuff: true
       }
       render(
         <TestWrapper>
@@ -134,7 +170,22 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/- Inhibits mana regeneration by 30% when not touching the ground/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Earth Power/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_EARTH_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_EARTH_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Earth Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_STONE_SKIN correctly", () => {
@@ -170,11 +221,13 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("air perks", () => {
-    it("should render PASSIVE_BURIED correctly", () => {
+    // PASSIVE_BURIED has been removed from the perk system
+
+    it("should render PASSIVE_AIR_POWER correctly", () => {
       const perk = {
-        perk: "PASSIVE_BURIED",
-        amount: 0.3,
-        isBuff: false
+        perk: "PASSIVE_AIR_POWER",
+        amount: 1,
+        isBuff: true
       }
       render(
         <TestWrapper>
@@ -182,9 +235,23 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/- Inhibits mana regeneration by 30% when deep underground/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Air Power/)).toBeInTheDocument()
     })
 
+    it("should render PASSIVE_AIR_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_AIR_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Air Resistance/)).toBeInTheDocument()
+    })
 
     it("should render ACTIVE_AIR_DASH correctly", () => {
       const perk = {
@@ -204,6 +271,36 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("abjuration perks", () => {
+    it("should render PASSIVE_ABJURATION_POWER correctly", () => {
+      const perk = {
+        perk: "PASSIVE_ABJURATION_POWER",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Power/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_ABJURATION_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_ABJURATION_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Resistance/)).toBeInTheDocument()
+    })
+
     it("should render PASSIVE_HEALING_AMPLIFICATION correctly", () => {
       const perk = {
         perk: "PASSIVE_HEALING_AMPLIFICATION",
@@ -217,21 +314,6 @@ describe("PerkStringRenderer", () => {
       )
       
       expect(screen.getByText(/\+ Amplifies Heal by 25% and reduces its food cost/)).toBeInTheDocument()
-    })
-
-    it("should render PASSIVE_PACIFIST correctly", () => {
-      const perk = {
-        perk: "PASSIVE_PACIFIST",
-        amount: 0.15,
-        isBuff: false
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/- 15% spell power reduction/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_GHOST_STEP correctly", () => {
@@ -248,7 +330,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ On death, cancel death and heal 20% health, become invisible for 10 seconds, create decoy \(300 second cooldown\)/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ On death, cancel death and heal 20% health, become invisible for 0.5 seconds, create decoy \(15 second cooldown\)/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_SANCTUARY correctly", () => {
@@ -269,6 +351,21 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("conjuration perks", () => {
+    it("should render PASSIVE_CONJURATION_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_CONJURATION_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Conjuration Resistance/)).toBeInTheDocument()
+    })
+
     it("should render PASSIVE_SUMMON_HEALTH correctly", () => {
       const perk = {
         perk: "PASSIVE_SUMMON_HEALTH",
@@ -282,7 +379,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/Grants summoned creatures \+1 health boost for 20 seconds/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Grants summoned creatures \+1 health boost for 20 seconds/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SUMMON_DEFENSE correctly", () => {
@@ -314,15 +411,27 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/Adds \+1 to your Summoning Power/)).toBeInTheDocument()
     })
 
+    it("should render PASSIVE_MANIPULATION_SICKNESS correctly", () => {
+      const perk = {
+        perk: "PASSIVE_MANIPULATION_SICKNESS",
+        time: 200,
+        isBuff: false
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/- Casting manipulation spells applies sickness for 10 seconds and costs hunger/)).toBeInTheDocument()
+    })
   })
 
   describe("necromancy perks", () => {
-
-    it("should render PASSIVE_LICH_FEAST correctly", () => {
+    it("should render PASSIVE_ANIMA_POWER correctly", () => {
       const perk = {
-        perk: "PASSIVE_LICH_FEAST",
-        health: 0.5,
-        hunger: 0.5,
+        perk: "PASSIVE_ANIMA_POWER",
+        amount: 1,
         isBuff: true
       }
       render(
@@ -331,7 +440,67 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Restore 0\.5 health and 0\.5 hunger when killing non-undead enemies/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Anima Power/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_ANIMA_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_ANIMA_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Anima Resistance/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_ROTTING_GUISE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_ROTTING_GUISE",
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Grants rotting guise effect/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_BLIGHTED correctly", () => {
+      const perk = {
+        perk: "PASSIVE_BLIGHTED",
+        amount: 0.25,
+        isBuff: false
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/- Healing spells are 25% less effective and add nausea/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_LICH_FEAST correctly", () => {
+      const perk = {
+        perk: "PASSIVE_LICH_FEAST",
+        health: 0.5,
+        hunger: 0.25,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Restore 0\.5 health and 0\.3 hunger when killing non-undead enemies/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SOULSPIKE correctly", () => {
@@ -367,6 +536,36 @@ describe("PerkStringRenderer", () => {
   })
 
   describe("manipulation perks", () => {
+    it("should render PASSIVE_MANIPULATION_POWER correctly", () => {
+      const perk = {
+        perk: "PASSIVE_MANIPULATION_POWER",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Power/)).toBeInTheDocument()
+    })
+
+    it("should render PASSIVE_MANIPULATION_RESISTANCE correctly", () => {
+      const perk = {
+        perk: "PASSIVE_MANIPULATION_RESISTANCE",
+        amount: 1,
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Resistance/)).toBeInTheDocument()
+    })
+
     it("should render PASSIVE_MANA_TAP correctly", () => {
       const perk = {
         perk: "PASSIVE_MANA_TAP",
@@ -413,9 +612,38 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/\+ Swap positions with entities\. Press KEYBIND to activate\. 3 second cooldown/)).toBeInTheDocument()
     })
 
+    it("should render PASSIVE_UNSTABLE_SUMMONING correctly", () => {
+      const perk = {
+        perk: "PASSIVE_UNSTABLE_SUMMONING",
+        amount: 0.33,
+        isBuff: false
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/- 33% chance to transform summons into random creatures/)).toBeInTheDocument()
+    })
   })
 
   describe("common perks", () => {
+    it("should render PASSIVE_MOB_PACIFICATION correctly", () => {
+      const perk = {
+        perk: "PASSIVE_MOB_PACIFICATION",
+        entities: ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"],
+        isBuff: true
+      }
+      render(
+        <TestWrapper>
+          <PerkStringRenderer perk={perk} />
+        </TestWrapper>
+      )
+      
+      expect(screen.getByText(/Drowned, Guardian, Elder Guardian ignore you/)).toBeInTheDocument()
+    })
+  })
 
   describe("error handling", () => {
     it("should handle invalid perk data", () => {
@@ -440,4 +668,4 @@ describe("PerkStringRenderer", () => {
       expect(screen.getByText(/Unknown perk: UNKNOWN_PERK/)).toBeInTheDocument()
     })
   })
-})  })
+})

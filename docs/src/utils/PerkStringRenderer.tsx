@@ -55,8 +55,8 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
     // Handle ghost step perk (special case with amount, time, and cooldown)
     else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
         const percentage = perk.amount * 100
-        const timeInSeconds = perk.time
-        const cooldownInSeconds = perk.cooldown
+        const timeInSeconds = perk.time / 20  // Convert ticks to seconds
+        const cooldownInSeconds = perk.cooldown / 20  // Convert ticks to seconds
         formattedMessage = formattedMessage
             .replace(/%d%%/g, percentage.toString() + '%')
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
@@ -72,9 +72,16 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
     }
     // Handle passive perks with time and amount
     else if (perk.time !== undefined && perk.amount !== undefined) {
-        formattedMessage = formattedMessage
-            .replace(/%s/g, perk.amount.toString())
-            .replace(/%d/g, (perk.time/20).toString())
+        // Special case for PASSIVE_SUMMON_HEALTH - format amount as health points
+        if (perkId === 'PASSIVE_SUMMON_HEALTH') {
+            formattedMessage = formattedMessage
+                .replace(/%s/g, `${perk.amount} health`)
+                .replace(/%d/g, (perk.time/20).toString())
+        } else {
+            formattedMessage = formattedMessage
+                .replace(/%s/g, perk.amount.toString())
+                .replace(/%d/g, (perk.time/20).toString())
+        }
     }
     // Handle passive perks with just time
     else if (perk.time !== undefined) {
@@ -99,8 +106,9 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }
     // Handle lich feast perk
-    else if(perk.health && perk.hunger) {
-        formattedMessage = formattedMessage.replace(/%.1f/g, perk.health.toString()).replace(/%.2f/g, perk.hunger.toString())
+    else if(perk.health !== undefined && perk.hunger !== undefined) {
+        // Replace first %.1f with health, then remaining %.1f with hunger
+        formattedMessage = formattedMessage.replace(/%.1f/, perk.health.toFixed(1)).replace(/%.1f/, perk.hunger.toFixed(1))
     }
     // Handle manipulation sickness perk
     else if(perk.duration !== undefined && perk.hunger !== undefined) {
@@ -163,18 +171,25 @@ export function formatPerkString(perk: Perk, messages: Record<string, string>): 
     // Handle ghost step perk (special case with amount, time, and cooldown)
     else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
         const percentage = perk.amount * 100
-        const timeInSeconds = perk.time
-        const cooldownInSeconds = perk.cooldown
+        const timeInSeconds = perk.time / 20  // Convert ticks to seconds
+        const cooldownInSeconds = perk.cooldown / 20  // Convert ticks to seconds
         formattedMessage = formattedMessage
             .replace(/%d%%/g, percentage.toString() + '%')
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
             .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
     }
     // Handle passive perks with time and amount
-    else if (perk.time && perk.amount !== undefined) {
-        formattedMessage = formattedMessage
-            .replace(/%s/g, perk.amount.toString())
-            .replace(/%d/g, (perk.time/20).toString())
+    else if (perk.time !== undefined && perk.amount !== undefined) {
+        // Special case for PASSIVE_SUMMON_HEALTH - format amount as health points
+        if (perkId === 'PASSIVE_SUMMON_HEALTH') {
+            formattedMessage = formattedMessage
+                .replace(/%s/g, `${perk.amount} health`)
+                .replace(/%d/g, (perk.time/20).toString())
+        } else {
+            formattedMessage = formattedMessage
+                .replace(/%s/g, perk.amount.toString())
+                .replace(/%d/g, (perk.time/20).toString())
+        }
     }
     // Handle passive perks with just time
     else if (perk.time !== undefined) {
@@ -203,8 +218,9 @@ export function formatPerkString(perk: Perk, messages: Record<string, string>): 
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }
     // Handle lich feast perk
-    else if(perk.health && perk.hunger) {
-        formattedMessage = formattedMessage.replace(/%.1f/g, perk.health.toString()).replace(/%.2f/g, perk.hunger.toString())
+    else if(perk.health !== undefined && perk.hunger !== undefined) {
+        // Replace first %.1f with health, then remaining %.1f with hunger
+        formattedMessage = formattedMessage.replace(/%.1f/, perk.health.toFixed(1)).replace(/%.1f/, perk.hunger.toFixed(1))
     }
     // Handle manipulation sickness perk
     else if(perk.duration !== undefined && perk.hunger !== undefined) {
