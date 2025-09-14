@@ -47,7 +47,7 @@ public abstract class AbstractDashAbility {
 	}
 
 	protected double getRequiredManaCost(AffinityPerk.ActiveAbilityPerk perk, IManaCap manaCap) {
-		return perk.manaCost; // Match Air Dash semantics (flat number)
+		return perk.manaCost; // Match Lightning Dash semantics (flat number)
 	}
 
 	protected float getDashLength(AffinityPerk.ActiveAbilityPerk perk) {

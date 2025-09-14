@@ -200,9 +200,9 @@ describe("PerkRenderer", () => {
       expect(screen.getByText(/Jumping costs -50% hunger/)).toBeInTheDocument()
     })
 
-    it("should render ACTIVE_AIR_DASH correctly", () => {
-      const perk = {
-        perk: "ACTIVE_AIR_DASH",
+    it("should render ACTIVE_LIGHTNING_DASH correctly", () => {
+        const perk = {
+            perk: "ACTIVE_LIGHTNING_DASH",
         manaCost: 0.2,
         cooldown: 100,
         isBuff: true
