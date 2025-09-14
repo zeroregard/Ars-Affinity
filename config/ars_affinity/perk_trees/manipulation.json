@@ -72,26 +72,6 @@
       "prerequisites": ["manipulation_manipulation_resistance_1"]
     },
     {
-      "id": "manipulation_unstable_summoning_1",
-      "perk": "PASSIVE_UNSTABLE_SUMMONING",
-      "tier": 2,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "chance": 0.33,
-      "entities": ["minecraft:chicken", "minecraft:sheep"],
-      "prerequisites": ["manipulation_mana_tap_1"]
-    },
-    {
-      "id": "manipulation_unstable_summoning_2",
-      "perk": "PASSIVE_UNSTABLE_SUMMONING",
-      "tier": 3,
-      "pointCost": 1,
-      "category": "PASSIVE",
-      "chance": 0.66,
-      "entities": ["minecraft:chicken", "minecraft:sheep", "minecraft:zombie", "minecraft:skeleton"],
-      "prerequisites": ["manipulation_unstable_summoning_1"]
-    },
-    {
       "id": "manipulation_swap_ability_1",
       "perk": "ACTIVE_SWAP_ABILITY",
       "tier": 3,

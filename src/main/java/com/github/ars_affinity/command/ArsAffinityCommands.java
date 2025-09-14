@@ -178,10 +178,9 @@ public class ArsAffinityCommands {
             int currentPoints = data.getSchoolPoints(school);
             int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
             float progressPercentage = data.getSchoolPercentage(school);
-            float displayPercentage = data.getSchoolAffinityPercentage(school) * 100.0f;
             
-            source.sendSuccess(() -> Component.literal(String.format("  %s: %d/%d points (%.1f%% progress, %.1f%% display)", 
-                school.getId(), currentPoints, maxPoints, progressPercentage, displayPercentage)), false);
+            source.sendSuccess(() -> Component.literal(String.format("  %s: %d/%d points (%.1f%% progress)", 
+                school.getId(), currentPoints, maxPoints, progressPercentage)), false);
         }
 
         return 1;

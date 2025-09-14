@@ -37,7 +37,10 @@ public class AffinityPerkManager {
         }
     }
 
-    public static void loadConfig() {
+    public static synchronized void loadConfig() {
+        if (isLoaded) {
+            return; // Already loaded, avoid concurrent loading
+        }
         schoolPerks.clear();
 
         Path configDir = FMLPaths.CONFIGDIR.get().resolve("ars_affinity").resolve("perk_trees");
