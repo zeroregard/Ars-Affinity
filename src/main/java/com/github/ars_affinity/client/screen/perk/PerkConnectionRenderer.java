@@ -1,45 +1,185 @@
 package com.github.ars_affinity.client.screen.perk;
 
+import com.github.ars_affinity.perk.PerkAllocation;
 import com.github.ars_affinity.perk.PerkNode;
+import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 import java.util.Map;
 
 public class PerkConnectionRenderer {
     private static final int NODE_SIZE = 24;
+    private static final int CONNECTION_SEGMENTS = 20;
+    
+    private final SpellSchool school;
+    private final PerkTreeLayout layout;
+    
+    public PerkConnectionRenderer(Player player, Map<String, PerkAllocation> allocatedPerks, SpellSchool school, PerkTreeLayout layout) {
+        this.school = school;
+        this.layout = layout;
+    }
     
     public void renderConnections(GuiGraphics guiGraphics, Map<Integer, List<PerkNode>> perksByTier, 
                                 Map<String, PerkNode> schoolPerks, int startX, int startY) {
-        for (Map.Entry<Integer, List<PerkNode>> tierEntry : perksByTier.entrySet()) {
-            List<PerkNode> nodes = tierEntry.getValue();
-            
-            for (PerkNode node : nodes) {
-                for (String prerequisiteId : node.getPrerequisites()) {
-                    PerkNode prerequisite = schoolPerks.get(prerequisiteId);
-                    if (prerequisite != null) {
-                        renderConnection(guiGraphics, prerequisite, node, startX, startY);
-                    }
+        // Render connections between all connected perks
+        for (PerkNode node : schoolPerks.values()) {
+            for (String prerequisiteId : node.getPrerequisites()) {
+                PerkNode prerequisite = schoolPerks.get(prerequisiteId);
+                if (prerequisite != null) {
+                    renderConnection(guiGraphics, prerequisite, node, startX, startY);
                 }
             }
         }
     }
     
     private void renderConnection(GuiGraphics guiGraphics, PerkNode from, PerkNode to, int startX, int startY) {
-        int fromX = getNodeX(from, startX);
-        int fromY = getNodeY(from, startY);
-        int toX = getNodeX(to, startX);
-        int toY = getNodeY(to, startY);
+        int fromX = layout.getNodeX(from, startX);
+        int fromY = layout.getNodeY(from, startY);
+        int toX = layout.getNodeX(to, startX);
+        int toY = layout.getNodeY(to, startY);
         
-        guiGraphics.fill(fromX + NODE_SIZE / 2, fromY + NODE_SIZE / 2, 
-                        toX + NODE_SIZE / 2, toY + NODE_SIZE / 2, 0xFF888888);
+        // Center the connection on the nodes
+        fromX += NODE_SIZE / 2;
+        fromY += NODE_SIZE / 2;
+        toX += NODE_SIZE / 2;
+        toY += NODE_SIZE / 2;
+        
+        // Create connection path
+        PerkConnectionPath path = new PerkConnectionPath(from, to, school, fromX, fromY, toX, toY);
+        
+        // Render the connection
+        renderConnectionPath(guiGraphics, path);
     }
     
-    private int getNodeX(PerkNode node, int startX) {
-        return startX + node.getTier() * 40;
+    private void renderConnectionPath(GuiGraphics guiGraphics, PerkConnectionPath path) {
+        List<BezierCurve.Point> points = path.getPathPoints(CONNECTION_SEGMENTS);
+        ConnectionStyle style = path.getStyle();
+        
+        if (points.size() < 2) return;
+        
+        // Render glow effect if enabled
+        if (style.hasGlow()) {
+            renderGlowEffect(guiGraphics, points, style);
+        }
+        
+        // Render main connection line
+        renderMainLine(guiGraphics, points, style);
     }
     
-    private int getNodeY(PerkNode node, int startY) {
-        return startY + node.getTier() * 60;
+    private void renderGlowEffect(GuiGraphics guiGraphics, List<BezierCurve.Point> points, ConnectionStyle style) {
+        int glowColor = style.getGlowColor();
+        float glowThickness = style.getThickness() + 1.0f; // Much more subtle glow
+        
+        for (int i = 0; i < points.size() - 1; i++) {
+            BezierCurve.Point current = points.get(i);
+            BezierCurve.Point next = points.get(i + 1);
+            
+            // Render subtle glow lines for effect
+            for (int offset = -1; offset <= 1; offset++) {
+                int x1 = (int) (current.x + offset);
+                int y1 = (int) (current.y + offset);
+                int x2 = (int) (next.x + offset);
+                int y2 = (int) (next.y + offset);
+                
+                renderLineSegment(guiGraphics, x1, y1, x2, y2, glowColor, glowThickness, false);
+            }
+        }
     }
+    
+    private void renderMainLine(GuiGraphics guiGraphics, List<BezierCurve.Point> points, ConnectionStyle style) {
+        int color = style.getColor();
+        float thickness = style.getThickness();
+        boolean isDashed = style.isDashed();
+        
+        for (int i = 0; i < points.size() - 1; i++) {
+            BezierCurve.Point current = points.get(i);
+            BezierCurve.Point next = points.get(i + 1);
+            
+            renderLineSegment(guiGraphics, 
+                (int) current.x, (int) current.y, 
+                (int) next.x, (int) next.y, 
+                color, thickness, isDashed);
+        }
+    }
+    
+    private void renderLineSegment(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, 
+                                 int color, float thickness, boolean isDashed) {
+        if (isDashed) {
+            renderDashedLine(guiGraphics, x1, y1, x2, y2, color, thickness);
+        } else {
+            renderSolidLine(guiGraphics, x1, y1, x2, y2, color, thickness);
+        }
+    }
+    
+    private void renderSolidLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color, float thickness) {
+        // Use Bresenham's line algorithm for proper thin line rendering
+        if (thickness <= 1.0f) {
+            renderBresenhamLine(guiGraphics, x1, y1, x2, y2, color);
+        } else {
+            // For thicker lines, render multiple parallel lines
+            int halfThickness = Math.max(1, (int) (thickness / 2));
+            for (int offset = -halfThickness; offset <= halfThickness; offset++) {
+                renderBresenhamLine(guiGraphics, x1 + offset, y1, x2 + offset, y2, color);
+            }
+        }
+    }
+    
+    private void renderBresenhamLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color) {
+        int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+        int sx = x1 < x2 ? 1 : -1;
+        int sy = y1 < y2 ? 1 : -1;
+        int err = dx - dy;
+        
+        int x = x1;
+        int y = y1;
+        
+        while (true) {
+            // Draw a single pixel
+            guiGraphics.fill(x, y, x + 1, y + 1, color);
+            
+            if (x == x2 && y == y2) break;
+            
+            int e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+        }
+    }
+    
+    private void renderDashedLine(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color, float thickness) {
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 4) {
+            renderSolidLine(guiGraphics, x1, y1, x2, y2, color, thickness);
+            return;
+        }
+        
+        float dashLength = 8.0f;
+        float gapLength = 4.0f;
+        float segmentLength = dashLength + gapLength;
+        
+        float segments = distance / segmentLength;
+        float stepX = dx / segments;
+        float stepY = dy / segments;
+        
+        for (int i = 0; i < (int) segments; i++) {
+            float startX = x1 + i * stepX;
+            float startY = y1 + i * stepY;
+            float endX = startX + (stepX * dashLength / segmentLength);
+            float endY = startY + (stepY * dashLength / segmentLength);
+            
+            renderSolidLine(guiGraphics, (int) startX, (int) startY, (int) endX, (int) endY, color, thickness);
+        }
+    }
+    
 }

@@ -53,7 +53,7 @@ public class PerkTreeScreen extends Screen {
         
         this.layout = new PerkTreeLayout(schoolPerks);
         this.nodeRenderer = new PerkNodeRenderer(player, allocatedPerks);
-        this.connectionRenderer = new PerkConnectionRenderer();
+        this.connectionRenderer = new PerkConnectionRenderer(player, allocatedPerks, school, layout);
         this.tooltipRenderer = new PerkTooltipRenderer(player, allocatedPerks);
         this.infoPanel = new PerkInfoPanel(school, affinityData, allocatedPerks);
     }
@@ -64,7 +64,10 @@ public class PerkTreeScreen extends Screen {
         
         addRenderableWidget(Button.builder(
             Component.translatable("gui.back"),
-            button -> onClose()
+            button -> {
+                System.out.println("Back button clicked!"); // Debug logging
+                onClose();
+            }
         ).bounds(10, 10, 60, 20).build());
     }
     
@@ -72,11 +75,22 @@ public class PerkTreeScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderCustomBackground(guiGraphics);
         
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelX = centerX - 256 / 2;
+        int panelY = centerY - 256 / 2;
+        
+        // Enable scissor test to clip content to the background panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
         renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        
+        // Disable scissor test
+        guiGraphics.disableScissor();
         
         for (var renderable : this.renderables) {
             renderable.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -88,6 +102,23 @@ public class PerkTreeScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderCustomBackground(guiGraphics);
+        
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelX = centerX - 256 / 2;
+        int panelY = centerY - 256 / 2;
+        
+        // Enable scissor test to clip content to the background panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        
+        int startX = layout.getStartX(width, scrollX);
+        int startY = layout.getStartY(scrollY);
+        
+        connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
+        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        
+        // Disable scissor test
+        guiGraphics.disableScissor();
     }
     
     private void renderCustomBackground(GuiGraphics guiGraphics) {
@@ -119,6 +150,11 @@ public class PerkTreeScreen extends Screen {
     
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // First, let the parent class handle button clicks
+        if (super.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        
         if (button == 0) {
             if (handleNodeClick((int) mouseX, (int) mouseY)) {
                 return true;
@@ -127,7 +163,7 @@ public class PerkTreeScreen extends Screen {
             return true;
         }
         
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
     
     @Override
@@ -181,5 +217,14 @@ public class PerkTreeScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+    
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == 256) { // ESC key
+            onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }

@@ -30,6 +30,7 @@ public class PerkNodeRenderer {
         
         int color = getNodeColor(node, isAllocated, isAvailable);
         
+        // Render the node background
         RenderSystem.setShaderColor(
             (color >> 16 & 0xFF) / 255.0f,
             (color >> 8 & 0xFF) / 255.0f,
@@ -39,16 +40,42 @@ public class PerkNodeRenderer {
         
         guiGraphics.blit(PERK_NODE_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
         
-        // Render the perk icon
-        ResourceLocation perkIcon = getPerkIcon(node);
-        guiGraphics.blit(perkIcon, x + 4, y + 4, 0, 0, NODE_SIZE - 8, NODE_SIZE - 8, NODE_SIZE - 8, NODE_SIZE - 8);
+        // Reset color for icon rendering
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         
+        // Render the perk icon on top of the node background
+        renderPerkIcon(guiGraphics, node, x, y, isAllocated, isAvailable);
+        
+        // Render tier level if allocated and tier > 1
         if (isAllocated && node.getTier() > 1) {
-            String levelText = "Lv." + String.valueOf(node.getTier());
+            String levelText = toRomanNumeral(node.getTier());
             guiGraphics.drawString(font, levelText, x + NODE_SIZE - 8, y + NODE_SIZE - 8, 0xFFFFFF);
         }
+    }
+    
+    private void renderPerkIcon(GuiGraphics guiGraphics, PerkNode node, int nodeX, int nodeY, boolean isAllocated, boolean isAvailable) {
+        ResourceLocation perkIcon = getPerkIcon(node);
+        int iconSize = 16; // Standard icon size
+        int iconX = nodeX + (NODE_SIZE - iconSize) / 2; // Center horizontally
+        int iconY = nodeY + (NODE_SIZE - iconSize) / 2; // Center vertically on the node
         
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        // Debug output
+        System.out.println("Rendering icon for node " + node.getId() + " at (" + iconX + ", " + iconY + ") with size " + iconSize);
+        
+        if (isAvailable && !isAllocated) {
+            // Render grayscale for available but not allocated
+            renderGrayscaleIcon(guiGraphics, perkIcon, iconX, iconY, iconSize);
+        } else {
+            // Render normal icon for allocated or unavailable
+            guiGraphics.blit(perkIcon, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+        }
+    }
+    
+    private void renderGrayscaleIcon(GuiGraphics guiGraphics, ResourceLocation icon, int x, int y, int size) {
+        // Apply grayscale shader effect
+        RenderSystem.setShaderColor(0.5f, 0.5f, 0.5f, 0.7f); // Darker and more transparent
+        guiGraphics.blit(icon, x, y, 0, 0, size, size, size, size);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); // Reset color
     }
     
     private ResourceLocation getPerkIcon(PerkNode node) {
@@ -57,6 +84,7 @@ public class PerkNodeRenderer {
     }
     
     public boolean isNodeHovered(PerkNode node, int x, int y, int mouseX, int mouseY) {
+        // Check if mouse is over the node box (which now includes the icon)
         return mouseX >= x && mouseX < x + NODE_SIZE && mouseY >= y && mouseY < y + NODE_SIZE;
     }
     
@@ -68,5 +96,21 @@ public class PerkNodeRenderer {
         } else {
             return 0xFF666666;
         }
+    }
+    
+    private String toRomanNumeral(int number) {
+        return switch (number) {
+            case 1 -> "I";
+            case 2 -> "II";
+            case 3 -> "III";
+            case 4 -> "IV";
+            case 5 -> "V";
+            case 6 -> "VI";
+            case 7 -> "VII";
+            case 8 -> "VIII";
+            case 9 -> "IX";
+            case 10 -> "X";
+            default -> String.valueOf(number);
+        };
     }
 }
