@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { PerkStringRenderer } from './utils/PerkStringRenderer'
 import { titleCase } from './utils/string'
+import { toRomanNumeral } from './utils/romanNumerals'
 
 // School Icon Component
 interface SchoolIconProps {
@@ -452,6 +453,18 @@ function UnifiedPerkTreeViewer() {
 
             return (
                 <g key={node.id}>
+                    {/* Double outline for ACTIVE_ perks */}
+                    {node.perk.startsWith('ACTIVE_') && (
+                        <circle
+                            cx={position.x}
+                            cy={position.y}
+                            r={NODE_SIZE / 2 + 4}
+                            fill="none"
+                            stroke={strokeColor}
+                            strokeWidth={isHovered ? 4 : 3}
+                            className="perk-node-outline"
+                        />
+                    )}
                     <circle
                         cx={position.x}
                         cy={position.y}
@@ -536,18 +549,6 @@ function UnifiedPerkTreeViewer() {
         ).join(' ')
     }
 
-    const toRomanNumeral = (num: number) => {
-        const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-        const symbols = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
-        let result = ''
-        for (let i = 0; i < values.length; i++) {
-            while (num >= values[i]) {
-                result += symbols[i]
-                num -= values[i]
-            }
-        }
-        return result
-    }
 
     // Convert perk node data to the format expected by PerkRenderer
     const getPerkDataForRenderer = (node: PerkNode) => {
