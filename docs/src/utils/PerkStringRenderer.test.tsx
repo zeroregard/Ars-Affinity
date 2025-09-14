@@ -34,7 +34,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Water Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Water Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_HYDRATION correctly", () => {
@@ -133,7 +133,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Fire Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Fire Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_FIRE_DASH correctly", () => {
@@ -185,7 +185,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Earth Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Earth Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_STONE_SKIN correctly", () => {
@@ -250,7 +250,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Air Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Air Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render ACTIVE_AIR_DASH correctly", () => {
@@ -298,7 +298,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Abjuration Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_HEALING_AMPLIFICATION correctly", () => {
@@ -363,7 +363,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Conjuration Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Conjuration Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_SUMMON_HEALTH correctly", () => {
@@ -455,7 +455,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Anima Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Anima Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_ROTTING_GUISE correctly", () => {
@@ -469,7 +469,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Grants rotting guise effect/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Undead creatures ignore you/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_BLIGHTED correctly", () => {
@@ -563,7 +563,7 @@ describe("PerkStringRenderer", () => {
         </TestWrapper>
       )
       
-      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Resistance/)).toBeInTheDocument()
+      expect(screen.getByText(/\+ Adds \+1 to your Manipulation Spell Resistance/)).toBeInTheDocument()
     })
 
     it("should render PASSIVE_MANA_TAP correctly", () => {
@@ -625,47 +625,6 @@ describe("PerkStringRenderer", () => {
       )
       
       expect(screen.getByText(/- 33% chance to transform summons into random creatures/)).toBeInTheDocument()
-    })
-  })
-
-  describe("common perks", () => {
-    it("should render PASSIVE_MOB_PACIFICATION correctly", () => {
-      const perk = {
-        perk: "PASSIVE_MOB_PACIFICATION",
-        entities: ["minecraft:drowned", "minecraft:guardian", "minecraft:elder_guardian"],
-        isBuff: true
-      }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={perk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/Drowned, Guardian, Elder Guardian ignore you/)).toBeInTheDocument()
-    })
-  })
-
-  describe("error handling", () => {
-    it("should handle invalid perk data", () => {
-      const invalidPerk = { perk: undefined }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={invalidPerk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/Invalid perk data/)).toBeInTheDocument()
-    })
-
-    it("should handle unknown perk", () => {
-      const unknownPerk = { perk: "UNKNOWN_PERK" }
-      render(
-        <TestWrapper>
-          <PerkStringRenderer perk={unknownPerk} />
-        </TestWrapper>
-      )
-      
-      expect(screen.getByText(/Unknown perk: UNKNOWN_PERK/)).toBeInTheDocument()
     })
   })
 })

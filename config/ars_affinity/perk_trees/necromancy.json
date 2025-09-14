@@ -29,10 +29,11 @@
     {
       "id": "necromancy_lich_feast_1",
       "perk": "PASSIVE_LICH_FEAST",
-      "tier": 2,
+      "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 1,
+      "health": 0.5,
+      "hunger": 0.25,
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
@@ -56,10 +57,11 @@
     {
       "id": "necromancy_lich_feast_2",
       "perk": "PASSIVE_LICH_FEAST",
-      "tier": 3,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 2,
+      "health": 1.0,
+      "hunger": 0.5,
       "prerequisites": ["necromancy_lich_feast_1", "necromancy_anima_power_2"]
     },
     {

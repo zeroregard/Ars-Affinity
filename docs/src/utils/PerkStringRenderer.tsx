@@ -72,10 +72,10 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
     }
     // Handle passive perks with time and amount
     else if (perk.time !== undefined && perk.amount !== undefined) {
-        // Special case for PASSIVE_SUMMON_HEALTH - format amount as health points
+        // Special case for PASSIVE_SUMMON_HEALTH - just use the amount as is
         if (perkId === 'PASSIVE_SUMMON_HEALTH') {
             formattedMessage = formattedMessage
-                .replace(/%s/g, `${perk.amount} health`)
+                .replace(/%s/g, perk.amount.toString())
                 .replace(/%d/g, (perk.time/20).toString())
         } else {
             formattedMessage = formattedMessage
@@ -177,19 +177,6 @@ export function formatPerkString(perk: Perk, messages: Record<string, string>): 
             .replace(/%d%%/g, percentage.toString() + '%')
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
             .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
-    }
-    // Handle passive perks with time and amount
-    else if (perk.time !== undefined && perk.amount !== undefined) {
-        // Special case for PASSIVE_SUMMON_HEALTH - format amount as health points
-        if (perkId === 'PASSIVE_SUMMON_HEALTH') {
-            formattedMessage = formattedMessage
-                .replace(/%s/g, `${perk.amount} health`)
-                .replace(/%d/g, (perk.time/20).toString())
-        } else {
-            formattedMessage = formattedMessage
-                .replace(/%s/g, perk.amount.toString())
-                .replace(/%d/g, (perk.time/20).toString())
-        }
     }
     // Handle passive perks with just time
     else if (perk.time !== undefined) {

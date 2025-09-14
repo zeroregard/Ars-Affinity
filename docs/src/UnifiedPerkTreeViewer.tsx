@@ -564,6 +564,8 @@ function UnifiedPerkTreeViewer() {
         if (node.radius !== undefined) baseData.radius = node.radius
         if (node.dashLength !== undefined) baseData.dashLength = node.dashLength
         if (node.dashDuration !== undefined) baseData.dashDuration = node.dashDuration
+        if (node.health !== undefined) baseData.health = node.health
+        if (node.hunger !== undefined) baseData.hunger = node.hunger
 
         return baseData
     }
