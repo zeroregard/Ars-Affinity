@@ -3,9 +3,11 @@ package com.github.ars_affinity.perk;
 import com.github.ars_affinity.ArsAffinity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
@@ -38,8 +40,8 @@ public class AffinityPerkManager {
     public static void loadConfig() {
         schoolPerks.clear();
 
-        Path configDir = FMLPaths.CONFIGDIR.get().resolve("ars_affinity").resolve("perks");
-        ArsAffinity.LOGGER.info("Loading perks from config directory: {}", configDir.toAbsolutePath());
+        Path configDir = FMLPaths.CONFIGDIR.get().resolve("ars_affinity").resolve("perk_trees");
+        ArsAffinity.LOGGER.info("Loading perks from perk trees directory: {}", configDir.toAbsolutePath());
 
         try {
             if (!Files.exists(configDir)) {
@@ -94,15 +96,8 @@ public class AffinityPerkManager {
             return;
         }
 
-        // Extract school and level from path relative to rootDir
-        Path relativePath = rootDir.relativize(jsonFile);
-        if (relativePath.getNameCount() != 2) {
-            ArsAffinity.LOGGER.warn("Invalid perk file structure: {} (expected school/level.json)", jsonFile);
-            return;
-        }
-
-        String schoolName = relativePath.getName(0).toString();
-        String levelName = relativePath.getName(1).toString().replace(".json", "");
+        // Extract school name from filename (school.json format)
+        String schoolName = fileName.replace(".json", "");
 
         // Parse spell school
         SpellSchool school = parseSpellSchool(schoolName);
@@ -111,29 +106,94 @@ public class AffinityPerkManager {
             return;
         }
 
-        // Parse level
-        int level;
-        try {
-            level = Integer.parseInt(levelName);
-            if (level <= 0) {
-                ArsAffinity.LOGGER.warn("Invalid level: {} in file: {}", levelName, jsonFile);
-                return;
-            }
-        } catch (NumberFormatException e) {
-            ArsAffinity.LOGGER.warn("Invalid level format: {} in file: {}", levelName, jsonFile);
-            return;
-        }
-
         // Load and parse JSON
         try (var reader = Files.newBufferedReader(jsonFile, StandardCharsets.UTF_8)) {
             JsonElement jsonElement = JsonParser.parseReader(reader);
-
-            if (jsonElement.isJsonArray()) {
-                AffinityPerk[] perks = GSON.fromJson(jsonElement, AffinityPerk[].class);
-                for (AffinityPerk perk : perks) addPerk(school, level, perk);
-            } else {
-                AffinityPerk perk = GSON.fromJson(jsonElement, AffinityPerk.class);
-                addPerk(school, level, perk);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            
+            if (jsonObject.has("perks") && jsonObject.get("perks").isJsonArray()) {
+                JsonArray perksArray = jsonObject.getAsJsonArray("perks");
+                for (JsonElement perkElement : perksArray) {
+                    try {
+                        // Create a temporary JSON object with the old format for compatibility
+                        JsonObject perkJson = perkElement.getAsJsonObject();
+                        JsonObject oldFormatJson = new JsonObject();
+                        
+                        // Copy basic properties
+                        oldFormatJson.add("perk", perkJson.get("perk"));
+                        oldFormatJson.add("isBuff", perkJson.get("category").getAsString().equals("PASSIVE") ? 
+                            new com.google.gson.JsonPrimitive(true) : new com.google.gson.JsonPrimitive(false));
+                        
+                        // Copy amount if present
+                        if (perkJson.has("amount")) {
+                            oldFormatJson.add("amount", perkJson.get("amount"));
+                        }
+                        
+                        // Copy time if present
+                        if (perkJson.has("time")) {
+                            oldFormatJson.add("time", perkJson.get("time"));
+                        }
+                        
+                        // Copy cooldown if present
+                        if (perkJson.has("cooldown")) {
+                            oldFormatJson.add("cooldown", perkJson.get("cooldown"));
+                        }
+                        
+                        // Copy manaCost if present
+                        if (perkJson.has("manaCost")) {
+                            oldFormatJson.add("manaCost", perkJson.get("manaCost"));
+                        }
+                        
+                        // Copy damage if present
+                        if (perkJson.has("damage")) {
+                            oldFormatJson.add("damage", perkJson.get("damage"));
+                        }
+                        
+                        // Copy freezeTime if present
+                        if (perkJson.has("freezeTime")) {
+                            oldFormatJson.add("freezeTime", perkJson.get("freezeTime"));
+                        }
+                        
+                        // Copy radius if present
+                        if (perkJson.has("radius")) {
+                            oldFormatJson.add("radius", perkJson.get("radius"));
+                        }
+                        
+                        // Copy entities if present
+                        if (perkJson.has("entities")) {
+                            oldFormatJson.add("entities", perkJson.get("entities"));
+                        }
+                        
+                        // Copy dashLength if present
+                        if (perkJson.has("dashLength")) {
+                            oldFormatJson.add("dashLength", perkJson.get("dashLength"));
+                        }
+                        
+                        // Copy dashDuration if present
+                        if (perkJson.has("dashDuration")) {
+                            oldFormatJson.add("dashDuration", perkJson.get("dashDuration"));
+                        }
+                        
+                        // Copy health and hunger for LichFeast
+                        if (perkJson.has("health")) {
+                            oldFormatJson.add("health", perkJson.get("health"));
+                        }
+                        if (perkJson.has("hunger")) {
+                            oldFormatJson.add("hunger", perkJson.get("hunger"));
+                        }
+                        
+                        // Copy chance for UnstableSummoning
+                        if (perkJson.has("chance")) {
+                            oldFormatJson.add("chance", perkJson.get("chance"));
+                        }
+                        
+                        AffinityPerk perk = GSON.fromJson(oldFormatJson, AffinityPerk.class);
+                        int tier = perkJson.get("tier").getAsInt();
+                        addPerk(school, tier, perk);
+                    } catch (Exception e) {
+                        ArsAffinity.LOGGER.error("Failed to parse perk: {} - {}", perkElement, e.getMessage(), e);
+                    }
+                }
             }
         } catch (JsonParseException e) {
             String errorMsg = "JSON parsing error in perk file: " + jsonFile + " - " + e.getMessage();
