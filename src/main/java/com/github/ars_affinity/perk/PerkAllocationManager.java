@@ -5,6 +5,7 @@ import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.world.entity.player.Player;
+import com.github.ars_affinity.perk.ActiveAbilityHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,11 @@ public class PerkAllocationManager {
             if (!data.isPerkAllocated(prereq)) {
                 return false;
             }
+        }
+        
+        // Check active ability restriction - only one active ability allowed at a time
+        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType()) && data.hasAnyActiveAbility()) {
+            return false;
         }
         
         return true;
