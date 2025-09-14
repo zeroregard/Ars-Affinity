@@ -39,7 +39,9 @@ public class PerkNodeRenderer {
         
         guiGraphics.blit(PERK_NODE_TEXTURE, x, y, 0, 0, NODE_SIZE, NODE_SIZE, NODE_SIZE, NODE_SIZE);
         
-        guiGraphics.fill(x + 4, y + 4, x + NODE_SIZE - 4, y + NODE_SIZE - 4, 0xFFFFFFFF);
+        // Render the perk icon
+        ResourceLocation perkIcon = getPerkIcon(node);
+        guiGraphics.blit(perkIcon, x + 4, y + 4, 0, 0, NODE_SIZE - 8, NODE_SIZE - 8, NODE_SIZE - 8, NODE_SIZE - 8);
         
         if (isAllocated && node.getTier() > 1) {
             String levelText = "Lv." + String.valueOf(node.getTier());
@@ -47,6 +49,11 @@ public class PerkNodeRenderer {
         }
         
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    
+    private ResourceLocation getPerkIcon(PerkNode node) {
+        String perkType = node.getPerkType().name().toLowerCase();
+        return ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perks/" + perkType + ".png");
     }
     
     public boolean isNodeHovered(PerkNode node, int x, int y, int mouseX, int mouseY) {

@@ -6,6 +6,7 @@ import com.github.ars_affinity.perk.PerkNode;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -56,12 +57,18 @@ public class PerkTooltipRenderer {
         guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
     }
     
+    public ResourceLocation getPerkIcon(PerkNode node) {
+        String perkType = node.getPerkType().name().toLowerCase();
+        return ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perks/" + perkType + ".png");
+    }
+    
     private String formatPerkName(String nodeId) {
         String[] parts = nodeId.split("_");
         StringBuilder result = new StringBuilder();
         
-        for (int i = 0; i < parts.length; i++) {
-            if (i > 0) result.append(" ");
+        // Skip the first part (school name) and start from the second part
+        for (int i = 1; i < parts.length; i++) {
+            if (i > 1) result.append(" ");
             
             String part = parts[i];
             if (part.matches("\\d+")) {

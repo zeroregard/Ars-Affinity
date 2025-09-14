@@ -74,7 +74,8 @@ public class EnhancedPerkNodeRenderer {
         if (finalIconSize > 4) { // Only render icon if large enough
             float iconX = x - finalIconSize / 2;
             float iconY = y - finalIconSize / 2;
-            guiGraphics.blit(PERK_NODE_TEXTURE, (int) iconX, (int) iconY, 0, 0, 
+            ResourceLocation perkIcon = getPerkIcon(node);
+            guiGraphics.blit(perkIcon, (int) iconX, (int) iconY, 0, 0, 
                 (int) finalIconSize, (int) finalIconSize, (int) finalIconSize, (int) finalIconSize);
         }
         
@@ -186,5 +187,10 @@ public class EnhancedPerkNodeRenderer {
                 }
             }
         }
+    }
+    
+    private ResourceLocation getPerkIcon(PerkNode node) {
+        String perkType = node.getPerkType().name().toLowerCase();
+        return ResourceLocation.fromNamespaceAndPath("ars_affinity", "textures/gui/perks/" + perkType + ".png");
     }
 }

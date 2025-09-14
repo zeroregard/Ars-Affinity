@@ -67,7 +67,7 @@ public class ArsAffinityConfig {
             .defineInRange("tier3ThresholdPercentage", 75.0, 0.0, 100.0);
         AFFINITY_SCALING_DECAY_STRENGTH = SERVER_BUILDER
             .comment("How quickly affinity gain decreases as affinity increases (1.0 = linear, 2.0 = exponential, higher = more aggressive decay)")
-            .defineInRange("affinityScalingDecayStrength", 1.8, 0.5, 5.0);
+            .defineInRange("affinityScalingDecayStrength", 1.0, 0.5, 5.0);
         AFFINITY_SCALING_MINIMUM_FACTOR = SERVER_BUILDER
             .comment("Minimum percentage of original gain that can be applied (0.1 = 10%, 0.05 = 5%)")
             .defineInRange("affinityScalingMinimumFactor", 0.1, 0.01, 0.5);
