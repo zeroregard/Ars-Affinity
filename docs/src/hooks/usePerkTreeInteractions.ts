@@ -10,7 +10,7 @@ export const usePerkTreeInteractions = () => {
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
     const containerRef = useRef<HTMLDivElement>(null)
 
-    // Handle mouse wheel zoom towards mouse cursor
+    // Handle mouse wheel zoom towards viewport center
     const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault()
         const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED
@@ -18,20 +18,21 @@ export const usePerkTreeInteractions = () => {
         
         if (newZoom === viewport.zoom) return // No change in zoom
         
-        // Get mouse position relative to the container
+        // Get container dimensions
         const rect = containerRef.current?.getBoundingClientRect()
         if (!rect) return
         
-        const mouseX = e.clientX - rect.left
-        const mouseY = e.clientY - rect.top
+        // Calculate viewport center
+        const viewportCenterX = rect.width / 2
+        const viewportCenterY = rect.height / 2
         
-        // Convert mouse position to SVG coordinates
-        const svgMouseX = (mouseX - viewport.x) / viewport.zoom
-        const svgMouseY = (mouseY - viewport.y) / viewport.zoom
+        // Convert viewport center to SVG coordinates
+        const svgCenterX = (viewportCenterX - viewport.x) / viewport.zoom
+        const svgCenterY = (viewportCenterY - viewport.y) / viewport.zoom
         
-        // Adjust viewport to zoom towards mouse position
-        const newX = mouseX - svgMouseX * newZoom
-        const newY = mouseY - svgMouseY * newZoom
+        // Adjust viewport to zoom towards viewport center
+        const newX = viewportCenterX - svgCenterX * newZoom
+        const newY = viewportCenterY - svgCenterY * newZoom
         
         setViewport(prev => ({
             ...prev,
