@@ -18,7 +18,7 @@ import net.minecraft.core.Holder;
 import java.util.List;
 
 public abstract class AbstractDashAbility {
-	public final void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
+	public void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
 		IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
 		if (manaCap == null) {
 			return;

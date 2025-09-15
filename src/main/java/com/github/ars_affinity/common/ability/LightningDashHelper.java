@@ -18,13 +18,33 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+// Class to represent a single link in the lightning chain
+class ChainLink {
+	public final LivingEntity target;
+	public final Vec3 position;
+	public final int chainIndex;
+	public final double damage;
+	
+	public ChainLink(LivingEntity target, int chainIndex, double damage) {
+		this.target = target;
+		this.position = target.getBoundingBox().getCenter();
+		this.chainIndex = chainIndex;
+		this.damage = damage;
+	}
+}
 
 public class LightningDashHelper extends AbstractDashAbility {
 	private static final LightningDashHelper INSTANCE = new LightningDashHelper();
-	private static final int MAX_VISUAL_TELEPORTS = 4;
+	private static final int MAX_CHAIN_LENGTH = 6; // Maximum number of enemies in chain
+	private static final double CHAIN_RANGE = 5.0; // Maximum distance between chain targets
 	private static final int TELEPORT_TICKS = 4; // 4 ticks out of 20 for teleporting
 	private static final int BUILDUP_TICKS = 8; // 8 ticks for build up
 	private static final int RECOVERY_TICKS = 8; // 8 ticks for recovery
+	private static final double BASE_DAMAGE = 6.0;
+	private static final double CHAIN_DAMAGE_REDUCTION = 0.8; // Each chain link does 80% of previous damage
 
 	public static void triggerAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
 		INSTANCE.executeAbility(player, perk);
@@ -42,7 +62,7 @@ public class LightningDashHelper extends AbstractDashAbility {
 
 	@Override
 	public void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
-		// Override to implement custom lightning dash mechanics
+		// Override to implement custom chain lightning mechanics
 		IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
 		if (manaCap == null) {
 			return;
@@ -63,16 +83,14 @@ public class LightningDashHelper extends AbstractDashAbility {
 		float dashLength = getDashLength(perk);
 		float dashDuration = getDashDuration(perk);
 
-		// Find targets in the dash path
-		List<LivingEntity> targets = findTargetsInDashPath(player, dashLength);
+		// Find all potential targets in the dash path
+		List<LivingEntity> allTargets = findTargetsInDashPath(player, dashLength);
 		
-		// Limit to maximum 4 targets for visual teleportation
-		List<LivingEntity> visualTargets = targets.stream()
-			.limit(MAX_VISUAL_TELEPORTS)
-			.toList();
+		// Create chain lightning path
+		List<ChainLink> chainPath = createChainLightningPath(player, allTargets);
 
-		// Execute lightning dash with teleportation
-		executeLightningDash(player, dashLength, dashDuration, visualTargets, targets);
+		// Execute chain lightning dash
+		executeChainLightningDash(player, dashLength, dashDuration, chainPath);
 		spawnParticles(player, dashLength);
 		playSounds(player);
 		consumeMana(player, perk, manaCap);
@@ -111,8 +129,70 @@ public class LightningDashHelper extends AbstractDashAbility {
 		return targets;
 	}
 
-	private void executeLightningDash(ServerPlayer player, float dashLength, float dashDuration, 
-									 List<LivingEntity> visualTargets, List<LivingEntity> allTargets) {
+	private List<ChainLink> createChainLightningPath(ServerPlayer player, List<LivingEntity> allTargets) {
+		List<ChainLink> chainPath = new ArrayList<>();
+		Set<LivingEntity> usedTargets = new HashSet<>();
+		
+		if (allTargets.isEmpty()) {
+			return chainPath;
+		}
+
+		// Find the closest target to start the chain
+		Vec3 playerPos = player.position();
+		LivingEntity closestTarget = allTargets.stream()
+			.min((a, b) -> Double.compare(
+				a.getBoundingBox().getCenter().distanceTo(playerPos),
+				b.getBoundingBox().getCenter().distanceTo(playerPos)
+			))
+			.orElse(null);
+
+		if (closestTarget == null) {
+			return chainPath;
+		}
+
+		// Start the chain with the closest target
+		ChainLink currentLink = new ChainLink(closestTarget, 0, BASE_DAMAGE);
+		chainPath.add(currentLink);
+		usedTargets.add(closestTarget);
+
+		// Build the chain by finding the next closest valid target
+		while (chainPath.size() < MAX_CHAIN_LENGTH) {
+			ChainLink nextLink = findNextChainTarget(currentLink, allTargets, usedTargets);
+			if (nextLink == null) {
+				break; // No more valid targets in range
+			}
+			
+			chainPath.add(nextLink);
+			usedTargets.add(nextLink.target);
+			currentLink = nextLink;
+		}
+
+		return chainPath;
+	}
+
+	private ChainLink findNextChainTarget(ChainLink currentLink, List<LivingEntity> allTargets, Set<LivingEntity> usedTargets) {
+		Vec3 currentPos = currentLink.position;
+		double currentDamage = currentLink.damage * CHAIN_DAMAGE_REDUCTION;
+		int nextIndex = currentLink.chainIndex + 1;
+
+		// Find the closest unused target within chain range
+		LivingEntity nextTarget = allTargets.stream()
+			.filter(target -> !usedTargets.contains(target))
+			.filter(target -> target.getBoundingBox().getCenter().distanceTo(currentPos) <= CHAIN_RANGE)
+			.min((a, b) -> Double.compare(
+				a.getBoundingBox().getCenter().distanceTo(currentPos),
+				b.getBoundingBox().getCenter().distanceTo(currentPos)
+			))
+			.orElse(null);
+
+		if (nextTarget == null) {
+			return null;
+		}
+
+		return new ChainLink(nextTarget, nextIndex, currentDamage);
+	}
+
+	private void executeChainLightningDash(ServerPlayer player, float dashLength, float dashDuration, List<ChainLink> chainPath) {
 		Vec3 lookDirection = player.getLookAngle();
 		
 		// Calculate timing
@@ -120,7 +200,7 @@ public class LightningDashHelper extends AbstractDashAbility {
 		int teleportStartTick = BUILDUP_TICKS;
 		int teleportEndTick = teleportStartTick + TELEPORT_TICKS;
 		
-		// Build up phase - prepare for teleportation
+		// Build up phase - prepare for chain lightning
 		for (int i = 0; i < BUILDUP_TICKS; i++) {
 			scheduleTask(player, i, () -> {
 				if (!player.isAlive()) return;
@@ -129,25 +209,34 @@ public class LightningDashHelper extends AbstractDashAbility {
 			});
 		}
 
-		// Teleportation phase - go through targets
-		if (!visualTargets.isEmpty()) {
-			int ticksPerTarget = TELEPORT_TICKS / visualTargets.size();
-			for (int i = 0; i < visualTargets.size(); i++) {
-				LivingEntity target = visualTargets.get(i);
+		// Chain lightning phase - teleport through chain targets
+		if (!chainPath.isEmpty()) {
+			int ticksPerTarget = Math.max(1, TELEPORT_TICKS / chainPath.size());
+			final List<ChainLink> finalChainPath = chainPath; // Make effectively final
+			
+			for (int i = 0; i < chainPath.size(); i++) {
+				final ChainLink chainLink = chainPath.get(i);
+				final int finalI = i; // Make effectively final
 				int teleportTick = teleportStartTick + (i * ticksPerTarget);
 				
 				scheduleTask(player, teleportTick, () -> {
-					if (!player.isAlive() || !target.isAlive()) return;
+					if (!player.isAlive() || !chainLink.target.isAlive()) return;
 					
 					// Teleport to target position
-					Vec3 targetPos = target.getBoundingBox().getCenter();
+					Vec3 targetPos = chainLink.position;
 					player.teleportTo(targetPos.x, targetPos.y, targetPos.z);
 					
-					// Damage the target
-					target.hurt(player.damageSources().magic(), 6.0f);
+					// Damage the target with scaling damage
+					chainLink.target.hurt(player.damageSources().magic(), (float)chainLink.damage);
 					
-					// Spawn lightning particles
-					spawnLightningParticles(player, target);
+					// Spawn chain lightning particles
+					spawnChainLightningParticles(player, chainLink);
+					
+					// Create lightning arc to next target (if exists)
+					if (finalI < finalChainPath.size() - 1) {
+						ChainLink nextLink = finalChainPath.get(finalI + 1);
+						spawnLightningArc(player, chainLink, nextLink);
+					}
 				});
 			}
 		}
@@ -164,16 +253,6 @@ public class LightningDashHelper extends AbstractDashAbility {
 					player.hurtMarked = true;
 				}
 			});
-		}
-
-		// Damage all targets (not just visual ones)
-		for (LivingEntity target : allTargets) {
-			if (target != player) {
-				scheduleTask(player, teleportStartTick, () -> {
-					if (!player.isAlive() || !target.isAlive()) return;
-					target.hurt(player.damageSources().magic(), 6.0f);
-				});
-			}
 		}
 
 		// Stop movement at the end
@@ -194,11 +273,51 @@ public class LightningDashHelper extends AbstractDashAbility {
 		serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, pos.x, pos.y + 1, pos.z, 5, 0.5, 0.5, 0.5, 0.1);
 	}
 
-	private void spawnLightningParticles(ServerPlayer player, LivingEntity target) {
+	private void spawnChainLightningParticles(ServerPlayer player, ChainLink chainLink) {
 		if (!(player.level() instanceof ServerLevel serverLevel)) return;
-		Vec3 targetPos = target.getBoundingBox().getCenter();
-		serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, targetPos.x, targetPos.y, targetPos.z, 10, 1.0, 1.0, 1.0, 0.2);
-		serverLevel.sendParticles(ParticleTypes.CRIT, targetPos.x, targetPos.y, targetPos.z, 5, 0.5, 0.5, 0.5, 0.1);
+		Vec3 targetPos = chainLink.position;
+		
+		// Scale particle intensity based on chain position (earlier = more intense)
+		int particleCount = (int)(15 * (1.0 - (chainLink.chainIndex * 0.15)));
+		particleCount = Math.max(5, particleCount);
+		
+		serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, targetPos.x, targetPos.y, targetPos.z, particleCount, 1.0, 1.0, 1.0, 0.2);
+		serverLevel.sendParticles(ParticleTypes.CRIT, targetPos.x, targetPos.y, targetPos.z, particleCount / 2, 0.5, 0.5, 0.5, 0.1);
+		
+		// Add explosion effect for first target
+		if (chainLink.chainIndex == 0) {
+			serverLevel.sendParticles(ParticleTypes.FIREWORK, targetPos.x, targetPos.y, targetPos.z, 1, 0, 0, 0, 0.1);
+		}
+	}
+
+	private void spawnLightningArc(ServerPlayer player, ChainLink from, ChainLink to) {
+		if (!(player.level() instanceof ServerLevel serverLevel)) return;
+		
+		Vec3 fromPos = from.position;
+		Vec3 toPos = to.position;
+		Vec3 direction = toPos.subtract(fromPos);
+		double distance = direction.length();
+		
+		if (distance < 0.1) return; // Avoid division by zero
+		
+		direction = direction.normalize();
+		
+		// Create a jagged lightning arc by adding random offsets
+		int arcPoints = Math.max(3, (int)(distance * 2));
+		for (int i = 0; i < arcPoints; i++) {
+			double progress = (double)i / (double)(arcPoints - 1);
+			Vec3 basePos = fromPos.add(direction.scale(distance * progress));
+			
+			// Add random offset for jagged effect
+			double offsetX = (Math.random() - 0.5) * 0.5;
+			double offsetY = (Math.random() - 0.5) * 0.5;
+			double offsetZ = (Math.random() - 0.5) * 0.5;
+			
+			Vec3 arcPos = basePos.add(offsetX, offsetY, offsetZ);
+			
+			// Spawn electric spark along the arc
+			serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, arcPos.x, arcPos.y, arcPos.z, 1, 0.1, 0.1, 0.1, 0.05);
+		}
 	}
 
 	@Override

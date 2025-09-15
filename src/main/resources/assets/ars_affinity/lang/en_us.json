@@ -23,7 +23,7 @@
   "ars_affinity.perk.ACTIVE_GROUND_SLAM": "Slam the ground, creating a shockwave that damages and knocks back nearby entities. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_ICE_BLAST": "Blast your surroundings with ice. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWAP_ABILITY": "Swap positions with entities. Press §bF§r to activate. %d second cooldown",
-  "ars_affinity.perk.ACTIVE_LIGHTNING_DASH": "Teleport through enemies in your path, dealing lightning damage. Press §bF§r to activate. %d second cooldown",
+  "ars_affinity.perk.ACTIVE_LIGHTNING_DASH": "Chain lightning that arcs between enemies, teleporting through them and dealing scaled damage. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SANCTUARY": "Hold §bF§r to project a protective field. %d second cooldown",
   "ars_affinity.perk.ACTIVE_CURSE_FIELD": " Hold §bF§r to project a cursed field that damages and silences foes. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWARM": "Press §bF§r to instruct all minions to attack target. %d second cooldown",
