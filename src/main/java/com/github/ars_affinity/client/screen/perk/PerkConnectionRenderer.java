@@ -96,13 +96,48 @@ public class PerkConnectionRenderer {
         for (int i = 0; i < points.size() - 1; i++) {
             BezierCurve.Point current = points.get(i);
             BezierCurve.Point next = points.get(i + 1);
-            
-            renderLineSegment(guiGraphics, 
-                (int) current.x, (int) current.y, 
-                (int) next.x, (int) next.y, 
+    
+            renderLineSegmentFloat(guiGraphics,
+                current.x, current.y,
+                next.x, next.y,
                 color, thickness, isDashed);
         }
     }
+
+    private void renderLineSegmentFloat(GuiGraphics guiGraphics, float x1, float y1, float x2, float y2,
+                                   int color, float thickness, boolean isDashed) {
+                                    renderSolidLineFloat(guiGraphics, x1, y1, x2, y2, color, thickness);
+    }
+
+    private void renderSolidLineFloat(GuiGraphics guiGraphics, float x1, float y1, float x2, float y2,
+                                 int color, float thickness) {
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float steps = Math.max(Math.abs(dx), Math.abs(dy));
+        
+        if (steps < 1) steps = 1;
+        if (steps > 1000) steps = 1000; // Safety check
+
+        float xInc = dx / steps;
+        float yInc = dy / steps;
+
+        float x = x1;
+        float y = y1;
+
+        for (int i = 0; i <= (int)steps; i++) {
+            // Use Math.round for proper pixel positioning
+            int pixelX = Math.round(x);
+            int pixelY = Math.round(y);
+            
+            // Draw 1x1 pixel for thin lines
+            guiGraphics.fill(pixelX, pixelY, pixelX + 1, pixelY + 1, color);
+            
+            x += xInc;
+            y += yInc;
+        }
+    }
+
+
     
     private void renderLineSegment(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, 
                                  int color, float thickness, boolean isDashed) {
