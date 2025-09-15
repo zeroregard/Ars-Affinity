@@ -64,7 +64,7 @@ public class PerkTreeScreen extends Screen {
         this.connectionRenderer = new PerkConnectionRenderer(player, allocatedPerks, school, layout);
         this.tooltipRenderer = new PerkTooltipRenderer(player, allocatedPerks);
         this.infoPanel = new PerkInfoPanel(school, affinityData, allocatedPerks);
-        this.galaxyBackground = new GalaxyBackgroundRenderer();
+        // this.galaxyBackground = new GalaxyBackgroundRenderer();
     }
     
     @Override
@@ -112,18 +112,23 @@ public class PerkTreeScreen extends Screen {
         
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int panelX = centerX - 256 / 2;
-        int panelY = centerY - 256 / 2;
+        int panelWidth = 256;
+        int panelHeight = 200; // Reduced height
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
         
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
-        // Render connections without scissor test to prevent clipping
+        // Enable scissor test for both connections and nodes to keep them within the panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
+        
+        // Render connections with scissor test to fix clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
         
-        // Enable scissor test only for nodes to keep them within the background panel
-        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        // Render nodes within the clipped area
         renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        
         guiGraphics.disableScissor();
         
         // Render tooltip outside the clipped area
@@ -144,18 +149,23 @@ public class PerkTreeScreen extends Screen {
         
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int panelX = centerX - 256 / 2;
-        int panelY = centerY - 256 / 2;
+        int panelWidth = 256;
+        int panelHeight = 200; // Reduced height
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
         
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
-        // Render connections without scissor test to prevent clipping
+        // Enable scissor test for both connections and nodes to keep them within the panel
+        guiGraphics.enableScissor(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
+        
+        // Render connections with scissor test to fix clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
         
-        // Enable scissor test only for nodes to keep them within the background panel
-        guiGraphics.enableScissor(panelX, panelY, panelX + 256, panelY + 256);
+        // Render nodes within the clipped area
         renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        
         guiGraphics.disableScissor();
         
         // Render tooltip outside the clipped area
@@ -167,14 +177,19 @@ public class PerkTreeScreen extends Screen {
     private void renderCustomBackground(GuiGraphics guiGraphics) {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-        int panelX = centerX - 256 / 2;
-        int panelY = centerY - 256 / 2;
+        int panelWidth = 256;
+        int panelHeight = 200; // Reduced height
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
         
-        // Render the dynamic galaxy background
-        galaxyBackground.render(guiGraphics, panelX, panelY, 256, 256, 0.016f); // ~60 FPS delta time
+        // Simple dark grey background for now (galaxy background disabled for performance)
+        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xFF2A2A2A);
         
-        // Add a subtle overlay to maintain the original panel feel
-        guiGraphics.fill(panelX, panelY, panelX + 256, panelY + 256, 0x20000000);
+        // Add a subtle border for visual definition
+        guiGraphics.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY + panelHeight, panelX + panelWidth + 1, panelY + panelHeight + 1, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY, panelX, panelY + panelHeight, 0xFF404040);
+        guiGraphics.fill(panelX + panelWidth, panelY, panelX + panelWidth + 1, panelY + panelHeight, 0xFF404040);
     }
     
     private PerkNode hoveredNode = null;
