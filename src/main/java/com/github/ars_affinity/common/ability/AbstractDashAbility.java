@@ -18,7 +18,7 @@ import net.minecraft.core.Holder;
 import java.util.List;
 
 public abstract class AbstractDashAbility {
-	public final void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
+	public void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
 		IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
 		if (manaCap == null) {
 			return;
@@ -47,7 +47,7 @@ public abstract class AbstractDashAbility {
 	}
 
 	protected double getRequiredManaCost(AffinityPerk.ActiveAbilityPerk perk, IManaCap manaCap) {
-		return perk.manaCost; // Match Air Dash semantics (flat number)
+		return perk.manaCost; // Match Lightning Dash semantics (flat number)
 	}
 
 	protected float getDashLength(AffinityPerk.ActiveAbilityPerk perk) {

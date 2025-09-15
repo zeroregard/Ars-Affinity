@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class AirDashCooldownEffect extends MobEffect {
-    public AirDashCooldownEffect() {
-        super(MobEffectCategory.HARMFUL, 0x87CEEB); // Light blue color
+public class LightningDashCooldownEffect extends MobEffect {
+    public LightningDashCooldownEffect() {
+        super(MobEffectCategory.HARMFUL, 0xFFD700); // Gold/yellow color for lightning
     }
 
     @Override
