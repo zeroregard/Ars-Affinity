@@ -99,11 +99,9 @@ public class PerkNodeRenderer {
     
     private int getNodeColor(PerkNode node, boolean isAllocated, boolean isAvailable) {
         if (isAllocated) {
-            return 0xFF00FF00;
-        } else if (isAvailable) {
-            return 0xFF0088FF;
+            return SchoolColorHelper.getSchoolAllocatedColor(node.getSchool());
         } else {
-            return 0xFF666666;
+            return 0xFF666666; // Gray for all non-allocated perks
         }
     }
     

@@ -114,11 +114,9 @@ public class EnhancedPerkNodeRenderer {
     
     private int getNodeColor(PerkNode node, boolean isAllocated, boolean isAvailable) {
         if (isAllocated) {
-            return 0xFF00FF00; // Green for allocated
-        } else if (isAvailable) {
-            return 0xFF0088FF; // Blue for available
+            return SchoolColorHelper.getSchoolAllocatedColor(node.getSchool());
         } else {
-            return 0xFF666666; // Gray for unavailable
+            return 0xFF666666; // Gray for all non-allocated perks
         }
     }
     
