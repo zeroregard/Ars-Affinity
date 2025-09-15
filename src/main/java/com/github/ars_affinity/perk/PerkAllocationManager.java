@@ -44,11 +44,36 @@ public class PerkAllocationManager {
         }
         
         // Check active ability restriction - only one active ability allowed at a time
-        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType()) && data.hasAnyActiveAbility()) {
-            return false;
+        // But allow if the player is trying to allocate the same active ability they currently have
+        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType())) {
+            AffinityPerkType currentActiveAbility = data.getCurrentActiveAbilityType();
+            if (currentActiveAbility != null && currentActiveAbility != node.getPerkType()) {
+                return false;
+            }
         }
         
         return true;
+    }
+    
+    /**
+     * Check if a player has a different active ability than the one they're trying to allocate.
+     * @param player The player
+     * @param perkId The perk ID to check
+     * @return true if the player has a different active ability
+     */
+    public static boolean hasDifferentActiveAbility(Player player, String perkId) {
+        PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) return false;
+        
+        PerkNode node = PerkTreeManager.getNode(perkId);
+        if (node == null) return false;
+        
+        if (!ActiveAbilityHelper.isActiveAbility(node.getPerkType())) {
+            return false;
+        }
+        
+        AffinityPerkType currentActiveAbility = data.getCurrentActiveAbilityType();
+        return currentActiveAbility != null && currentActiveAbility != node.getPerkType();
     }
     
     /**

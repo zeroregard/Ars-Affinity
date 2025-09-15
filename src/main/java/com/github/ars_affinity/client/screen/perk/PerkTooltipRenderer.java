@@ -59,7 +59,12 @@ public class PerkTooltipRenderer {
         } else if (PerkAllocationManager.canAllocate(player, node.getId())) {
             tooltip.add(Component.literal("Click to allocate").withStyle(Style.EMPTY.withColor(0x0088FF)));
         } else {
-            tooltip.add(Component.literal("Prerequisites not met").withStyle(Style.EMPTY.withColor(0xFF6666)));
+            // Check if the issue is specifically about having a different active ability
+            if (PerkAllocationManager.hasDifferentActiveAbility(player, node.getId())) {
+                tooltip.add(Component.literal("You already have one active ability").withStyle(Style.EMPTY.withColor(0xFF6666)));
+            } else {
+                tooltip.add(Component.literal("Prerequisites not met").withStyle(Style.EMPTY.withColor(0xFF6666)));
+            }
         }
         
         guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
