@@ -69,12 +69,12 @@ public class PerkNodeRenderer {
         int iconX = nodeX + (nodeSize - iconSize) / 2; // Center horizontally
         int iconY = nodeY + (nodeSize - iconSize) / 2; // Center vertically on the node
         
-        if (isAvailable && !isAllocated) {
-            // Render grayscale for available but not allocated
-            renderGrayscaleIcon(guiGraphics, perkIcon, iconX, iconY, iconSize);
-        } else {
-            // Render normal icon for allocated or unavailable
+        if (isAllocated) {
+            // Render full color for allocated perks
             guiGraphics.blit(perkIcon, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+        } else {
+            // Render grayscale for all non-allocated perks
+            renderGrayscaleIcon(guiGraphics, perkIcon, iconX, iconY, iconSize);
         }
     }
     

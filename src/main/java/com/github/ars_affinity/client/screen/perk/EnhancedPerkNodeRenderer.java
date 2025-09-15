@@ -75,8 +75,15 @@ public class EnhancedPerkNodeRenderer {
             float iconX = x - finalIconSize / 2;
             float iconY = y - finalIconSize / 2;
             ResourceLocation perkIcon = getPerkIcon(node);
-            guiGraphics.blit(perkIcon, (int) iconX, (int) iconY, 0, 0, 
-                (int) finalIconSize, (int) finalIconSize, (int) finalIconSize, (int) finalIconSize);
+            
+            if (isAllocated) {
+                // Render full color for allocated perks
+                guiGraphics.blit(perkIcon, (int) iconX, (int) iconY, 0, 0, 
+                    (int) finalIconSize, (int) finalIconSize, (int) finalIconSize, (int) finalIconSize);
+            } else {
+                // Render grayscale for all non-allocated perks
+                renderGrayscaleIcon(guiGraphics, perkIcon, (int) iconX, (int) iconY, (int) finalIconSize);
+            }
         }
         
         // Render level indicator for multi-level perks
@@ -187,6 +194,13 @@ public class EnhancedPerkNodeRenderer {
                 }
             }
         }
+    }
+    
+    private void renderGrayscaleIcon(GuiGraphics guiGraphics, ResourceLocation icon, int x, int y, int size) {
+        // Apply grayscale shader effect
+        RenderSystem.setShaderColor(0.5f, 0.5f, 0.5f, 0.7f); // Darker and more transparent
+        guiGraphics.blit(icon, x, y, 0, 0, size, size, size, size);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); // Reset color
     }
     
     private ResourceLocation getPerkIcon(PerkNode node) {
