@@ -144,7 +144,7 @@ public class PerkTreeLayout {
     
     private Map<String, Integer> calculateDependencyDepths() {
         Map<String, Integer> depths = new HashMap<>();
-        Set<String> visited = new HashSet<>();
+        Set<String> processed = new HashSet<>();
         
         // Find root nodes (no prerequisites)
         List<PerkNode> rootNodes = new ArrayList<>();
@@ -154,23 +154,41 @@ public class PerkTreeLayout {
             }
         }
         
-        // BFS to calculate dependency depths
-        Queue<PerkNode> queue = new LinkedList<>();
+        // Process root nodes first
         for (PerkNode root : rootNodes) {
             depths.put(root.getId(), 0);
-            queue.offer(root);
+            processed.add(root.getId());
         }
         
-        while (!queue.isEmpty()) {
-            PerkNode current = queue.poll();
-            int currentDepth = depths.get(current.getId());
+        // Process remaining nodes using topological sort
+        boolean progressMade = true;
+        while (progressMade) {
+            progressMade = false;
             
-            // Find all nodes that depend on this node
             for (PerkNode node : schoolPerks.values()) {
-                if (node.getPrerequisites().contains(current.getId()) && !visited.contains(node.getId())) {
-                    depths.put(node.getId(), currentDepth + 1);
-                    visited.add(node.getId());
-                    queue.offer(node);
+                if (processed.contains(node.getId())) {
+                    continue;
+                }
+                
+                // Check if all prerequisites have been processed
+                boolean allPrereqsProcessed = true;
+                int maxPrereqDepth = -1;
+                
+                for (String prereqId : node.getPrerequisites()) {
+                    if (!processed.contains(prereqId)) {
+                        allPrereqsProcessed = false;
+                        break;
+                    }
+                    Integer prereqDepth = depths.get(prereqId);
+                    if (prereqDepth != null) {
+                        maxPrereqDepth = Math.max(maxPrereqDepth, prereqDepth);
+                    }
+                }
+                
+                if (allPrereqsProcessed) {
+                    depths.put(node.getId(), maxPrereqDepth + 1);
+                    processed.add(node.getId());
+                    progressMade = true;
                 }
             }
         }
