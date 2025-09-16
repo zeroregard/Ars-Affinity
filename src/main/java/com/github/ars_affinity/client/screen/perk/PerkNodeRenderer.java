@@ -56,11 +56,42 @@ public class PerkNodeRenderer {
         // Render the perk icon on top of the node background
         renderPerkIcon(guiGraphics, node, x, y, isAllocated, isAvailable, nodeSize);
         
-        // Render tier level if allocated and tier > 1
-        if (isAllocated && node.getTier() > 1) {
-            String levelText = toRomanNumeral(node.getTier());
-            guiGraphics.drawString(font, levelText, x + nodeSize - 8, y + nodeSize - 8, 0xFFFFFF);
-        }
+
+        String levelText = toRomanNumeral(node.getTier());
+        guiGraphics.drawString(font, levelText, x + nodeSize - 8, y + nodeSize - 8, 0XFFFFFF);
+    }
+    
+    public void renderNodeWithoutNumerals(GuiGraphics guiGraphics, Font font, PerkNode node, int x, int y, int mouseX, int mouseY) {
+        PerkAllocation allocation = allocatedPerks.get(node.getId());
+        boolean isAllocated = allocation != null && allocation.isActive();
+        boolean isAvailable = PerkAllocationManager.canAllocate(player, node.getId());
+        boolean isActiveAbility = node.getPerkType().name().startsWith("ACTIVE_");
+        
+        int nodeSize = isActiveAbility ? ACTIVE_NODE_SIZE : NODE_SIZE;
+        int color = getNodeColor(node, isAllocated, isAvailable);
+        
+        // Render the base background (no coloring)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        guiGraphics.blit(PERK_BACKGROUND_TEXTURE, x, y, 0, 0, nodeSize, nodeSize, nodeSize, nodeSize);
+        
+        // Render the colored border
+        RenderSystem.setShaderColor(
+            (color >> 16 & 0xFF) / 255.0f,
+            (color >> 8 & 0xFF) / 255.0f,
+            (color & 0xFF) / 255.0f,
+            1.0f
+        );
+        
+        ResourceLocation borderTexture = isActiveAbility ? PERK_BORDER_ACTIVE_TEXTURE : PERK_BORDER_TEXTURE;
+        guiGraphics.blit(borderTexture, x, y, 0, 0, nodeSize, nodeSize, nodeSize, nodeSize);
+        
+        // Reset color for icon rendering
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        
+        // Render the perk icon on top of the node background
+        renderPerkIcon(guiGraphics, node, x, y, isAllocated, isAvailable, nodeSize);
+        
+        // Note: No roman numerals rendered in this method
     }
     
     private void renderPerkIcon(GuiGraphics guiGraphics, PerkNode node, int nodeX, int nodeY, boolean isAllocated, boolean isAvailable, int nodeSize) {

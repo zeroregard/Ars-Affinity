@@ -76,7 +76,7 @@
     {
       "id": "abjuration_sanctuary_1",
       "perk": "ACTIVE_SANCTUARY",
-      "tier": 3,
+      "tier": 1,
       "pointCost": 1,
       "category": "ACTIVE",
       "manaCost": 0.2,

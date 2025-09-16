@@ -94,7 +94,7 @@
     {
       "id": "necromancy_curse_field_1",
       "perk": "ACTIVE_CURSE_FIELD",
-      "tier": 3,
+      "tier": 1,
       "pointCost": 1,
       "category": "ACTIVE",
       "manaCost": 0.2,

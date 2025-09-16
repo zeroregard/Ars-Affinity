@@ -25,6 +25,7 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 1,
+      "time": 400,
       "prerequisites": ["conjuration_summoning_power_1"]
     },
     {
@@ -53,6 +54,7 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 2,
+      "time": 400,
       "prerequisites": ["conjuration_summon_defense_1"]
     },
     {
@@ -72,6 +74,7 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 3,
+      "time": 400,
       "prerequisites": ["conjuration_summon_defense_2"]
     },
     {

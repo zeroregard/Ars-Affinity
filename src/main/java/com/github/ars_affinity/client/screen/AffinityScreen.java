@@ -4,10 +4,8 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.client.screen.perk.PerkTreeScreen;
 import com.github.ars_affinity.perk.PerkAllocationManager;
-import com.github.ars_affinity.perk.PerkTreeManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -18,8 +16,8 @@ import java.util.List;
 
 public class AffinityScreen extends Screen {
 
-    private static final int BACKGROUND_WIDTH = 256;
-    private static final int BACKGROUND_HEIGHT = 256;
+    private static final int BACKGROUND_WIDTH = 194;
+    private static final int BACKGROUND_HEIGHT = 194;
     private static final int ICON_SIZE = 16;
 
     private static final ResourceLocation BACKGROUND_TEXTURE = ArsAffinity.prefix("textures/gui/affinity_bg.png");
@@ -72,11 +70,11 @@ public class AffinityScreen extends Screen {
     private void renderBackgroundPanel(GuiGraphics guiGraphics, int centerX, int centerY) {
         int panelX = centerX - BACKGROUND_WIDTH / 2;
         int panelY = centerY - BACKGROUND_HEIGHT / 2;
-        guiGraphics.blit(BACKGROUND_TEXTURE, panelX, panelY, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, 256, 256);
+        guiGraphics.blit(BACKGROUND_TEXTURE, panelX, panelY, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
     }
 
     private void renderSchoolOctagon(GuiGraphics guiGraphics, int centerX, int centerY, int mouseX, int mouseY) {
-        final int iconRadius = 60;
+        final int iconRadius = 56;
         final int numSchools = schools.size();
 
         for (int i = 0; i < numSchools; i++) {
@@ -96,8 +94,6 @@ public class AffinityScreen extends Screen {
                 guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
             }
 
-            int tier = getSchoolTier(player, school);
-            renderProgressionBars(guiGraphics, centerX, centerY, school, tier);
         }
     }
 
@@ -124,18 +120,6 @@ public class AffinityScreen extends Screen {
         return tooltip;
     }
 
-    private void renderProgressionBars(GuiGraphics guiGraphics, int centerX, int centerY, SpellSchool school, int tier) {
-        int panelX = centerX - BACKGROUND_WIDTH / 2;
-        int panelY = centerY - BACKGROUND_HEIGHT / 2;
-
-        String schoolName = school.getId().toLowerCase();
-        for (int i = 0; i < tier && i < 3; i++) {
-            ResourceLocation tierTexture = ArsAffinity.prefix("textures/gui/tiers/" + schoolName + "_tier" + (i + 1) + ".png");
-
-            RenderSystem.enableBlend();
-            guiGraphics.blit(tierTexture, panelX, panelY, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-        }
-    }
 
     private void renderSchoolIcon(GuiGraphics guiGraphics, SpellSchool school, int x, int y) {
         ResourceLocation iconTexture = school.getTexturePath();
@@ -152,7 +136,7 @@ public class AffinityScreen extends Screen {
         if (button == 0) { // Left click
             int centerX = this.width / 2;
             int centerY = this.height / 2;
-            final int iconRadius = 60;
+            final int iconRadius = 56;
             final int numSchools = schools.size();
 
             for (int i = 0; i < numSchools; i++) {
@@ -175,23 +159,4 @@ public class AffinityScreen extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    // ---- Helpers you must define elsewhere ----
-
-    private int getSchoolTier(Player player, SpellSchool school) {
-        // Calculate tier based on allocated perks
-        var affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
-        if (affinityData == null) return 0;
-        
-        int allocatedCount = PerkAllocationManager.getAllocatedPerks(player, school).size();
-        int totalPerks = PerkTreeManager.getTotalPerksForSchool(school);
-        
-        if (totalPerks == 0) return 0;
-        
-        // Calculate tier based on percentage of perks allocated
-        float percentage = (float) allocatedCount / totalPerks;
-        if (percentage >= 0.75f) return 3;
-        if (percentage >= 0.5f) return 2;
-        if (percentage >= 0.25f) return 1;
-        return 0;
-    }
 }

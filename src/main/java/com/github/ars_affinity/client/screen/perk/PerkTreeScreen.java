@@ -8,8 +8,8 @@ import com.github.ars_affinity.perk.PerkAllocationManager;
 import com.github.ars_affinity.perk.PerkNode;
 import com.github.ars_affinity.perk.PerkTreeManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
+import com.hollingsworth.arsnouveau.api.documentation.DocAssets;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +23,8 @@ import java.util.*;
  */
 public class PerkTreeScreen extends Screen {
     
-    private static final ResourceLocation BACKGROUND_TEXTURE = ArsAffinity.prefix("textures/gui/affinity_bg.png");
+    private static final ResourceLocation PERK_TREE_BACKGROUND = ArsAffinity.prefix("textures/gui/perk_tree_background.png");
+    private static final ResourceLocation PERK_TREE_FRAME = ArsAffinity.prefix("textures/gui/perk_tree_frame.png");
     
     private final Player player;
     private final SpellSchool school;
@@ -36,19 +37,10 @@ public class PerkTreeScreen extends Screen {
     private final PerkNodeRenderer nodeRenderer;
     private final PerkConnectionRenderer connectionRenderer;
     private final PerkTooltipRenderer tooltipRenderer;
-    private final PerkInfoPanel infoPanel;
     
     private int scrollX = 0;
     private int scrollY = 0;
     private boolean isDragging = false;
-    
-    // Smooth camera system
-    private float targetScrollX = 0;
-    private float targetScrollY = 0;
-    private boolean isLerping = false;
-    private static final float LERP_SPEED = 0.15f; // Adjust for faster/slower lerping
-    private long lastDragTime = 0;
-    private static final long LERP_DELAY = 500; // Start lerping 500ms after drag ends
     
     public PerkTreeScreen(Player player, SpellSchool school, Screen previousScreen) {
         super(Component.translatable("ars_affinity.screen.perk_tree.title", school.getTextComponent()));
@@ -63,7 +55,6 @@ public class PerkTreeScreen extends Screen {
         this.nodeRenderer = new PerkNodeRenderer(player, allocatedPerks);
         this.connectionRenderer = new PerkConnectionRenderer(player, allocatedPerks, school, layout);
         this.tooltipRenderer = new PerkTooltipRenderer(player, allocatedPerks);
-        this.infoPanel = new PerkInfoPanel(school, affinityData, allocatedPerks);
         // this.galaxyBackground = new GalaxyBackgroundRenderer();
     }
     
@@ -74,13 +65,7 @@ public class PerkTreeScreen extends Screen {
         // Center the view on the root node (column 0)
         centerOnRootNode();
         
-        addRenderableWidget(Button.builder(
-            Component.translatable("gui.back"),
-            button -> {
-                System.out.println("Back button clicked!"); // Debug logging
-                onClose();
-            }
-        ).bounds(10, 10, 60, 20).build());
+        // Back button is now rendered as just an icon without a button widget
     }
     
     private void centerOnRootNode() {
@@ -108,8 +93,6 @@ public class PerkTreeScreen extends Screen {
     
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderCustomBackground(guiGraphics);
-        
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         int panelWidth = 256;
@@ -120,14 +103,29 @@ public class PerkTreeScreen extends Screen {
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
-        // Enable scissor test for both connections and nodes to keep them within the panel
+        // Enable scissor test for background, connections, and nodes to keep them within the panel
         guiGraphics.enableScissor(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
+        
+        // Render the parallax background within the clipped area
+        renderParallaxBackground(guiGraphics, panelX, panelY, panelWidth, panelHeight);
+        
+        // Add a subtle border for visual definition (within clipped area)
+        guiGraphics.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY + panelHeight, panelX + panelWidth + 1, panelY + panelHeight + 1, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY, panelX, panelY + panelHeight, 0xFF404040);
+        guiGraphics.fill(panelX + panelWidth, panelY, panelX + panelWidth + 1, panelY + panelHeight, 0xFF404040);
         
         // Render connections with scissor test to fix clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
         
-        // Render nodes within the clipped area
-        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        // Render nodes within the clipped area (without roman numerals)
+        renderNodesWithoutNumerals(guiGraphics, startX, startY, mouseX, mouseY);
+        
+        // Render the frame overlay within the clipped area
+        renderFrameOverlay(guiGraphics);
+        
+        // Render roman numerals after the frame (so they appear below it) - still within scissor
+        renderRomanNumerals(guiGraphics, startX, startY);
         
         guiGraphics.disableScissor();
         
@@ -140,13 +138,15 @@ public class PerkTreeScreen extends Screen {
             renderable.render(guiGraphics, mouseX, mouseY, partialTick);
         }
         
-        infoPanel.render(guiGraphics, font, width, height);
+        // Render custom back button icon (above frame and roman numerals)
+        renderBackButtonIcon(guiGraphics, mouseX, mouseY);
+        
+        // Render the compact header at the very top (highest z-order, above everything)
+        renderHeader(guiGraphics);
     }
     
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderCustomBackground(guiGraphics);
-        
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         int panelWidth = 256;
@@ -157,14 +157,23 @@ public class PerkTreeScreen extends Screen {
         int startX = layout.getStartX(width, scrollX);
         int startY = layout.getStartY(scrollY);
         
-        // Enable scissor test for both connections and nodes to keep them within the panel
+        // Enable scissor test for background, connections, and nodes to keep them within the panel
         guiGraphics.enableScissor(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
+        
+        // Render the parallax background within the clipped area
+        renderParallaxBackground(guiGraphics, panelX, panelY, panelWidth, panelHeight);
+        
+        // Add a subtle border for visual definition (within clipped area)
+        guiGraphics.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY + panelHeight, panelX + panelWidth + 1, panelY + panelHeight + 1, 0xFF404040);
+        guiGraphics.fill(panelX - 1, panelY, panelX, panelY + panelHeight, 0xFF404040);
+        guiGraphics.fill(panelX + panelWidth, panelY, panelX + panelWidth + 1, panelY + panelHeight, 0xFF404040);
         
         // Render connections with scissor test to fix clipping
         connectionRenderer.renderConnections(guiGraphics, layout.getPerksByTier(), schoolPerks, startX, startY);
         
-        // Render nodes within the clipped area
-        renderNodes(guiGraphics, startX, startY, mouseX, mouseY);
+        // Render nodes within the clipped area (without roman numerals)
+        renderNodesWithoutNumerals(guiGraphics, startX, startY, mouseX, mouseY);
         
         guiGraphics.disableScissor();
         
@@ -174,26 +183,107 @@ public class PerkTreeScreen extends Screen {
         }
     }
     
-    private void renderCustomBackground(GuiGraphics guiGraphics) {
+    private PerkNode hoveredNode = null;
+    private PerkAllocation hoveredAllocation = null;
+    
+    private void renderParallaxBackground(GuiGraphics guiGraphics, int panelX, int panelY, int panelWidth, int panelHeight) {
+        // Calculate parallax offset based on scroll position
+        // The background moves slower than the content for a parallax effect
+        float parallaxFactor = 0.3f; // Adjust this value for more/less parallax effect (0.0 = no parallax, 1.0 = full parallax)
+        int parallaxOffsetX = (int) (scrollX * parallaxFactor);
+        int parallaxOffsetY = (int) (scrollY * parallaxFactor);
+        
+        // The texture is 410x410, so we tile it to create a seamless background
+        int textureSize = 410;
+        
+        // Render the background texture with tiling and parallax offset
+        // We render extra tiles around the panel to ensure coverage during parallax movement
+        for (int x = panelX - textureSize + parallaxOffsetX; x < panelX + panelWidth + textureSize; x += textureSize) {
+            for (int y = panelY - textureSize + parallaxOffsetY; y < panelY + panelHeight + textureSize; y += textureSize) {
+                guiGraphics.blit(PERK_TREE_BACKGROUND, x, y, 0, 0, textureSize, textureSize, textureSize, textureSize);
+            }
+        }
+    }
+    
+    private void renderHeader(GuiGraphics guiGraphics) {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         int panelWidth = 256;
-        int panelHeight = 200; // Reduced height
+        int panelHeight = 200;
         int panelX = centerX - panelWidth / 2;
         int panelY = centerY - panelHeight / 2;
         
-        // Simple dark grey background for now (galaxy background disabled for performance)
-        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xFF2A2A2A);
+        int headerWidth = 30;
+        int headerHeight = 14;
+        int headerX = panelX + (panelWidth - headerWidth) / 2; // Center within the panel
+        int headerY = panelY - headerHeight - 5 + (headerHeight * 2); // Position above the panel, moved down by 200% of its height
         
-        // Add a subtle border for visual definition
-        guiGraphics.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY, 0xFF404040);
-        guiGraphics.fill(panelX - 1, panelY + panelHeight, panelX + panelWidth + 1, panelY + panelHeight + 1, 0xFF404040);
-        guiGraphics.fill(panelX - 1, panelY, panelX, panelY + panelHeight, 0xFF404040);
-        guiGraphics.fill(panelX + panelWidth, panelY, panelX + panelWidth + 1, panelY + panelHeight, 0xFF404040);
+        // Render black background
+        guiGraphics.fill(headerX, headerY, headerX + headerWidth, headerY + headerHeight, 0xFF000000);
+        
+        // Get available perk points
+        int availablePoints = affinityData.getAvailablePoints(school);
+        
+        // Render school icon on the left side (same as overview screen)
+        ResourceLocation iconTexture = school.getTexturePath();
+        int iconSize = 16; // Same size as overview screen
+        int iconX = headerX + 2;
+        int iconY = headerY - 1; // Adjust for larger icon
+        guiGraphics.blit(iconTexture, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+        
+        // Render available points text on the right side
+        String pointsText = String.valueOf(availablePoints);
+        int textX = headerX + headerWidth - font.width(pointsText) - 2;
+        int textY = headerY + 3;
+        guiGraphics.drawString(font, pointsText, textX, textY, 0xFFFFFF);
     }
     
-    private PerkNode hoveredNode = null;
-    private PerkAllocation hoveredAllocation = null;
+    private void renderBackButtonIcon(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = 256;
+        int panelHeight = 200;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonWidth = DocAssets.ARROW_BACK.width();
+        int buttonHeight = DocAssets.ARROW_BACK.height();
+        int buttonX = panelX + 10; // Position relative to panel
+        int buttonY = panelY + 10; // Position relative to panel
+        
+        // Determine which texture to use based on hover state
+        boolean isHovered = mouseX >= buttonX && mouseX < buttonX + buttonWidth && 
+                           mouseY >= buttonY && mouseY < buttonY + buttonHeight;
+        
+        var backIcon = isHovered ? DocAssets.ARROW_BACK_HOVER : DocAssets.ARROW_BACK;
+        
+        // Render the back arrow icon
+        guiGraphics.blit(
+            backIcon.location(), 
+            buttonX, buttonY, 
+            backIcon.u(), backIcon.v(), 
+            buttonWidth, buttonHeight, 
+            backIcon.width(), backIcon.height()
+        );
+    }
+    
+    private void renderFrameOverlay(GuiGraphics guiGraphics) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = 256;
+        int panelHeight = 200;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        // Frame texture dimensions: 258x202
+        int frameWidth = 258;
+        int frameHeight = 202;
+        int frameX = panelX - 1; // Align with panel edges
+        int frameY = panelY - 1; // Align with panel edges
+        
+        // Render the frame texture on top of everything (highest Z-order)
+        guiGraphics.blit(PERK_TREE_FRAME, frameX, frameY, 0, 0, frameWidth, frameHeight, frameWidth, frameHeight);
+    }
     
     private void renderNodes(GuiGraphics guiGraphics, int startX, int startY, int mouseX, int mouseY) {
         hoveredNode = null;
@@ -213,6 +303,55 @@ public class PerkTreeScreen extends Screen {
         }
     }
     
+    private void renderNodesWithoutNumerals(GuiGraphics guiGraphics, int startX, int startY, int mouseX, int mouseY) {
+        hoveredNode = null;
+        hoveredAllocation = null;
+        
+        // Use the new dependency-based positioning for all nodes
+        for (PerkNode node : schoolPerks.values()) {
+            int nodeX = layout.getNodeX(node, startX);
+            int nodeY = layout.getNodeY(node, startY);
+            
+            // Render node without roman numerals
+            nodeRenderer.renderNodeWithoutNumerals(guiGraphics, font, node, nodeX, nodeY, mouseX, mouseY);
+            
+            if (nodeRenderer.isNodeHovered(node, nodeX, nodeY, mouseX, mouseY)) {
+                hoveredNode = node;
+                hoveredAllocation = allocatedPerks.get(node.getId());
+            }
+        }
+    }
+    
+    private void renderRomanNumerals(GuiGraphics guiGraphics, int startX, int startY) {
+        // Render only the roman numerals for each node
+        for (PerkNode node : schoolPerks.values()) {
+            int nodeX = layout.getNodeX(node, startX);
+            int nodeY = layout.getNodeY(node, startY);
+            
+            boolean isActiveAbility = node.getPerkType().name().startsWith("ACTIVE_");
+            int nodeSize = isActiveAbility ? 28 : 24; // ACTIVE_NODE_SIZE : NODE_SIZE
+            
+            String levelText = toRomanNumeral(node.getTier());
+            guiGraphics.drawString(font, levelText, nodeX + nodeSize - 8, nodeY + nodeSize - 8, 0XFFFFFF);
+        }
+    }
+    
+    private String toRomanNumeral(int number) {
+        return switch (number) {
+            case 1 -> "I";
+            case 2 -> "II";
+            case 3 -> "III";
+            case 4 -> "IV";
+            case 5 -> "V";
+            case 6 -> "VI";
+            case 7 -> "VII";
+            case 8 -> "VIII";
+            case 9 -> "IX";
+            case 10 -> "X";
+            default -> String.valueOf(number);
+        };
+    }
+    
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         // First, let the parent class handle button clicks
@@ -221,6 +360,11 @@ public class PerkTreeScreen extends Screen {
         }
         
         if (button == 0) {
+            // Check if back button icon was clicked
+            if (handleBackButtonClick((int) mouseX, (int) mouseY)) {
+                return true;
+            }
+            
             if (handleNodeClick((int) mouseX, (int) mouseY)) {
                 return true;
             }
@@ -235,8 +379,6 @@ public class PerkTreeScreen extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0) {
             isDragging = false;
-            // Start the lerping process after a delay
-            lastDragTime = System.currentTimeMillis();
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
@@ -245,9 +387,6 @@ public class PerkTreeScreen extends Screen {
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (isDragging && button == 0) {
-            // Stop any ongoing lerping when user starts dragging
-            isLerping = false;
-            
             scrollX += (int) deltaX;
             scrollY += (int) deltaY;
             
@@ -258,9 +397,23 @@ public class PerkTreeScreen extends Screen {
             int treeMaxY = layout.getTreeMaxY();
             
             // Calculate bounds with some padding
+            // When scrollX = 0, tree is at: getStartX(width, 0) = width/2
+            // Tree bounds are: treeMinX to treeMaxX (relative to tree origin)
+            // We want to allow scrolling so the tree can move within screen bounds
             int padding = 50;
-            int minScrollX = -treeMaxX - padding;
-            int maxScrollX = -treeMinX + width - padding;
+            
+            // For left bound: allow the rightmost part of tree to reach left edge of screen
+            // Rightmost tree position at scrollX = minScrollX: width/2 + minScrollX + treeMaxX
+            // We want this to be >= 0, so: width/2 + minScrollX + treeMaxX >= 0
+            // Therefore: minScrollX >= -width/2 - treeMaxX
+            int minScrollX = -width/2 - treeMaxX - padding;
+            
+            // For right bound: allow the leftmost part of tree to reach right edge of screen  
+            // Leftmost tree position at scrollX = maxScrollX: width/2 + maxScrollX + treeMinX
+            // We want this to be <= width, so: width/2 + maxScrollX + treeMinX <= width
+            // Therefore: maxScrollX <= width/2 - treeMinX
+            int maxScrollX = width/2 - treeMinX + padding;
+            
             int minScrollY = -treeMaxY - padding;
             int maxScrollY = -treeMinY + height - padding;
             
@@ -269,6 +422,29 @@ public class PerkTreeScreen extends Screen {
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+    
+    private boolean handleBackButtonClick(int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = 256;
+        int panelHeight = 200;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonWidth = DocAssets.ARROW_BACK.width();
+        int buttonHeight = DocAssets.ARROW_BACK.height();
+        int buttonX = panelX + 10;
+        int buttonY = panelY + 10;
+        
+        if (mouseX >= buttonX && mouseX < buttonX + buttonWidth && 
+            mouseY >= buttonY && mouseY < buttonY + buttonHeight) {
+            System.out.println("Back button clicked!"); // Debug logging
+            onClose();
+            return true;
+        }
+        
+        return false;
     }
     
     private boolean handleNodeClick(int mouseX, int mouseY) {
@@ -312,88 +488,4 @@ public class PerkTreeScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
     
-    private void updateSmoothCamera() {
-        if (isDragging) {
-            // Don't lerp while dragging
-            return;
-        }
-        
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastDragTime < LERP_DELAY) {
-            // Wait for the delay before starting lerping
-            return;
-        }
-        
-        // Find the closest perk node to the current view center
-        PerkNode closestNode = findClosestNodeToViewCenter();
-        if (closestNode != null) {
-            // Calculate target position to center the closest node
-            int nodeX = layout.getNodeX(closestNode, 0);
-            int nodeY = layout.getNodeY(closestNode, 0);
-            
-            // Target scroll position to center the node on screen
-            targetScrollX = -nodeX;
-            targetScrollY = -nodeY + height / 2 - 50; // 50 is the base offset from getStartY
-            
-            // Clamp target position to valid bounds
-            int treeMinX = layout.getTreeMinX();
-            int treeMaxX = layout.getTreeMaxX();
-            int treeMinY = layout.getTreeMinY();
-            int treeMaxY = layout.getTreeMaxY();
-            
-            int padding = 50;
-            int minScrollX = -treeMaxX - padding;
-            int maxScrollX = -treeMinX + width - padding;
-            int minScrollY = -treeMaxY - padding;
-            int maxScrollY = -treeMinY + height - padding;
-            
-            targetScrollX = Math.max(minScrollX, Math.min(maxScrollX, targetScrollX));
-            targetScrollY = Math.max(minScrollY, Math.min(maxScrollY, targetScrollY));
-            
-            isLerping = true;
-        }
-        
-        if (isLerping) {
-            // Lerp towards the target position
-            float deltaX = targetScrollX - scrollX;
-            float deltaY = targetScrollY - scrollY;
-            
-            // Check if we're close enough to stop lerping
-            if (Math.abs(deltaX) < 1.0f && Math.abs(deltaY) < 1.0f) {
-                scrollX = (int) targetScrollX;
-                scrollY = (int) targetScrollY;
-                isLerping = false;
-            } else {
-                scrollX += (int) (deltaX * LERP_SPEED);
-                scrollY += (int) (deltaY * LERP_SPEED);
-            }
-        }
-    }
-    
-    private PerkNode findClosestNodeToViewCenter() {
-        // Get the current view center in world coordinates
-        int viewCenterX = width / 2 - scrollX; // Convert screen center to world coordinates
-        int viewCenterY = height / 2 - scrollY + 50; // Account for getStartY offset
-        
-        PerkNode closestNode = null;
-        double closestDistance = Double.MAX_VALUE;
-        
-        for (PerkNode node : schoolPerks.values()) {
-            int nodeX = layout.getNodeX(node, 0);
-            int nodeY = layout.getNodeY(node, 0);
-            
-            // Calculate distance from view center to node center
-            double distance = Math.sqrt(
-                Math.pow(nodeX - viewCenterX, 2) + 
-                Math.pow(nodeY - viewCenterY, 2)
-            );
-            
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestNode = node;
-            }
-        }
-        
-        return closestNode;
-    }
 }

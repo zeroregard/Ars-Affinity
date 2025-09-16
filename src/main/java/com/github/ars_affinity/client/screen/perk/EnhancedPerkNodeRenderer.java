@@ -87,15 +87,17 @@ public class EnhancedPerkNodeRenderer {
         }
         
         // Render level indicator for multi-level perks
-        if (isAllocated && node.getTier() > 1 && finalSize > 16) {
+        if (node.getTier() > 1 && finalSize > 16) {
             String levelText = "Lv." + String.valueOf(node.getTier());
             float textSize = finalSize * 0.3f;
             int textX = (int) (x + finalSize * 0.3f);
             int textY = (int) (y + finalSize * 0.3f);
             
+            int textColor = isAllocated ? 0xFFFFFF : 0x888888; // White for allocated, gray for unallocated
+            
             // Render text with shadow
             guiGraphics.drawString(font, levelText, textX + 1, textY + 1, 0x000000, false);
-            guiGraphics.drawString(font, levelText, textX, textY, 0xFFFFFF, false);
+            guiGraphics.drawString(font, levelText, textX, textY, textColor, false);
         }
         
         // Render hover effect
