@@ -24,23 +24,22 @@ public class AffinityPerkHelper {
         return false;
     }
     
-    public static AffinityPerk getActivePerk(PlayerAffinityData data, AffinityPerkType perkType) {
-        // Find the first allocated perk of this type
+    public static AffinityPerk getAllocatedPerk(PlayerAffinityData data, AffinityPerkType perkType) {
+        // Find the highest tier allocated perk of this type
         return data.getAllAllocatedPerks().stream()
             .filter(allocation -> allocation.getPerkType() == perkType)
-            .findFirst()
+            .max((a1, a2) -> Integer.compare(a1.getTier(), a2.getTier()))
             .map(allocation -> {
-                // Create AffinityPerk from the PerkNode data
-                PerkNode node = allocation.getNode();
-                return createAffinityPerkFromNode(node);
+                // Get the loaded perk data from AffinityPerkManager instead of creating from node
+                return AffinityPerkManager.getHighestLevelPerk(allocation.getNode().getSchool(), perkType);
             })
             .orElse(null);
     }
 
-    public static AffinityPerk getActivePerk(Player player, AffinityPerkType perkType) {
+    public static AffinityPerk getAllocatedPerk(Player player, AffinityPerkType perkType) {
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         if (data != null) {
-            return getActivePerk(data, perkType);
+            return getAllocatedPerk(data, perkType);
         }
         return null;
     }
@@ -75,7 +74,7 @@ public class AffinityPerkHelper {
     }
     
     public static void applyActivePerk(PlayerAffinityData data, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
-        AffinityPerk perk = getActivePerk(data, perkType);
+        AffinityPerk perk = getAllocatedPerk(data, perkType);
         if (perk != null) {
             perkConsumer.accept(perk);
         }
@@ -84,7 +83,7 @@ public class AffinityPerkHelper {
     public static void applyActivePerk(Player player, AffinityPerkType perkType, Consumer<AffinityPerk> perkConsumer) {
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         if (data != null) {
-            AffinityPerk perk = getActivePerk(data, perkType);
+            AffinityPerk perk = getAllocatedPerk(data, perkType);
             if (perk != null) {
                 perkConsumer.accept(perk);
             }
@@ -94,7 +93,7 @@ public class AffinityPerkHelper {
     public static <T extends AffinityPerk> void applyActivePerk(Player player, AffinityPerkType perkType, Class<T> perkClass, Consumer<T> perkConsumer) {
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         if (data != null) {
-            AffinityPerk perk = getActivePerk(data, perkType);
+            AffinityPerk perk = getAllocatedPerk(data, perkType);
             if (perk != null && perkClass.isInstance(perk)) {
                 perkConsumer.accept(perkClass.cast(perk));
             }
@@ -110,6 +109,100 @@ public class AffinityPerkHelper {
     
     public static Set<PerkAllocation> getAllActivePerkAllocations(PlayerAffinityData data) {
         return data.getAllAllocatedPerks();
+    }
+    
+    /**
+     * Get the amount value from the highest tier of a specific perk type
+     */
+    public static float getPerkAmount(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
+            return amountPerk.amount;
+        } else if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+            return durationPerk.amount;
+        }
+        return 0.0f;
+    }
+    
+    /**
+     * Get the time value from the highest tier of a specific perk type
+     */
+    public static int getPerkTime(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
+            return durationPerk.time;
+        }
+        return 0;
+    }
+    
+    /**
+     * Get the cooldown value from the highest tier of a specific perk type (for GhostStepPerk)
+     */
+    public static int getPerkCooldown(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
+            return ghostStepPerk.cooldown;
+        }
+        return 0;
+    }
+    
+    /**
+     * Get the health value from the highest tier of a specific perk type (for LichFeastPerk)
+     */
+    public static float getPerkHealth(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
+            return lichPerk.health;
+        }
+        return 0.0f;
+    }
+    
+    /**
+     * Get the hunger value from the highest tier of a specific perk type (for LichFeastPerk)
+     */
+    public static float getPerkHunger(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.LichFeastPerk lichPerk) {
+            return lichPerk.hunger;
+        }
+        return 0.0f;
+    }
+    
+    /**
+     * Get the chance value from the highest tier of a specific perk type (for UnstableSummoningPerk)
+     */
+    public static float getPerkChance(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
+            return unstablePerk.chance;
+        }
+        return 0.0f;
+    }
+    
+    /**
+     * Get the entities list from the highest tier of a specific perk type (for UnstableSummoningPerk)
+     */
+    public static java.util.List<String> getPerkEntities(Player player, AffinityPerkType perkType) {
+        AffinityPerk perk = getAllocatedPerk(player, perkType);
+        if (perk instanceof AffinityPerk.UnstableSummoningPerk unstablePerk) {
+            return unstablePerk.entities;
+        }
+        return java.util.Collections.emptyList();
+    }
+    
+    /**
+     * Get the tier of the highest level perk of a specific type
+     */
+    public static int getPerkTier(Player player, AffinityPerkType perkType) {
+        PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data != null) {
+            return data.getAllAllocatedPerks().stream()
+                .filter(allocation -> allocation.getPerkType() == perkType)
+                .mapToInt(PerkAllocation::getTier)
+                .max()
+                .orElse(0);
+        }
+        return 0;
     }
     
     /**

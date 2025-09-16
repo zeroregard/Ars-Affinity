@@ -217,6 +217,10 @@ public class PerkTreeScreen extends Screen {
         int headerX = panelX + (panelWidth - headerWidth) / 2; // Center within the panel
         int headerY = panelY - headerHeight - 5 + (headerHeight * 2); // Position above the panel, moved down by 200% of its height
         
+        // Render header above the numerals (Z > 0)
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.2f); // Above frame and numerals
+        
         // Render black background
         guiGraphics.fill(headerX, headerY, headerX + headerWidth, headerY + headerHeight, 0xFF000000);
         
@@ -235,6 +239,8 @@ public class PerkTreeScreen extends Screen {
         int textX = headerX + headerWidth - font.width(pointsText) - 2;
         int textY = headerY + 3;
         guiGraphics.drawString(font, pointsText, textX, textY, 0xFFFFFF);
+        
+        guiGraphics.pose().popPose();
     }
     
     private void renderBackButtonIcon(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -256,7 +262,9 @@ public class PerkTreeScreen extends Screen {
         
         var backIcon = isHovered ? DocAssets.ARROW_BACK_HOVER : DocAssets.ARROW_BACK;
         
-        // Render the back arrow icon
+        // Render the back arrow icon above the numerals (Z > 0)
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.15f); // Above frame, below header
         guiGraphics.blit(
             backIcon.location(), 
             buttonX, buttonY, 
@@ -264,6 +272,7 @@ public class PerkTreeScreen extends Screen {
             buttonWidth, buttonHeight, 
             backIcon.width(), backIcon.height()
         );
+        guiGraphics.pose().popPose();
     }
     
     private void renderFrameOverlay(GuiGraphics guiGraphics) {
@@ -280,8 +289,11 @@ public class PerkTreeScreen extends Screen {
         int frameX = panelX - 1; // Align with panel edges
         int frameY = panelY - 1; // Align with panel edges
         
-        // Render the frame texture on top of everything (highest Z-order)
+        // Render the frame texture above the numerals (Z > 0)
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.1f); // Above Z=0 where drawString renders
         guiGraphics.blit(PERK_TREE_FRAME, frameX, frameY, 0, 0, frameWidth, frameHeight, frameWidth, frameHeight);
+        guiGraphics.pose().popPose();
     }
     
     private void renderNodes(GuiGraphics guiGraphics, int startX, int startY, int mouseX, int mouseY) {

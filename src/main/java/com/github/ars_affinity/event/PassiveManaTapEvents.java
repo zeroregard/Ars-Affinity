@@ -20,8 +20,10 @@ public class PassiveManaTapEvents {
         // Only trigger if damage was actually dealt
         if (event.damage <= 0) return;
         
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_MANA_TAP, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-            double manaRestore = event.damage * amountPerk.amount;
+        // Check if player has the mana tap perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_MANA_TAP)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_MANA_TAP);
+            double manaRestore = event.damage * amount;
             
             // Restore mana to the player
             IManaCap playerMana = CapabilityRegistry.getMana(player);
@@ -34,9 +36,9 @@ public class PassiveManaTapEvents {
                     playerMana.setMana(newMana);
                     
                     ArsAffinity.LOGGER.info("Player {} dealt {} damage - PASSIVE_MANA_TAP restored {} mana ({}%)", 
-                        player.getName().getString(), event.damage, manaRestore, (int)(amountPerk.amount * 100));
+                        player.getName().getString(), event.damage, manaRestore, (int)(amount * 100));
                 }
             }
-        });
+        }
     }
 } 

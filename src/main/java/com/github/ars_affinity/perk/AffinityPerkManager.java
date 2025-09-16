@@ -229,46 +229,6 @@ public class AffinityPerkManager {
             default -> null;
         };
     }
-
-    public static List<AffinityPerk> getPerksForLevel(SpellSchool school, int level) {
-        if (!isLoaded) {
-            loadConfig();
-        }
-
-        Map<Integer, List<AffinityPerk>> schoolPerkMap = schoolPerks.get(school);
-        if (schoolPerkMap == null) {
-            ArsAffinity.LOGGER.warn("No perks found for school: {}", school.getId());
-            return new java.util.ArrayList<>();
-        }
-
-        List<AffinityPerk> perks = new java.util.ArrayList<>();
-        for (int i = 1; i <= level; i++) {
-            List<AffinityPerk> levelPerks = schoolPerkMap.get(i);
-            if (levelPerks != null) {
-                ArsAffinity.LOGGER.info("Found {} perks for school {} at level {}", levelPerks.size(), school.getId(), i);
-                perks.addAll(levelPerks);
-            } else {
-                ArsAffinity.LOGGER.info("No perks found for school {} at level {}", school.getId(), i);
-            }
-        }
-
-        ArsAffinity.LOGGER.info("Returning {} total perks for school {} up to level {}", perks.size(), school.getId(), level);
-        return perks;
-    }
-
-    public static List<AffinityPerk> getPerksForCurrentLevel(SpellSchool school, int level) {
-        if (!isLoaded) {
-            loadConfig();
-        }
-
-        Map<Integer, List<AffinityPerk>> schoolPerkMap = schoolPerks.get(school);
-        if (schoolPerkMap == null) {
-            return new java.util.ArrayList<>();
-        }
-
-        List<AffinityPerk> levelPerks = schoolPerkMap.get(level);
-        return levelPerks != null ? levelPerks : new java.util.ArrayList<>();
-    }
     
     // Use this to access static perk data regardless of whether a player actually has this perk or not
     // Later on, we should be using this instead of storing perk data per player. Players should only have the perk type and tier stored, not the data.
@@ -294,5 +254,35 @@ public class AffinityPerkManager {
         }
         
         return null;
+    }
+    
+    // Get the highest level perk of a specific type for a school
+    public static AffinityPerk getHighestLevelPerk(SpellSchool school, AffinityPerkType perkType) {
+        if (!isLoaded) {
+            loadConfig();
+        }
+        
+        Map<Integer, List<AffinityPerk>> schoolPerkMap = schoolPerks.get(school);
+        if (schoolPerkMap == null) {
+            return null;
+        }
+        
+        // Find the highest tier that contains this perk type
+        int highestTier = -1;
+        AffinityPerk highestPerk = null;
+        
+        for (Map.Entry<Integer, List<AffinityPerk>> entry : schoolPerkMap.entrySet()) {
+            int tier = entry.getKey();
+            List<AffinityPerk> tierPerks = entry.getValue();
+            
+            for (AffinityPerk perk : tierPerks) {
+                if (perk.perk == perkType && tier > highestTier) {
+                    highestTier = tier;
+                    highestPerk = perk;
+                }
+            }
+        }
+        
+        return highestPerk;
     }
 } 

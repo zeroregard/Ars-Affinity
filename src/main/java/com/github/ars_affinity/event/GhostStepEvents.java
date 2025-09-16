@@ -37,16 +37,20 @@ public class GhostStepEvents {
         }
 
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_GHOST_STEP, AffinityPerk.GhostStepPerk.class, ghostStepPerk -> {
+        // Check if player has the ghost step perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_GHOST_STEP)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_GHOST_STEP);
+            int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_GHOST_STEP);
+            int cooldown = AffinityPerkHelper.getPerkCooldown(player, AffinityPerkType.PASSIVE_GHOST_STEP);
+            
             event.setCanceled(true);
 
             // Calculate healing amount based on percentage of max health
             float maxHealth = player.getMaxHealth();
-            float healAmount = maxHealth * ghostStepPerk.amount;
+            float healAmount = maxHealth * amount;
             player.setHealth(healAmount);
 
-
-            castDecoyEffect(player, ghostStepPerk.time);
+            castDecoyEffect(player, time);
 
             // Remove any projectiles stuck to the player before making them invisible
             removeStuckProjectiles(player);
@@ -55,14 +59,14 @@ public class GhostStepEvents {
             scheduleDelayedProjectileRemoval(player);
 
             // Apply invisibility effect
-            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, ghostStepPerk.time * 20)); // Convert seconds to ticks
+            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, time * 20)); // Convert seconds to ticks
 
             // Apply cooldown effect
-            player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, ghostStepPerk.cooldown * 20, 0, false, true, true)); // Convert seconds to ticks
+            player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, cooldown * 20, 0, false, true, true)); // Convert seconds to ticks
 
             ArsAffinity.LOGGER.info("Player {} activated Ghost Step - healed for {} health, invisible for {} seconds",
-                    player.getName().getString(), healAmount, ghostStepPerk.time);
-        });
+                    player.getName().getString(), healAmount, time);
+        }
     }
 
     private static void removeStuckProjectiles(Player player) {

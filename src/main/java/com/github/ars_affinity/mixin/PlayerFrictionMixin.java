@@ -55,7 +55,7 @@ public abstract class PlayerFrictionMixin {
         BlockState aboveState = player.level().getBlockState(abovePos);
         
         if (COLD_WALKER_BLOCKS.contains(groundState) || COLD_WALKER_BLOCKS.contains(aboveState)) {
-            var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
+            var perk = AffinityPerkHelper.getAllocatedPerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
             if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
                 float newFriction = 0.6F - (amountPerk.amount * 0.6F);
                 ArsAffinity.LOGGER.debug(

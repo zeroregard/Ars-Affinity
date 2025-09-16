@@ -33,18 +33,21 @@ public class PassiveSummoningPowerEvents {
             return;
         }
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SUMMONING_POWER, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
+        // Check if player has the summoning power perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_SUMMONING_POWER)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_SUMMONING_POWER);
+            int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_SUMMONING_POWER);
+            
             // Apply SUMMON_POWER attribute boost to the PLAYER
-            int summonPowerBonus = (int) durationPerk.amount;
-            applySummonPowerBoostToPlayer(player, summonPowerBonus, durationPerk.time);
+            int summonPowerBonus = (int) amount;
+            applySummonPowerBoostToPlayer(player, summonPowerBonus, time);
 
             // Apply extended distance override
-            applyExtendedDistanceOverride(event.summon.getLivingEntity(), player, durationPerk.time, event.world);
+            applyExtendedDistanceOverride(event.summon.getLivingEntity(), player, time, event.world);
 
             ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMONING_POWER perk (+{} power to player) for {} seconds, with extended distance control",
-                player.getName().getString(), summonPowerBonus, durationPerk.time / 20);
-
-        });
+                player.getName().getString(), summonPowerBonus, time / 20);
+        }
     }
 
     private static void applySummonPowerBoostToPlayer(Player player, int powerBonus, int durationTicks) {

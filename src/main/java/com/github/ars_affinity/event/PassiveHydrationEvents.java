@@ -38,7 +38,10 @@ public class PassiveHydrationEvents {
             return;
         }
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_HYDRATION, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
+        // Check if player has the hydration perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_HYDRATION)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_HYDRATION);
+            
             // Get wet ticks capability
             WetTicks wetTicks = player.getCapability(WetTicksCapability.WET_TICKS);
             if (wetTicks == null) {
@@ -62,7 +65,7 @@ public class PassiveHydrationEvents {
                 wetTicks.addWetTicks(20);
                 int newWetTicks = wetTicks.getWetTicks();
                 WetTicksProvider.savePlayerWetTicks(player);
-                applyHydratedEffect(player, durationPerk.amount, newWetTicks);
+                applyHydratedEffect(player, amount, newWetTicks);
                 
             } else {
                 if (wetTicks.getWetTicks() > 0) {
@@ -79,7 +82,7 @@ public class PassiveHydrationEvents {
                     lastFoodLevels.remove(player.getUUID());
                 }
             }
-        });
+        }
     }
     
     private static void applyHydratedEffect(Player player, float maxAmplification, int wetTicks) {

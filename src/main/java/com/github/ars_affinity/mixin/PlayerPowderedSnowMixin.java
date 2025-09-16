@@ -34,7 +34,7 @@ public class PlayerPowderedSnowMixin {
 
         // Only prevent freezing if trying to accumulate frozen ticks
         if (ticks > entity.getTicksFrozen()) {
-            var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
+            var perk = AffinityPerkHelper.getAllocatedPerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
             if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk && amountPerk.amount > 0) {
                 // Keep current frozen ticks instead of increasing them
                 ci.cancel();
@@ -64,7 +64,7 @@ public class PlayerPowderedSnowMixin {
         }
 
         if (state.getBlock() instanceof PowderSnowBlock) {
-            var perk = AffinityPerkHelper.getActivePerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
+            var perk = AffinityPerkHelper.getAllocatedPerk(player, AffinityPerkType.PASSIVE_COLD_WALKER);
             if (perk instanceof AffinityPerk) {
                 // Cancel vanilla slowdown entirely
                 ci.cancel();

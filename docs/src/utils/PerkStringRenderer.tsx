@@ -46,17 +46,14 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
 
     let formattedMessage = message
 
-    // Handle active abilities
     if (perk.manaCost !== undefined && perk.cooldown !== undefined) {
-        // Replace §bF§r first before other %d replacements
         formattedMessage = formattedMessage.replace('§bF§r', 'KEYBIND')
         formattedMessage = formattedMessage.replace(/%d/g, (perk.cooldown / 20).toString())
     }
-    // Handle ghost step perk (special case with amount, time, and cooldown)
     else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
         const percentage = perk.amount * 100
-        const timeInSeconds = perk.time / 20  // Convert ticks to seconds
-        const cooldownInSeconds = perk.cooldown / 20  // Convert ticks to seconds
+        const timeInSeconds = perk.time / 20
+        const cooldownInSeconds = perk.cooldown / 20
         formattedMessage = formattedMessage
             .replace(/%d%%/g, percentage.toString() + '%')
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
@@ -83,40 +80,31 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
                 .replace(/%d/g, (perk.time/20).toString())
         }
     }
-    // Handle passive perks with just time
     else if (perk.time !== undefined) {
         formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
     }
-    // Handle passive perks with just amount
     else if (perk.amount !== undefined) {
-        // Check if the message contains %% to determine if it's a percentage
         if (message.includes('%%')) {
             const percentage = perk.amount * 100
             formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
             formattedMessage = formattedMessage.replace(/%%/g, '%')
         } else {
-            // Direct value, not a percentage
             formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
         }
     }
-    // Handle passive perks with chance
     else if (perk.chance !== undefined) {
         const percentage = perk.chance * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }
-    // Handle lich feast perk
     else if(perk.health !== undefined && perk.hunger !== undefined) {
-        // Replace first %.1f with health, then remaining %.1f with hunger
         formattedMessage = formattedMessage.replace(/%.1f/, perk.health.toFixed(1)).replace(/%.1f/, perk.hunger.toFixed(1))
     }
-    // Handle manipulation sickness perk
     else if(perk.duration !== undefined && perk.hunger !== undefined) {
         formattedMessage = formattedMessage
             .replace(/%d/g, (perk.duration / 20).toString())
             .replace(/%d/g, perk.hunger.toString())
     }
-    // Handle entity-based perks
     else if(perk.entities) {
         formattedMessage = formattedMessage.replace(/%s/g, perk.entities.map(entity => titleCase(entity
             .replace('minecraft:', '')
@@ -124,7 +112,7 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
         .join(', '))
     }
 
-    const color = perk.isBuff ? '#4ade80' : '#f87171' // green for positive, red for negative
+    const color = perk.isBuff ? '#4ade80' : '#f87171'
     const prefix = perk.isBuff ? '+ ' : '- '
 
     const textStyle: React.CSSProperties = {
@@ -145,7 +133,6 @@ export function PerkStringRenderer({ perk }: PerkStringRendererProps) {
     )
 }
 
-// Export the pure function for unit testing
 export function formatPerkString(perk: Perk, messages: Record<string, string>): string {
     const perkId = perk.perk;
     
@@ -162,23 +149,19 @@ export function formatPerkString(perk: Perk, messages: Record<string, string>): 
 
     let formattedMessage = message
 
-    // Handle active abilities
     if (perk.manaCost !== undefined && perk.cooldown !== undefined) {
-        // Replace §bF§r first before other %d replacements
         formattedMessage = formattedMessage.replace('§bF§r', 'KEYBIND')
         formattedMessage = formattedMessage.replace(/%d/g, (perk.cooldown / 20).toString())
     }
-    // Handle ghost step perk (special case with amount, time, and cooldown)
     else if (perkId === 'PASSIVE_GHOST_STEP' && perk.amount !== undefined && perk.time !== undefined && perk.cooldown !== undefined) {
         const percentage = perk.amount * 100
-        const timeInSeconds = perk.time / 20  // Convert ticks to seconds
-        const cooldownInSeconds = perk.cooldown / 20  // Convert ticks to seconds
+        const timeInSeconds = perk.time / 20
+        const cooldownInSeconds = perk.cooldown / 20
         formattedMessage = formattedMessage
             .replace(/%d%%/g, percentage.toString() + '%')
             .replace(/%d seconds/g, timeInSeconds.toString() + ' seconds')
             .replace(/%d second cooldown/g, cooldownInSeconds.toString() + ' second cooldown')
     }
-    // Handle passive perks with just time
     else if (perk.time !== undefined) {
         formattedMessage = formattedMessage.replace(/%d/g, (perk.time/20).toString())
     }
@@ -186,36 +169,28 @@ export function formatPerkString(perk: Perk, messages: Record<string, string>): 
     else if (perkId === 'PASSIVE_SUMMONING_POWER' && perk.amount !== undefined) {
         formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
     }
-    // Handle passive perks with just amount
     else if (perk.amount !== undefined) {
-        // Check if the message contains %% to determine if it's a percentage
         if (message.includes('%%')) {
             const percentage = perk.amount * 100
             formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
             formattedMessage = formattedMessage.replace(/%%/g, '%')
         } else {
-            // Direct value, not a percentage
             formattedMessage = formattedMessage.replace(/%d/g, perk.amount.toString())
         }
     }
-    // Handle passive perks with chance
     else if (perk.chance !== undefined) {
         const percentage = perk.chance * 100
         formattedMessage = formattedMessage.replace(/%d/g, percentage.toString())
         formattedMessage = formattedMessage.replace(/%%/g, '%')
     }
-    // Handle lich feast perk
     else if(perk.health !== undefined && perk.hunger !== undefined) {
-        // Replace first %.1f with health, then remaining %.1f with hunger
         formattedMessage = formattedMessage.replace(/%.1f/, perk.health.toFixed(1)).replace(/%.1f/, perk.hunger.toFixed(1))
     }
-    // Handle manipulation sickness perk
     else if(perk.duration !== undefined && perk.hunger !== undefined) {
         formattedMessage = formattedMessage
             .replace(/%d/g, (perk.duration / 20).toString())
             .replace(/%d/g, perk.hunger.toString())
     }
-    // Handle entity-based perks
     else if(perk.entities) {
         formattedMessage = formattedMessage.replace(/%s/g, perk.entities.map(entity => titleCase(entity
             .replace('minecraft:', '')

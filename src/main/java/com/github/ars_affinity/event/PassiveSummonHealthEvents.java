@@ -20,12 +20,16 @@ public class PassiveSummonHealthEvents {
             return;
         }
         
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SUMMON_HEALTH, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
-            int amplifier = Math.round(durationPerk.amount);
-            event.summon.getLivingEntity().addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, durationPerk.time, amplifier));
+        // Check if player has the summon health perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_SUMMON_HEALTH)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_SUMMON_HEALTH);
+            int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_SUMMON_HEALTH);
+            
+            int amplifier = Math.round(amount);
+            event.summon.getLivingEntity().addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, time, amplifier));
             
             ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMON_HEALTH perk ({}%) - adding health boost effect with amplifier {} for {} seconds", 
-                player.getName().getString(), (int)(durationPerk.amount * 100), amplifier, durationPerk.time / 20);
-        });
+                player.getName().getString(), (int)(amount * 100), amplifier, time / 20);
+        }
     }
 } 

@@ -35,7 +35,10 @@ public class DeflectionEvents {
             return;
         }
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_DEFLECTION, AffinityPerk.DurationBasedPerk.class, perk -> {
+        // Check if player has the deflection perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_DEFLECTION)) {
+            int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_DEFLECTION);
+            
             // Process the deflection logic
             event.setCanceled(true);
             try {
@@ -63,11 +66,11 @@ public class DeflectionEvents {
                 }
 
                 // Apply cooldown effect
-                player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, perk.time, 0, false, true, true));
+                player.addEffect(new MobEffectInstance(ModPotions.DEFLECTION_COOLDOWN_EFFECT, time, 0, false, true, true));
 
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Deflection: Error reversing projectile", e);
             }
-        });
+        }
     }
 } 

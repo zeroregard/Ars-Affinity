@@ -35,10 +35,14 @@ public class PassiveUnstableSummoningEvents {
         var player = playerCaster.player;
         if (event.world.isClientSide()) return;
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING, AffinityPerk.UnstableSummoningPerk.class, unstablePerk -> {
-            if (RANDOM.nextFloat() < unstablePerk.chance) {
+        // Check if player has the unstable summoning perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING)) {
+            float chance = AffinityPerkHelper.getPerkChance(player, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING);
+            java.util.List<String> entities = AffinityPerkHelper.getPerkEntities(player, AffinityPerkType.PASSIVE_UNSTABLE_SUMMONING);
+            
+            if (RANDOM.nextFloat() < chance) {
                 LivingEntity originalEntity = event.summon.getLivingEntity();
-                if (originalEntity != null && !unstablePerk.entities.isEmpty()) {
+                if (originalEntity != null && !entities.isEmpty()) {
                     Level level = originalEntity.level();
                     double x = originalEntity.getX();
                     double y = originalEntity.getY();
@@ -46,7 +50,7 @@ public class PassiveUnstableSummoningEvents {
                     
                     originalEntity.discard();
                     
-                    String randomEntityId = unstablePerk.entities.get(RANDOM.nextInt(unstablePerk.entities.size()));
+                    String randomEntityId = entities.get(RANDOM.nextInt(entities.size()));
                     java.util.Optional<EntityType<?>> entityTypeOpt = EntityType.byString(randomEntityId);
                     
                     if (entityTypeOpt.isPresent()) {
@@ -64,14 +68,14 @@ public class PassiveUnstableSummoningEvents {
                             }
                             
                             ArsAffinity.LOGGER.info("Player {} triggered UNSTABLE_SUMMONING perk ({}%) - transformed summon into {}", 
-                                player.getName().getString(), (int)(unstablePerk.chance * 100), randomEntityId);
+                                player.getName().getString(), (int)(chance * 100), randomEntityId);
                         }
                     } else {
                         ArsAffinity.LOGGER.warn("Invalid entity type for UNSTABLE_SUMMONING perk: {}", randomEntityId);
                     }
                 }
             }
-        });
+        }
         
     }
     
