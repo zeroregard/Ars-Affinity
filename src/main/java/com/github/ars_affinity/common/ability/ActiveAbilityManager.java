@@ -36,14 +36,12 @@ public class ActiveAbilityManager {
 			return;
 		}
 
-		// Get the current active ability type from the player's data
 		AffinityPerkType currentActiveAbilityType = data.getCurrentActiveAbilityType();
 		if (currentActiveAbilityType == null) {
 			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability allocated for {}", player.getName().getString());
 			return;
 		}
 
-		// Get the perk for the active ability
 		AffinityPerk activePerk = AffinityPerkHelper.getActivePerk(player, currentActiveAbilityType);
 		if (activePerk == null || !(activePerk instanceof AffinityPerk.ActiveAbilityPerk)) {
 			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability perk available for {} (type: {})", 

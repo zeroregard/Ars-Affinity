@@ -7,7 +7,6 @@ export interface PerkNode {
     pointCost: number
     category: 'PASSIVE' | 'ACTIVE'
     prerequisites?: string[]
-    // Configurable perk values
     amount?: number
     time?: number
     cooldown?: number

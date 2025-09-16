@@ -72,7 +72,6 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
         NeoForge.EVENT_BUS.register(SchoolAffinityPointAllocatedEvents.class);
         
-        // Register event classes
         NeoForge.EVENT_BUS.register(PassiveLichFeastEvents.class);
         NeoForge.EVENT_BUS.register(GhostStepEvents.class);
         NeoForge.EVENT_BUS.register(DeflectionEvents.class);

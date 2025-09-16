@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import PerkTreeViewer from './PerkTreeViewer'
 
-// Mock the PerkRenderer component
 vi.mock('./PerkRenderer', () => ({
   default: ({ perk }: { perk: any }) => <div data-testid="perk-renderer">{perk.perk}</div>
 }))

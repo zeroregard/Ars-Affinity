@@ -21,7 +21,6 @@ public class ActiveAbilityProvider {
         return playerDataCache.computeIfAbsent(playerId, id -> {
             ActiveAbilityData newData = new ActiveAbilityData();
             
-            // Load from player persistent data
             CompoundTag playerData = player.getPersistentData();
             String dataKey = "ars_affinity:active_ability_data";
             

@@ -52,7 +52,6 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     };
     
     public PlayerAffinityData() {
-        // Initialize all schools with 0 points and 0% progress
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
             schoolPoints.put(school, 0);
             schoolPercentages.put(school, 0.0f);
@@ -68,7 +67,6 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         this.isDirty = true;
     }
     
-    // Point Management
     public int getSchoolPoints(SpellSchool school) {
         return schoolPoints.getOrDefault(school, 0);
     }

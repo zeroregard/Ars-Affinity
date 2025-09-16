@@ -25,32 +25,28 @@ export const PerkTreeNodes: React.FC<PerkTreeNodesProps> = ({
                 if (!position) return null
 
                 const isHovered = hoveredNode?.node.id === node.id && hoveredNode?.school === schoolTree.school
-                const isAllocated = false // TODO: Check if perk is allocated
-                const canAllocate = true // TODO: Check if perk can be allocated
+                const isAllocated = false
+                const canAllocate = true
 
-                // Choose color based on state
                 let fillColor: string
                 if (isAllocated) {
                     fillColor = schoolColors.allocated
                 } else if (canAllocate) {
-                    fillColor = 'rgba(0, 0, 0, 1)' // Completely black background
+                    fillColor = 'rgba(0, 0, 0, 1)'
                 } else {
-                    fillColor = 'rgba(0, 0, 0, 1)' // Completely black background for unavailable
+                    fillColor = 'rgba(0, 0, 0, 1)' for unavailable
                 }
 
-                // Choose stroke color
                 const strokeColor = isHovered ? schoolColors.hover : '#374151'
 
-                // Calculate icon size and position
-                const iconSize = NODE_SIZE * 0.6 // 60% of node size
+                const iconSize = NODE_SIZE * 0.6
                 const iconX = position.x - iconSize / 2
                 const iconY = position.y - iconSize / 2
 
-                // Calculate Roman numeral position (bottom right of node)
                 const romanNumeral = toRomanNumeral(node.tier)
-                const textSize = NODE_SIZE * 0.3 // 30% of node size
-                const textX = position.x + (NODE_SIZE / 2) - textSize * 0.3 // Right side with small padding
-                const textY = position.y + (NODE_SIZE / 2) - textSize * 0.2 // Bottom side with small padding
+                const textSize = NODE_SIZE * 0.3
+                const textX = position.x + (NODE_SIZE / 2) - textSize * 0.3
+                const textY = position.y + (NODE_SIZE / 2) - textSize * 0.2
 
                 return (
                     <g key={node.id}>

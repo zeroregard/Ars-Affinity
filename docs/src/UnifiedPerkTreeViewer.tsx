@@ -59,17 +59,14 @@ function UnifiedPerkTreeViewer() {
                         const newZoom = Math.min(MAX_ZOOM, viewport.zoom + 0.2)
                         if (newZoom === viewport.zoom) return
                         
-                        // Zoom towards screen center
                         const screenWidth = window.innerWidth
                         const screenHeight = window.innerHeight
                         const screenCenterX = screenWidth / 2
                         const screenCenterY = screenHeight / 2
                         
-                        // Convert screen center to SVG coordinates
                         const svgCenterX = (screenCenterX - viewport.x) / viewport.zoom
                         const svgCenterY = (screenCenterY - viewport.y) / viewport.zoom
                         
-                        // Adjust viewport to zoom towards screen center
                         const newX = screenCenterX - svgCenterX * newZoom
                         const newY = screenCenterY - svgCenterY * newZoom
                         
@@ -84,17 +81,14 @@ function UnifiedPerkTreeViewer() {
                         const newZoom = Math.max(MIN_ZOOM, viewport.zoom - 0.2)
                         if (newZoom === viewport.zoom) return
                         
-                        // Zoom towards screen center
                         const screenWidth = window.innerWidth
                         const screenHeight = window.innerHeight
                         const screenCenterX = screenWidth / 2
                         const screenCenterY = screenHeight / 2
                         
-                        // Convert screen center to SVG coordinates
                         const svgCenterX = (screenCenterX - viewport.x) / viewport.zoom
                         const svgCenterY = (screenCenterY - viewport.y) / viewport.zoom
                         
-                        // Adjust viewport to zoom towards screen center
                         const newX = screenCenterX - svgCenterX * newZoom
                         const newY = screenCenterY - svgCenterY * newZoom
                         
@@ -112,13 +106,11 @@ function UnifiedPerkTreeViewer() {
                         const contentCenterX = -((cols - 1) * SCHOOL_SPACING) / 2
                         const contentCenterY = -((rows - 1) * SCHOOL_SPACING) / 2
                         
-                        // To center content on screen: translate so content center appears at screen center
                         const screenWidth = window.innerWidth
                         const screenHeight = window.innerHeight
                         const screenCenterX = screenWidth / 2 / viewport.zoom
                         const screenCenterY = screenHeight / 2 / viewport.zoom
                         
-                        // Translate to put content center at screen center
                         const centerX = screenCenterX - contentCenterX
                         const centerY = screenCenterY - contentCenterY
                         

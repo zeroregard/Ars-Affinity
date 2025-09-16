@@ -12,7 +12,6 @@ public class ActiveAbilityData implements INBTSerializable<CompoundTag> {
     private boolean isDirty = false;
     
     public ActiveAbilityData() {
-        // Default constructor
     }
     
     public AffinityPerkType getActiveAbilityType() {

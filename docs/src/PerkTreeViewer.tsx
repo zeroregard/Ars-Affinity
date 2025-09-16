@@ -49,11 +49,10 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
     const [viewport, setViewport] = useState<ViewportState>({ x: 0, y: 0, zoom: 1.0 })
     const [isDragging, setIsDragging] = useState(false)
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-    const dragSensitivity = 1.5 // Increase this value to make dragging more sensitive
+    const dragSensitivity = 1.5
     const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map())
     const containerRef = useRef<HTMLDivElement>(null)
 
-    // Load perk tree data
     useEffect(() => {
         const loadPerkTree = async () => {
             try {
@@ -71,12 +70,10 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         loadPerkTree()
     }, [school])
 
-    // Calculate node positions based on tiers and prerequisites
     const calculateNodePositions = (data: PerkTreeData) => {
         const positions = new Map<string, NodePosition>()
         const tiers = new Map<number, PerkNode[]>()
         
-        // Group nodes by tier
         data.perks.forEach(node => {
             if (!tiers.has(node.tier)) {
                 tiers.set(node.tier, [])
@@ -84,12 +81,10 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
             tiers.get(node.tier)!.push(node)
         })
 
-        // Sort nodes within each tier
         tiers.forEach(nodes => {
             nodes.sort((a, b) => a.id.localeCompare(b.id))
         })
 
-        // Calculate positions
         tiers.forEach((nodes, tier) => {
             const startX = -(nodes.length - 1) * NODE_SPACING / 2
             nodes.forEach((node, index) => {
@@ -105,7 +100,6 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         setNodePositions(positions)
     }
 
-    // Handle mouse wheel zoom
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault()
         const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED
@@ -115,7 +109,6 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         }))
     }, [])
 
-    // Handle mouse down for dragging
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         if (e.target === containerRef.current) {
             setIsDragging(true)
@@ -123,7 +116,6 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         }
     }, [viewport.x, viewport.y])
 
-    // Handle mouse move for dragging
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         if (isDragging) {
             setViewport(prev => ({
@@ -134,18 +126,14 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         }
     }, [isDragging, dragStart])
 
-    // Handle mouse up
     const handleMouseUp = useCallback(() => {
         setIsDragging(false)
     }, [])
 
-    // Handle node click
     const handleNodeClick = useCallback((node: PerkNode) => {
         console.log('Clicked node:', node.id)
-        // TODO: Implement perk allocation/deallocation
     }, [])
 
-    // Render connection lines between nodes
     const renderConnections = () => {
         if (!perkTreeData) return null
 
@@ -170,7 +158,6 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         }).flat()
     }
 
-    // Render individual perk nodes
     const renderNodes = () => {
         if (!perkTreeData) return null
 
@@ -179,8 +166,8 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
             if (!position) return null
 
             const isHovered = hoveredNode?.id === node.id
-            const isAllocated = false // TODO: Check if perk is allocated
-            const canAllocate = true // TODO: Check if perk can be allocated
+            const isAllocated = false
+            const canAllocate = true
 
             return (
                 <g key={node.id}>
@@ -212,7 +199,6 @@ function PerkTreeViewer({ school, onClose }: PerkTreeViewerProps) {
         })
     }
 
-    // Render tooltip
     const renderTooltip = () => {
         if (!hoveredNode) return null
 

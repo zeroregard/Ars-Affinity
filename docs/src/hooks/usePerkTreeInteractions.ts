@@ -10,27 +10,22 @@ export const usePerkTreeInteractions = () => {
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
     const containerRef = useRef<HTMLDivElement>(null)
 
-    // Handle mouse wheel zoom towards viewport center
     const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault()
         const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED
         const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, viewport.zoom + delta))
         
-        if (newZoom === viewport.zoom) return // No change in zoom
+        if (newZoom === viewport.zoom) return
         
-        // Get container dimensions
         const rect = containerRef.current?.getBoundingClientRect()
         if (!rect) return
         
-        // Calculate viewport center
         const viewportCenterX = rect.width / 2
         const viewportCenterY = rect.height / 2
         
-        // Convert viewport center to SVG coordinates
         const svgCenterX = (viewportCenterX - viewport.x) / viewport.zoom
         const svgCenterY = (viewportCenterY - viewport.y) / viewport.zoom
         
-        // Adjust viewport to zoom towards viewport center
         const newX = viewportCenterX - svgCenterX * newZoom
         const newY = viewportCenterY - svgCenterY * newZoom
         
@@ -42,7 +37,6 @@ export const usePerkTreeInteractions = () => {
         }))
     }, [viewport])
 
-    // Add wheel event listener with passive: false
     useEffect(() => {
         const container = containerRef.current
         if (!container) return
@@ -54,21 +48,19 @@ export const usePerkTreeInteractions = () => {
         }
     }, [handleWheel])
 
-    // Handle mouse down for dragging
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        if (e.button === 0) { // Left mouse button
+        if (e.button === 0) {
             setIsDragging(true)
             setDragStart({ x: e.clientX, y: e.clientY })
             e.preventDefault()
         }
     }, [])
 
-    // Handle mouse move for dragging
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
         setMousePosition({ x: e.clientX, y: e.clientY })
         
         if (isDragging) {
-            const dragSensitivity = 1.5 // Increase this value to make dragging more sensitive
+            const dragSensitivity = 1.5
             setViewport(prev => ({
                 ...prev,
                 x: (e.clientX - dragStart.x) * dragSensitivity,
@@ -78,14 +70,11 @@ export const usePerkTreeInteractions = () => {
         }
     }, [isDragging, dragStart])
 
-    // Handle mouse up
     const handleMouseUp = useCallback(() => {
         setIsDragging(false)
     }, [])
 
-    // Handle node click
     const handleNodeClick = useCallback((node: PerkNode, school: School) => {
-        // TODO: Implement perk allocation/deallocation
     }, [])
 
     return {

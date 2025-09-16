@@ -11,7 +11,6 @@ interface PerkTooltipProps {
 
 const formatPerkName = (nodeId: string) => {
     const parts = nodeId.split('_')
-    // Skip the first part (school name) to avoid duplication
     return parts.slice(1).map(part => 
         part.match(/\d+/) ? toRomanNumeral(parseInt(part)) : titleCase(part)
     ).join(' ')
@@ -20,10 +19,9 @@ const formatPerkName = (nodeId: string) => {
 const getPerkDataForRenderer = (node: PerkNode) => {
     const baseData: any = {
         perk: node.perk,
-        isBuff: true, // Most perks are buffs
+        isBuff: true,
     }
 
-    // Only include properties that actually exist in the PerkNode
     if (node.amount !== undefined) baseData.amount = node.amount
     if (node.time !== undefined) baseData.time = node.time
     if (node.cooldown !== undefined) baseData.cooldown = node.cooldown

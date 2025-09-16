@@ -55,7 +55,6 @@ public class PerkTreeScreen extends Screen {
         this.nodeRenderer = new PerkNodeRenderer(player, allocatedPerks);
         this.connectionRenderer = new PerkConnectionRenderer(player, allocatedPerks, school, layout);
         this.tooltipRenderer = new PerkTooltipRenderer(player, allocatedPerks);
-        // this.galaxyBackground = new GalaxyBackgroundRenderer();
     }
     
     @Override
