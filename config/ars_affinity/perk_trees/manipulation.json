@@ -39,7 +39,7 @@
     {
       "id": "manipulation_deflection_2",
       "perk": "PASSIVE_DEFLECTION",
-      "tier": 1,
+      "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 1,
