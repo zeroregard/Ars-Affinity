@@ -15,7 +15,7 @@ public class ArsAffinityDataGenerators {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         
         // Register our data generators
-        event.getGenerator().addProvider(event.includeServer(), new RecipeDataGen(packOutput, existingFileHelper));
+        event.getGenerator().addProvider(event.includeServer(), new RecipeDataGen(packOutput, event.getLookupProvider()));
         event.getGenerator().addProvider(event.includeServer(), new CuriosDataGen(packOutput, existingFileHelper));
         event.getGenerator().addProvider(event.includeClient(), new ItemModelDataGen(packOutput, existingFileHelper));
         

@@ -13,8 +13,9 @@ import com.github.ars_affinity.event.*;
 import com.github.ars_affinity.perk.PerkTreeManager;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
-import com.github.ars_affinity.registry.ModItems;
 import com.github.ars_affinity.registry.ModPotions;
+import com.github.ars_affinity.common.ritual.RitualAmnesia;
+import com.hollingsworth.arsnouveau.setup.registry.APIRegistry;
 
 import com.github.ars_affinity.registry.ModSounds;
 
@@ -57,10 +58,12 @@ public class ArsAffinity {
         ModPotions.EFFECTS.register(modEventBus);
         ModPotions.POTIONS.register(modEventBus);
 
-        ModItems.ITEMS.register(modEventBus);
         ModDataComponents.DATA.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
+        
+        // Register ritual
+        APIRegistry.registerRitual(new RitualAmnesia());
         
         if (FMLEnvironment.dist.isClient()) {
             ArsAffinityClient.init(modEventBus);

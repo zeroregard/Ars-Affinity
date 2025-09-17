@@ -194,6 +194,18 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         }
     }
     
+    public void resetSchoolPercentage(SpellSchool school) {
+        schoolPercentages.put(school, 0.0f);
+        markDirty();
+    }
+    
+    public void resetAllSchoolPercentages() {
+        for (SpellSchool school : SUPPORTED_SCHOOLS) {
+            schoolPercentages.put(school, 0.0f);
+        }
+        markDirty();
+    }
+    
     public void addAvailablePoints(SpellSchool school, int points) {
         int currentAvailable = getAvailablePoints(school);
         availablePoints.put(school, currentAvailable + points);

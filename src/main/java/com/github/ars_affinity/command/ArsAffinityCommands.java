@@ -134,9 +134,10 @@ public class ArsAffinityCommands {
             // Use respecAll to properly deallocate all perks
             data.respecAll();
             
-            // Reset all school points to 0
+            // Reset all school points and percentages to 0
             for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
                 data.setSchoolPoints(school, 0);
+                data.resetSchoolPercentage(school);
             }
             
             ChatMessageHelper.sendAllSchoolsResetMessage(player, totalPointsReset);
@@ -154,8 +155,9 @@ public class ArsAffinityCommands {
             // Use respecSchool to properly deallocate perks for this school
             data.respecSchool(school);
             
-            // Reset school points to 0
+            // Reset school points and percentage to 0
             data.setSchoolPoints(school, 0);
+            data.resetSchoolPercentage(school);
             
             ChatMessageHelper.sendSchoolResetMessage(player, school, currentPoints);
             return 1;

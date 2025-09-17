@@ -12,9 +12,9 @@ public class ModCreativeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ARS_AFFINITY_TAB = TABS.register("general", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.ars_affinity"))
-            .icon(() -> ModItems.TABLET_OF_AMNESIA.get().getDefaultInstance())
+            .icon(() -> net.minecraft.world.item.Items.ENCHANTED_BOOK.getDefaultInstance())
             .displayItems((params, output) -> {
-                output.accept(ModItems.TABLET_OF_AMNESIA.get().getDefaultInstance());
+                // Items are added via CreativeTabEvents instead
             })
             .build());
 } 
