@@ -34,7 +34,7 @@ export const PerkTreeNodes: React.FC<PerkTreeNodesProps> = ({
                 } else if (canAllocate) {
                     fillColor = 'rgba(0, 0, 0, 1)'
                 } else {
-                    fillColor = 'rgba(0, 0, 0, 1)' for unavailable
+                    fillColor = 'rgba(0, 0, 0, 1)'
                 }
 
                 const strokeColor = isHovered ? schoolColors.hover : '#374151'
