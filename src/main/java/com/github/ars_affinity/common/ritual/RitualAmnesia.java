@@ -107,10 +107,6 @@ public class RitualAmnesia extends AbstractRitual {
         return ArsAffinity.prefix("ritual_amnesia");
     }
     
-    @Override
-    public String getName() {
-        return "Ritual of Amnesia";
-    }
     
     @Override
     public String getDescriptionKey() {
