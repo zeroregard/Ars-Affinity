@@ -18,6 +18,7 @@ public class AffinityPerkDescriptionHelper {
 			case PASSIVE_FIRE_THORNS:
 			case PASSIVE_HEALING_AMPLIFICATION:
 			case PASSIVE_COLD_WALKER:
+			case PASSIVE_SOULSPIKE:
 				if (perk instanceof AffinityPerk.AmountBasedPerk amountPerk) {
 					return Component.translatable(translationKey, (int)(amountPerk.amount * 100));
 				}
@@ -70,7 +71,7 @@ public class AffinityPerkDescriptionHelper {
 				return Component.translatable(translationKey, 0, 0);
 			case PASSIVE_GHOST_STEP:
 				if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
-					return Component.translatable(translationKey, (int)(ghostStepPerk.amount * 100), ghostStepPerk.time, ghostStepPerk.cooldown);
+					return Component.translatable(translationKey, (int)(ghostStepPerk.amount * 100), ghostStepPerk.time / 20, ghostStepPerk.cooldown / 20);
 				}
 				return Component.translatable(translationKey, 0, 0, 0);
 			case ACTIVE_ICE_BLAST:

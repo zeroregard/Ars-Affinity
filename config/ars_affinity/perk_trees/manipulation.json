@@ -29,12 +29,22 @@
     {
       "id": "manipulation_deflection_1",
       "perk": "PASSIVE_DEFLECTION",
-      "tier": 2,
+      "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 1,
       "time": 200,
       "prerequisites": ["manipulation_mana_tap_1"]
+    },
+    {
+      "id": "manipulation_deflection_2",
+      "perk": "PASSIVE_DEFLECTION",
+      "tier": 1,
+      "pointCost": 1,
+      "category": "PASSIVE",
+      "amount": 1,
+      "time": 100,
+      "prerequisites": ["manipulation_deflection_1", "manipulation_mana_tap_2"]
     },
     {
       "id": "manipulation_mana_tap_2",

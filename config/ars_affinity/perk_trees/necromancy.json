@@ -14,7 +14,7 @@
       "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 1,
+      "amount": 0.1,
       "prerequisites": ["necromancy_anima_power_1"]
     },
     {
@@ -42,7 +42,7 @@
       "tier": 2,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 2,
+      "amount": 0.2,
       "prerequisites": ["necromancy_soulspike_1"]
     },
     {
@@ -51,7 +51,7 @@
       "tier": 3,
       "pointCost": 1,
       "category": "PASSIVE",
-      "amount": 3,
+      "amount": 0.3,
       "prerequisites": ["necromancy_soulspike_2"]
     },
     {

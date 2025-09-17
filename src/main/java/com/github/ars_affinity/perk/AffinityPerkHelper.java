@@ -120,6 +120,8 @@ public class AffinityPerkHelper {
             return amountPerk.amount;
         } else if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
             return durationPerk.amount;
+        } else if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
+            return ghostStepPerk.amount;
         }
         return 0.0f;
     }
@@ -131,6 +133,8 @@ public class AffinityPerkHelper {
         AffinityPerk perk = getAllocatedPerk(player, perkType);
         if (perk instanceof AffinityPerk.DurationBasedPerk durationPerk) {
             return durationPerk.time;
+        } else if (perk instanceof AffinityPerk.GhostStepPerk ghostStepPerk) {
+            return ghostStepPerk.time;
         }
         return 0;
     }

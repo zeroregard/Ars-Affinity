@@ -1,8 +1,6 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
-import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.registry.ModPotions;
@@ -19,7 +17,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 public class GhostStepEvents {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST)
     public static void onPlayerDeath(LivingDeathEvent event) {
         // Check if the dying entity is a player
         if (!(event.getEntity() instanceof Player player)) {
@@ -31,24 +29,33 @@ public class GhostStepEvents {
             return;
         }
 
+        ArsAffinity.LOGGER.info("Ghost Step: Player {} is dying, checking for Ghost Step perk", player.getName().getString());
+
         // Check if player already has cooldown
         if (player.hasEffect(ModPotions.GHOST_STEP_COOLDOWN_EFFECT)) {
+            ArsAffinity.LOGGER.info("Ghost Step: Player {} has cooldown, skipping", player.getName().getString());
             return;
         }
 
-
         // Check if player has the ghost step perk
         if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_GHOST_STEP)) {
+            event.setCanceled(true);
+            ArsAffinity.LOGGER.info("Ghost Step: Player {} has Ghost Step perk, activating", player.getName().getString());
+            
             float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_GHOST_STEP);
             int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_GHOST_STEP);
             int cooldown = AffinityPerkHelper.getPerkCooldown(player, AffinityPerkType.PASSIVE_GHOST_STEP);
             
-            event.setCanceled(true);
-
             // Calculate healing amount based on percentage of max health
             float maxHealth = player.getMaxHealth();
             float healAmount = maxHealth * amount;
+            
+            ArsAffinity.LOGGER.info("Ghost Step: Setting health to {} (was {}), canceling event", healAmount, player.getHealth());
+            
+            // Set health first, then cancel the event (following TotemPerk pattern)
             player.setHealth(healAmount);
+            
+            ArsAffinity.LOGGER.info("Ghost Step: Event canceled: {}, player health: {}", event.isCanceled(), player.getHealth());
 
             castDecoyEffect(player, time);
 
@@ -59,13 +66,15 @@ public class GhostStepEvents {
             scheduleDelayedProjectileRemoval(player);
 
             // Apply invisibility effect
-            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, time * 20)); // Convert seconds to ticks
+            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, time)); // time is already in ticks
 
             // Apply cooldown effect
-            player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, cooldown * 20, 0, false, true, true)); // Convert seconds to ticks
+            player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, cooldown, 0, false, true, true)); // cooldown is already in ticks
 
             ArsAffinity.LOGGER.info("Player {} activated Ghost Step - healed for {} health, invisible for {} seconds",
                     player.getName().getString(), healAmount, time);
+        } else {
+            ArsAffinity.LOGGER.info("Ghost Step: Player {} does not have Ghost Step perk", player.getName().getString());
         }
     }
 
