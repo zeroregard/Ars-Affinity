@@ -34,16 +34,13 @@ public class PassiveStoneSkinEvents {
 		// Cooldown check
 		if (player.hasEffect(ModPotions.STONE_SKIN_COOLDOWN_EFFECT)) return;
 
-		// Check if player has the perk
-		final boolean[] hasPerk = {false};
-		AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_STONE_SKIN, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
-			hasPerk[0] = true;
+		// Check if player has the stone skin perk
+		if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_STONE_SKIN)) {
+			int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_STONE_SKIN);
 
 			event.setCanceled(true);
 
-
-			player.addEffect(new MobEffectInstance(ModPotions.STONE_SKIN_COOLDOWN_EFFECT, durationPerk.time, 0, false, true, true));
-
+			player.addEffect(new MobEffectInstance(ModPotions.STONE_SKIN_COOLDOWN_EFFECT, time, 0, false, true, true));
 
 			Vec3 pos = player.position();
 			player.level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0f, 0.9f);
@@ -72,9 +69,7 @@ public class PassiveStoneSkinEvents {
 					serverLevel.sendParticles(stoneParticles, player.getX() + ox, player.getY() + oy, player.getZ() + oz, 1, 0, 0, 0, 0.0);
 				}
 			}
-		});
-
-		if (!hasPerk[0]) return;
+		}
 	}
 }
 

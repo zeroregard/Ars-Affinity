@@ -1,7 +1,6 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -30,18 +29,20 @@ public class SpellAmplificationEvents {
         }
         var player = playerCaster.player;
         if (player.level().isClientSide()) return;
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
+        // Check if player has the healing amplification perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION)) {
             // Check if the spell contains healing effects
             var healingEffects = event.spell.unsafeList().stream()
                 .filter(part -> part instanceof EffectHeal).toList();
             
             if (healingEffects.size() > 0) {
                 // Store the amplification amount for this player
-                playerHealingAmplification.put(player.getUUID(), amountPerk.amount);
+                float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION);
+                playerHealingAmplification.put(player.getUUID(), amount);
                 ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% amplification", 
-                    player.getName().getString(), (int)(amountPerk.amount * 100));
+                    player.getName().getString(), (int)(amount * 100));
             }
-        });
+        }
     }
 
     @SubscribeEvent

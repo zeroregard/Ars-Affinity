@@ -1,7 +1,6 @@
 package com.github.ars_affinity.common.ability.field;
 
 import com.github.ars_affinity.registry.ModPotions;
-import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;

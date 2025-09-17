@@ -8,7 +8,7 @@ import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
 import com.github.ars_affinity.registry.ModPotions;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -28,17 +28,20 @@ public class PassiveHydrationEvents {
         if (player.tickCount % 20 != 0) return;
         
         // Get player's affinity progress
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
             return;
         }
         
-        int waterTier = progress.getTier(SpellSchools.ELEMENTAL_WATER);
-        if (waterTier == 0) {
+        int waterPoints = data.getSchoolPoints(SpellSchools.ELEMENTAL_WATER);
+        if (waterPoints == 0) {
             return;
         }
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_HYDRATION, AffinityPerk.DurationBasedPerk.class, durationPerk -> {
+        // Check if player has the hydration perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_HYDRATION)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_HYDRATION);
+            
             // Get wet ticks capability
             WetTicks wetTicks = player.getCapability(WetTicksCapability.WET_TICKS);
             if (wetTicks == null) {
@@ -62,7 +65,7 @@ public class PassiveHydrationEvents {
                 wetTicks.addWetTicks(20);
                 int newWetTicks = wetTicks.getWetTicks();
                 WetTicksProvider.savePlayerWetTicks(player);
-                applyHydratedEffect(player, durationPerk.amount, newWetTicks);
+                applyHydratedEffect(player, amount, newWetTicks);
                 
             } else {
                 if (wetTicks.getWetTicks() > 0) {
@@ -79,7 +82,7 @@ public class PassiveHydrationEvents {
                     lastFoodLevels.remove(player.getUUID());
                 }
             }
-        });
+        }
     }
     
     private static void applyHydratedEffect(Player player, float maxAmplification, int wetTicks) {

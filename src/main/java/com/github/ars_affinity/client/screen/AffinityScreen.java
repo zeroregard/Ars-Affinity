@@ -1,18 +1,14 @@
 package com.github.ars_affinity.client.screen;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
-import com.github.ars_affinity.perk.AffinityPerk;
-import com.github.ars_affinity.perk.AffinityPerkDescriptionHelper;
-import com.github.ars_affinity.perk.AffinityPerkManager;
-import com.github.ars_affinity.client.screen.SchoolGlyphScreen;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
+import com.github.ars_affinity.client.screen.perk.PerkTreeScreen;
+import com.github.ars_affinity.perk.PerkAllocationManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -45,8 +41,7 @@ public class AffinityScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-
+        // Don't call super.render() to avoid pause screen blur
         int centerX = this.width / 2;
         int centerY = this.height / 2;
 
@@ -63,6 +58,14 @@ public class AffinityScreen extends Screen {
 
         renderSchoolOctagon(guiGraphics, centerX, centerY, mouseX, mouseY);
     }
+    
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Override to prevent blur effect
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        renderBackgroundPanel(guiGraphics, centerX, centerY);
+    }
 
     private void renderBackgroundPanel(GuiGraphics guiGraphics, int centerX, int centerY) {
         int panelX = centerX - BACKGROUND_WIDTH / 2;
@@ -71,7 +74,7 @@ public class AffinityScreen extends Screen {
     }
 
     private void renderSchoolOctagon(GuiGraphics guiGraphics, int centerX, int centerY, int mouseX, int mouseY) {
-        final int iconRadius = 60;
+        final int iconRadius = 56;
         final int numSchools = schools.size();
 
         for (int i = 0; i < numSchools; i++) {
@@ -91,8 +94,6 @@ public class AffinityScreen extends Screen {
                 guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
             }
 
-            int tier = getSchoolTier(player, school);
-            renderProgressionBars(guiGraphics, centerX, centerY, school, tier);
         }
     }
 
@@ -102,46 +103,23 @@ public class AffinityScreen extends Screen {
         // School name
         tooltip.add(school.getTextComponent());
         
-        // Current tier
-        int tier = getSchoolTier(player, school);
-        if (tier > 0) {
-            tooltip.add(Component.literal("Tier " + tier));
-            tooltip.add(Component.literal("")); // Empty line
+        // Points info
+        var affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (affinityData != null) {
+            int availablePoints = affinityData.getAvailablePoints(school);
+            int totalPoints = affinityData.getSchoolPoints(school);
+            int allocatedCount = PerkAllocationManager.getAllocatedPerks(player, school).size();
             
-            // Current tier perks only (not all perks up to this tier)
-            List<AffinityPerk> perks = AffinityPerkManager.getPerksForCurrentLevel(school, tier);
-            if (!perks.isEmpty()) {
-                perks.sort((a, b) -> Boolean.compare(!a.isBuff, !b.isBuff));
-                tooltip.add(Component.literal("Current Perks:"));
-                for (AffinityPerk perk : perks) {
-                    String prefix = AffinityPerkDescriptionHelper.getPerkPrefix(perk);
-                    MutableComponent description = AffinityPerkDescriptionHelper.getPerkDescription(perk);
-                    
-                    // Color the perk based on whether it's a buff or debuff
-                    int color = perk.isBuff ? 0x55FF55 : 0xFF5555; // Green for buff, red for debuff
-                    Component perkComponent = Component.literal(prefix).withStyle(style -> style.withColor(color))
-                            .append(description.withStyle(style -> style.withColor(color)));
-                    
-                    tooltip.add(perkComponent);
-                }
-            }
+            tooltip.add(Component.literal("Available Points: " + availablePoints));
+            tooltip.add(Component.literal("Total Points: " + totalPoints));
+            tooltip.add(Component.literal("Allocated Perks: " + allocatedCount));
+            tooltip.add(Component.literal(""));
+            tooltip.add(Component.literal("Click to open perk tree"));
         }
         
         return tooltip;
     }
 
-    private void renderProgressionBars(GuiGraphics guiGraphics, int centerX, int centerY, SpellSchool school, int tier) {
-        int panelX = centerX - BACKGROUND_WIDTH / 2;
-        int panelY = centerY - BACKGROUND_HEIGHT / 2;
-
-        String schoolName = school.getId().toLowerCase();
-        for (int i = 0; i < tier && i < 3; i++) {
-            ResourceLocation tierTexture = ArsAffinity.prefix("textures/gui/tiers/" + schoolName + "_tier" + (i + 1) + ".png");
-
-            RenderSystem.enableBlend();
-            guiGraphics.blit(tierTexture, panelX, panelY, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-        }
-    }
 
     private void renderSchoolIcon(GuiGraphics guiGraphics, SpellSchool school, int x, int y) {
         ResourceLocation iconTexture = school.getTexturePath();
@@ -158,7 +136,7 @@ public class AffinityScreen extends Screen {
         if (button == 0) { // Left click
             int centerX = this.width / 2;
             int centerY = this.height / 2;
-            final int iconRadius = 60;
+            final int iconRadius = 56;
             final int numSchools = schools.size();
 
             for (int i = 0; i < numSchools; i++) {
@@ -172,8 +150,8 @@ public class AffinityScreen extends Screen {
 
                 if (mouseX >= iconX && mouseX < iconX + ICON_SIZE &&
                     mouseY >= iconY && mouseY < iconY + ICON_SIZE) {
-                    // Open SchoolGlyphScreen with the selected school
-                    this.minecraft.setScreen(new SchoolGlyphScreen(this, school));
+                    // Open PerkTreeScreen with the selected school
+                    this.minecraft.setScreen(new PerkTreeScreen(player, school, this));
                     return true;
                 }
             }
@@ -181,10 +159,4 @@ public class AffinityScreen extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    // ---- Helpers you must define elsewhere ----
-
-    private int getSchoolTier(Player player, SpellSchool school) {
-        // Return 1, 2, or 3 depending on player's progression in this school
-        return SchoolAffinityProgressHelper.getTier(player, school); // Implement this
-    }
 }
