@@ -105,6 +105,13 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         
         // Calculate how many points should be awarded based on percentage thresholds
         int maxPoints = PerkTreeManager.getMaxPointsForSchool(school);
+        
+        // Prevent division by zero - if no max points configured, no points can be awarded
+        if (maxPoints <= 0) {
+            ArsAffinity.LOGGER.warn("No max points configured for school {}, cannot award points", school.getId());
+            return 0;
+        }
+        
         int thresholdInterval = 100 / maxPoints; // e.g., 10% per point for 10 points
         
         int oldPoints = getSchoolPoints(school);
@@ -537,7 +544,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         for (Tag perkTag : allocatedPerksTag) {
             if (perkTag instanceof CompoundTag compoundTag) {
                 PerkAllocation allocation = PerkAllocation.deserializeNBT(compoundTag);
-                allocatedPerks.put(allocation.getNodeId(), allocation);
+                if (allocation != null) {
+                    allocatedPerks.put(allocation.getNodeId(), allocation);
+                } else {
+                    ArsAffinity.LOGGER.warn("Failed to deserialize perk allocation, skipping");
+                }
             }
         }
         
