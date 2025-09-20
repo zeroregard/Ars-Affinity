@@ -142,10 +142,29 @@ tasks.register('syncConfigToRun', Sync) {
     outputs.upToDateWhen { false }
 }
 
+// Copy config files to resources so they're included in the JAR
+tasks.register('copyConfigToResources', Copy) {
+    from('config/ars_affinity') {
+        include '**/*'
+    }
+    into(new File(sourceSets.main.resources.srcDirs.first(), 'data/ars_affinity/config'))
+    
+    includeEmptyDirs = true
+}
+
 tasks.named('runClient').configure {
     dependsOn(tasks.named('syncConfigToRun'))
 }
 
 tasks.named('runServer').configure {
     dependsOn(tasks.named('syncConfigToRun'))
+}
+
+// Ensure config files are copied to resources before building
+tasks.named('processResources').configure {
+    dependsOn(tasks.named('copyConfigToResources'))
+}
+
+tasks.named('sourcesJar').configure {
+    dependsOn(tasks.named('copyConfigToResources'))
 } 
