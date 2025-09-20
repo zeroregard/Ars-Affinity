@@ -47,18 +47,32 @@ public class PerkTreeManager {
             if (!Files.exists(configDir)) {
                 Files.createDirectories(configDir);
                 ArsAffinity.LOGGER.warn("Perk trees directory does not exist, created: {}", configDir);
-                return;
             }
             
             for (SpellSchool school : SUPPORTED_SCHOOLS) {
                 String schoolName = getSchoolName(school);
                 Path schoolFile = configDir.resolve(schoolName + ".json");
                 
+                // First try to load from config directory
                 if (Files.exists(schoolFile)) {
-                    ArsAffinity.LOGGER.info("Loading perk tree for school: {}", schoolName);
+                    ArsAffinity.LOGGER.info("Loading perk tree for school: {} from config", schoolName);
                     loadSchoolPerkTree(school, schoolFile);
                 } else {
-                    ArsAffinity.LOGGER.warn("No perk tree file found for school: {}", schoolName);
+                    // Try to copy from JAR resources
+                    try {
+                        String resourcePath = "data/ars_affinity/config/perk_trees/" + schoolName + ".json";
+                        var resourceStream = PerkTreeManager.class.getClassLoader().getResourceAsStream(resourcePath);
+                        if (resourceStream != null) {
+                            ArsAffinity.LOGGER.info("Copying perk tree for school: {} from JAR resources", schoolName);
+                            Files.createDirectories(schoolFile.getParent());
+                            Files.copy(resourceStream, schoolFile);
+                            loadSchoolPerkTree(school, schoolFile);
+                        } else {
+                            ArsAffinity.LOGGER.warn("No perk tree file found for school: {}", schoolName);
+                        }
+                    } catch (IOException e) {
+                        ArsAffinity.LOGGER.error("Failed to copy perk tree file for school {}: {}", schoolName, e.getMessage());
+                    }
                 }
             }
             
