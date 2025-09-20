@@ -54,11 +54,27 @@ public class PerkTreeManager {
                 String schoolName = getSchoolName(school);
                 Path schoolFile = configDir.resolve(schoolName + ".json");
                 
+                
                 if (Files.exists(schoolFile)) {
                     ArsAffinity.LOGGER.info("Loading perk tree for school: {}", schoolName);
                     loadSchoolPerkTree(school, schoolFile);
                 } else {
-                    ArsAffinity.LOGGER.warn("No perk tree file found for school: {}", schoolName);
+                    // Try to copy from source directory if it exists
+                    Path sourceFile = FMLPaths.GAMEDIR.get().getParent().resolve("config/ars_affinity/perk_trees").resolve(schoolName + ".json");
+                    if (Files.exists(sourceFile)) {
+                        ArsAffinity.LOGGER.info("Copying perk tree file from source for school: {}", schoolName);
+                        try {
+                            Files.createDirectories(schoolFile.getParent());
+                            Files.copy(sourceFile, schoolFile);
+                            loadSchoolPerkTree(school, schoolFile);
+                        } catch (IOException e) {
+                            ArsAffinity.LOGGER.error("Failed to copy perk tree file for school {}: {}", schoolName, e.getMessage());
+                            createDefaultPerkTreeForSchool(school, schoolFile);
+                        }
+                    } else {
+                        ArsAffinity.LOGGER.warn("No perk tree file found for school: {} (file: {}), creating default", schoolName, schoolFile.toAbsolutePath());
+                        createDefaultPerkTreeForSchool(school, schoolFile);
+                    }
                 }
             }
             
@@ -215,6 +231,41 @@ public class PerkTreeManager {
         }
     }
     
+    private static void createDefaultPerkTreeForSchool(SpellSchool school, Path schoolFile) {
+        try {
+            // Ensure parent directory exists
+            Files.createDirectories(schoolFile.getParent());
+            
+            // Create a basic perk tree structure
+            JsonObject schoolTree = new JsonObject();
+            JsonArray perks = new JsonArray();
+            
+            // Create a basic root node for the school
+            JsonObject rootNode = new JsonObject();
+            String schoolName = getSchoolName(school);
+            rootNode.addProperty("id", schoolName + "_basic_1");
+            rootNode.addProperty("perk", "STACKABLE_SPELL_POWER");
+            rootNode.addProperty("tier", 1);
+            rootNode.addProperty("pointCost", 5);
+            rootNode.addProperty("category", "STACKABLE");
+            rootNode.addProperty("isStackable", true);
+            rootNode.addProperty("maxStacks", 5);
+            perks.add(rootNode);
+            
+            schoolTree.add("perks", perks);
+            
+            // Write to file
+            Files.writeString(schoolFile, GSON.toJson(schoolTree), StandardCharsets.UTF_8);
+            ArsAffinity.LOGGER.info("Created default perk tree for school: {} at {}", schoolName, schoolFile);
+            
+            // Load the newly created file
+            loadSchoolPerkTree(school, schoolFile);
+            
+        } catch (IOException e) {
+            ArsAffinity.LOGGER.error("Failed to create default perk tree for school {}: {}", school.getId(), e.getMessage(), e);
+        }
+    }
+    
     private static void createExampleFirePerkTree(Path configDir) throws IOException {
         JsonObject fireTree = new JsonObject();
         
@@ -276,6 +327,7 @@ public class PerkTreeManager {
     
     private static String getSchoolName(SpellSchool school) {
         String schoolId = school.getId().toString();
+        
         return switch (schoolId) {
             case "ars_nouveau:elemental_fire" -> "fire";
             case "ars_nouveau:elemental_water" -> "water";
@@ -285,7 +337,10 @@ public class PerkTreeManager {
             case "ars_nouveau:necromancy" -> "necromancy";
             case "ars_nouveau:conjuration" -> "conjuration";
             case "ars_nouveau:manipulation" -> "manipulation";
-            default -> schoolId.replace(":", "_");
+            default -> {
+                ArsAffinity.LOGGER.warn("Unknown school ID: '{}', using fallback mapping", schoolId);
+                yield schoolId.replace(":", "_");
+            }
         };
     }
 }
