@@ -15,6 +15,7 @@ import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
 import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
 import com.github.ars_affinity.potion.AffinityConsumableCooldownEffect;
+import com.github.ars_affinity.potion.SwapCooldownEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
@@ -42,6 +43,7 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
     public static final DeferredHolder<MobEffect, AffinityConsumableCooldownEffect> AFFINITY_CONSUMABLE_COOLDOWN_EFFECT = EFFECTS.register("affinity_consumable_cooldown", AffinityConsumableCooldownEffect::new);
+    public static final DeferredHolder<MobEffect, SwapCooldownEffect> SWAP_COOLDOWN_EFFECT = EFFECTS.register("swap_cooldown", SwapCooldownEffect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
     

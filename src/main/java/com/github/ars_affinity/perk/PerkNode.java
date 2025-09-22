@@ -27,11 +27,14 @@ public class PerkNode {
     private final float radius;
     private final float dashLength;
     private final float dashDuration;
+    private final float health;
+    private final float hunger;
     
     public PerkNode(String id, AffinityPerkType perkType, SpellSchool school, int tier, 
                    int pointCost, List<String> prerequisites, PerkCategory category,
                    float amount, int time, int cooldown, float manaCost, float damage,
-                   int freezeTime, float radius, float dashLength, float dashDuration) {
+                   int freezeTime, float radius, float dashLength, float dashDuration,
+                   float health, float hunger) {
         this.id = id;
         this.perkType = perkType;
         this.school = school;
@@ -48,6 +51,8 @@ public class PerkNode {
         this.radius = radius;
         this.dashLength = dashLength;
         this.dashDuration = dashDuration;
+        this.health = health;
+        this.hunger = hunger;
     }
     
     // Getters
@@ -69,6 +74,8 @@ public class PerkNode {
     public float getRadius() { return radius; }
     public float getDashLength() { return dashLength; }
     public float getDashDuration() { return dashDuration; }
+    public float getHealth() { return health; }
+    public float getHunger() { return hunger; }
     
     // Utility methods
     public boolean hasPrerequisites() {
@@ -110,6 +117,8 @@ public class PerkNode {
         tag.putFloat("radius", radius);
         tag.putFloat("dashLength", dashLength);
         tag.putFloat("dashDuration", dashDuration);
+        tag.putFloat("health", health);
+        tag.putFloat("hunger", hunger);
         
         ListTag prerequisitesTag = new ListTag();
         for (String prerequisite : prerequisites) {
@@ -136,6 +145,8 @@ public class PerkNode {
         float radius = tag.getFloat("radius");
         float dashLength = tag.getFloat("dashLength");
         float dashDuration = tag.getFloat("dashDuration");
+        float health = tag.getFloat("health");
+        float hunger = tag.getFloat("hunger");
         
         List<String> prerequisites = new ArrayList<>();
         ListTag prerequisitesTag = tag.getList("prerequisites", Tag.TAG_STRING);
@@ -147,7 +158,7 @@ public class PerkNode {
         
         return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
                            category, amount, time, cooldown, manaCost, damage,
-                           freezeTime, radius, dashLength, dashDuration);
+                           freezeTime, radius, dashLength, dashDuration, health, hunger);
     }
     
     private static SpellSchool parseSpellSchool(String schoolId) {
