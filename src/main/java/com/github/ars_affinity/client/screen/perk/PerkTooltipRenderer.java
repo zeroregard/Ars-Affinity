@@ -157,7 +157,8 @@ public class PerkTooltipRenderer {
             case PASSIVE_HYDRATION:
                 return new AffinityPerk.DurationBasedPerk(perkType, node.getAmount(), node.getTime(), isBuff);
             case PASSIVE_LICH_FEAST:
-                return new AffinityPerk.LichFeastPerk(perkType, node.getAmount(), node.getTime(), isBuff);
+                // Lich Feast uses health and hunger values, not amount and time
+                return new AffinityPerk.LichFeastPerk(perkType, node.getHealth(), node.getHunger(), isBuff);
             case ACTIVE_ICE_BLAST:
                 return new AffinityPerk.ActiveAbilityPerk(perkType, node.getManaCost(), node.getCooldown(), 
                     node.getDamage(), node.getFreezeTime(), node.getRadius(), isBuff);

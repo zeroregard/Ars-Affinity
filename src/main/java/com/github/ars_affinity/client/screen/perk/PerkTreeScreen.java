@@ -467,8 +467,12 @@ public class PerkTreeScreen extends Screen {
             PerkAllocation allocation = allocatedPerks.get(clickedNode.getId());
             if (allocation != null && allocation.isActive()) {
                 PerkAllocationManager.deallocatePerk(player, clickedNode.getId());
+                // Play deallocation sound
+                player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 0.5f, 0.8f);
             } else {
                 PerkAllocationManager.allocatePoints(player, clickedNode.getId(), 1);
+                // Play allocation sound
+                player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 0.5f, 1.2f);
             }
             
             allocatedPerks.clear();

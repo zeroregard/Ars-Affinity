@@ -21,7 +21,7 @@
     {
       "id": "earth_earth_resistance_1",
       "perk": "PASSIVE_EARTH_RESISTANCE",
-      "tier": 2,
+      "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 200,

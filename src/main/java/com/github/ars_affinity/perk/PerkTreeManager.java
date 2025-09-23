@@ -123,6 +123,8 @@ public class PerkTreeManager {
         float radius = nodeData.has("radius") ? nodeData.get("radius").getAsFloat() : 0.0f;
         float dashLength = nodeData.has("dashLength") ? nodeData.get("dashLength").getAsFloat() : 0.0f;
         float dashDuration = nodeData.has("dashDuration") ? nodeData.get("dashDuration").getAsFloat() : 0.0f;
+        float health = nodeData.has("health") ? nodeData.get("health").getAsFloat() : 0.0f;
+        float hunger = nodeData.has("hunger") ? nodeData.get("hunger").getAsFloat() : 0.0f;
         
         List<String> prerequisites = new ArrayList<>();
         if (nodeData.has("prerequisites")) {
@@ -134,7 +136,7 @@ public class PerkTreeManager {
         
         return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
                            category, amount, time, cooldown, manaCost, damage,
-                           freezeTime, radius, dashLength, dashDuration);
+                           freezeTime, radius, dashLength, dashDuration, health, hunger);
     }
     
     public static PerkNode getNode(String nodeId) {

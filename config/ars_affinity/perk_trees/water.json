@@ -30,7 +30,7 @@
     {
       "id": "water_water_resistance_1",
       "perk": "PASSIVE_WATER_RESISTANCE",
-      "tier": 2,
+      "tier": 1,
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 200,

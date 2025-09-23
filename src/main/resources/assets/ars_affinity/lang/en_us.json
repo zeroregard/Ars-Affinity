@@ -63,6 +63,7 @@
   "effect.ars_affinity.hydrated.2": "Hydrated II", 
   "effect.ars_affinity.hydrated.3": "Hydrated III",
   "effect.ars_affinity.affinity_consumable_cooldown": "Affinity Consumable Cooldown",
+  "effect.ars_affinity.swap_cooldown": "Swap Cooldown",
   
   "effect.ars_affinity.fire_affinity": "Fire Affinity",
   "effect.ars_affinity.water_affinity": "Water Affinity",
