@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import com.github.ars_affinity.client.screen.SchoolGlyphScreen;
 
 import java.util.*;
 
@@ -140,6 +141,9 @@ public class PerkTreeScreen extends Screen {
         // Render custom back button icon (above frame and roman numerals)
         renderBackButtonIcon(guiGraphics, mouseX, mouseY);
         
+        // Render glyph button in top right
+        renderGlyphButton(guiGraphics, mouseX, mouseY);
+        
         // Render the compact header at the very top (highest z-order, above everything)
         renderHeader(guiGraphics);
     }
@@ -212,7 +216,7 @@ public class PerkTreeScreen extends Screen {
         int panelX = centerX - panelWidth / 2;
         int panelY = centerY - panelHeight / 2;
         
-        int headerWidth = 30;
+        int headerWidth = 14;
         int headerHeight = 14;
         int headerX = panelX + (panelWidth - headerWidth) / 2; // Center within the panel
         int headerY = panelY - headerHeight - 5 + (headerHeight * 2); // Position above the panel, moved down by 200% of its height
@@ -227,16 +231,9 @@ public class PerkTreeScreen extends Screen {
         // Get available perk points
         int availablePoints = affinityData.getAvailablePoints(school);
         
-        // Render school icon on the left side (same as overview screen)
-        ResourceLocation iconTexture = school.getTexturePath();
-        int iconSize = 16; // Same size as overview screen
-        int iconX = headerX + 2;
-        int iconY = headerY - 1; // Adjust for larger icon
-        guiGraphics.blit(iconTexture, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
-        
         // Render available points text on the right side
         String pointsText = String.valueOf(availablePoints);
-        int textX = headerX + headerWidth - font.width(pointsText) - 2;
+        int textX = headerX + headerWidth / 2 - font.width(pointsText) / 2;
         int textY = headerY + 3;
         guiGraphics.drawString(font, pointsText, textX, textY, 0xFFFFFF);
         
@@ -273,6 +270,51 @@ public class PerkTreeScreen extends Screen {
             backIcon.width(), backIcon.height()
         );
         guiGraphics.pose().popPose();
+    }
+    
+    private void renderGlyphButton(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = 256;
+        int panelHeight = 200;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonSize = 18;
+        int buttonX = panelX + panelWidth - buttonSize - 10; // Top right corner
+        int buttonY = panelY + 10; // Same Y as back button
+        
+        // Determine if button is hovered
+        boolean isHovered = mouseX >= buttonX && mouseX < buttonX + buttonSize && 
+                           mouseY >= buttonY && mouseY < buttonY + buttonSize;
+        
+        // Render button background
+        int backgroundColor = isHovered ? 0xFF4A4A4A : 0xFF2A2A2A;
+        guiGraphics.fill(buttonX, buttonY, buttonX + buttonSize, buttonY + buttonSize, backgroundColor);
+        
+        // Render border
+        int borderColor = isHovered ? 0xFF888888 : 0xFF555555;
+        guiGraphics.fill(buttonX, buttonY, buttonX + buttonSize, buttonY + 1, borderColor);
+        guiGraphics.fill(buttonX, buttonY, buttonX + 1, buttonY + buttonSize, borderColor);
+        guiGraphics.fill(buttonX + buttonSize - 1, buttonY, buttonX + buttonSize, buttonY + buttonSize, borderColor);
+        guiGraphics.fill(buttonX, buttonY + buttonSize - 1, buttonX + buttonSize, buttonY + buttonSize, borderColor);
+        
+        // Render school icon
+        ResourceLocation iconTexture = school.getTexturePath();
+        int iconSize = 16;
+        int iconX = buttonX + (buttonSize - iconSize) / 2;
+        int iconY = buttonY + (buttonSize - iconSize) / 2;
+        
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.15f); // Above frame, below header
+        guiGraphics.blit(iconTexture, iconX, iconY, 0, 0, iconSize, iconSize, iconSize, iconSize);
+        guiGraphics.pose().popPose();
+        
+        // Render tooltip on hover
+        if (isHovered) {
+            Component tooltip = Component.translatable("ars_affinity.screen.glyphs.tooltip");
+            guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
+        }
     }
     
     private void renderFrameOverlay(GuiGraphics guiGraphics) {
@@ -343,7 +385,7 @@ public class PerkTreeScreen extends Screen {
             int nodeSize = isActiveAbility ? 28 : 24; // ACTIVE_NODE_SIZE : NODE_SIZE
             
             String levelText = toRomanNumeral(node.getTier());
-            guiGraphics.drawString(font, levelText, nodeX + nodeSize - 8, nodeY + nodeSize - 8, 0XFFFFFF);
+            guiGraphics.drawString(font, levelText, nodeX + nodeSize - 4, nodeY + nodeSize - 4, 0XFFFFFF);
         }
     }
     
@@ -373,6 +415,11 @@ public class PerkTreeScreen extends Screen {
         if (button == 0) {
             // Check if back button icon was clicked
             if (handleBackButtonClick((int) mouseX, (int) mouseY)) {
+                return true;
+            }
+            
+            // Check if glyph button was clicked
+            if (handleGlyphButtonClick((int) mouseX, (int) mouseY)) {
                 return true;
             }
             
@@ -452,6 +499,27 @@ public class PerkTreeScreen extends Screen {
             mouseY >= buttonY && mouseY < buttonY + buttonHeight) {
             System.out.println("Back button clicked!"); // Debug logging
             onClose();
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean handleGlyphButtonClick(int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = 256;
+        int panelHeight = 200;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonSize = 20;
+        int buttonX = panelX + panelWidth - buttonSize - 10;
+        int buttonY = panelY + 10;
+        
+        if (mouseX >= buttonX && mouseX < buttonX + buttonSize && 
+            mouseY >= buttonY && mouseY < buttonY + buttonSize) {
+            minecraft.setScreen(new SchoolGlyphScreen(this, school));
             return true;
         }
         

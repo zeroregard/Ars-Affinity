@@ -9,7 +9,7 @@
         "group": "Mod Development - arsaffinity",
         "order": 0
       },
-      "projectName": "arsaffinity-Ars-Affinity",
+      "projectName": "arsaffinity",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
         "@C:\\Users\\mathi\\Documents\\Projects\\Mods\\Ars-Affinity\\build\\moddev\\clientRunProgramArgs.txt"
@@ -31,7 +31,7 @@
         "group": "Mod Development - arsaffinity",
         "order": 1
       },
-      "projectName": "arsaffinity-Ars-Affinity",
+      "projectName": "arsaffinity",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
         "@C:\\Users\\mathi\\Documents\\Projects\\Mods\\Ars-Affinity\\build\\moddev\\dataRunProgramArgs.txt"
@@ -53,7 +53,7 @@
         "group": "Mod Development - arsaffinity",
         "order": 2
       },
-      "projectName": "arsaffinity-Ars-Affinity",
+      "projectName": "arsaffinity",
       "mainClass": "net.neoforged.devlaunch.Main",
       "args": [
         "@C:\\Users\\mathi\\Documents\\Projects\\Mods\\Ars-Affinity\\build\\moddev\\serverRunProgramArgs.txt"

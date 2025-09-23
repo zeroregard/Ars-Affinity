@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import com.github.ars_affinity.client.screen.SchoolGlyphScreen;
 
 import java.util.*;
 
@@ -88,6 +89,12 @@ public class EnhancedPerkTreeScreen extends Screen {
             Component.literal("Reset"),
             button -> viewport.resetView(width, height)
         ).bounds(width - 100, 10, 50, 20).build());
+        
+        // Glyph button
+        addRenderableWidget(Button.builder(
+            Component.translatable("ars_affinity.screen.glyphs.button"),
+            button -> minecraft.setScreen(new SchoolGlyphScreen(this, school))
+        ).bounds(width - 160, 10, 50, 20).build());
         
         // Initialize viewport
         viewport.resetView(width, height);

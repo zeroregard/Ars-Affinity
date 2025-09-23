@@ -115,6 +115,8 @@
   "key.categories.ars_affinity": "Ars Affinity",
   "ars_affinity.screen.affinity.title": "Affinities",
   "ars_affinity.screen.school_glyph.title": "School Glyphs",
+  "ars_affinity.screen.glyphs.button": "Glyphs",
+  "ars_affinity.screen.glyphs.tooltip": "View school glyphs",
   "item.ars_affinity.affinity_anchor_charm": "Affinity Anchor Charm",
   "item.ars_affinity.ritual_amnesia": "Amnesia",
   "ars_nouveau.tablet_of": "Tablet of %s",

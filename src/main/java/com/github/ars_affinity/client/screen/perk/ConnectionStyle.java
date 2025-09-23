@@ -22,7 +22,7 @@ public class ConnectionStyle {
     public static ConnectionStyle forType(ConnectionType type, SpellSchool school) {
         return switch (type) {
             case AVAILABLE -> new ConnectionStyle(
-                0xFF888888, // Grey
+                0xFF4A6B8A, // Darker blue-grey
                 0x00000000, // No glow
                 0.5f, // Very thin line
                 true, // Dashed
@@ -30,7 +30,7 @@ public class ConnectionStyle {
                 0.0f
             );
             case ACTIVE -> new ConnectionStyle(
-                0xFFAAAAAA, // Light grey
+                0xFF6B8BB0, // Medium blue-grey
                 0x00000000, // No glow
                 0.8f, // Slightly thicker
                 false, // Solid
@@ -38,7 +38,7 @@ public class ConnectionStyle {
                 0.0f
             );
             case LOCKED -> new ConnectionStyle(
-                0xFF666666, // Dark grey
+                0xFF3A4F66, // Darker blue-grey
                 0x00000000, // No glow
                 0.4f, // Very thin
                 true, // Dashed
@@ -46,7 +46,7 @@ public class ConnectionStyle {
                 0.0f
             );
             case PREREQUISITE -> new ConnectionStyle(
-                0xFF999999, // Medium grey
+                0xFF5A7A9A, // Blue-grey
                 0x00000000, // No glow
                 0.6f, // Thin
                 false, // Solid
