@@ -194,6 +194,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         }
     }
     
+    public void setSchoolPercentage(SpellSchool school, float percentage) {
+        schoolPercentages.put(school, Math.max(0.0f, Math.min(100.0f, percentage)));
+        markDirty();
+    }
+    
     public void resetSchoolPercentage(SpellSchool school) {
         schoolPercentages.put(school, 0.0f);
         markDirty();

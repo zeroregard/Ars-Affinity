@@ -4,6 +4,7 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.client.screen.perk.PerkTreeScreen;
 import com.github.ars_affinity.perk.PerkAllocationManager;
+import com.github.ars_affinity.perk.PerkTreeManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,6 +34,8 @@ public class AffinityScreen extends Screen {
             SpellSchools.ELEMENTAL_WATER,      // Left bottom
             SpellSchools.ABJURATION            // Left top
     );
+    
+    private SpellSchool hoveredSchool = null;
 
     public AffinityScreen(Player player) {
         super(Component.translatable("ars_affinity.screen.affinity.title"));
@@ -57,6 +60,10 @@ public class AffinityScreen extends Screen {
         );
 
         renderSchoolOctagon(guiGraphics, centerX, centerY, mouseX, mouseY);
+        
+        if (hoveredSchool != null) {
+            renderSchoolInfo(guiGraphics, centerX, centerY);
+        }
     }
     
     @Override
@@ -76,6 +83,8 @@ public class AffinityScreen extends Screen {
     private void renderSchoolOctagon(GuiGraphics guiGraphics, int centerX, int centerY, int mouseX, int mouseY) {
         final int iconRadius = 56;
         final int numSchools = schools.size();
+        
+        hoveredSchool = null;
 
         for (int i = 0; i < numSchools; i++) {
             SpellSchool school = schools.get(i);
@@ -87,43 +96,71 @@ public class AffinityScreen extends Screen {
             int iconY = (int) ((centerY + iconRadius * Math.sin(angleRad)) - ICON_SIZE / 2) - 3;
             renderSchoolIcon(guiGraphics, school, iconX, iconY);
 
-
             if (mouseX >= iconX && mouseX < iconX + ICON_SIZE &&
                     mouseY >= iconY && mouseY < iconY + ICON_SIZE) {
-                List<Component> tooltip = createSchoolTooltip(school);
-                guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+                hoveredSchool = school;
             }
-
         }
-    }
-
-    private List<Component> createSchoolTooltip(SpellSchool school) {
-        List<Component> tooltip = new java.util.ArrayList<>();
-        
-        // School name
-        tooltip.add(school.getTextComponent());
-        
-        // Points info
-        var affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
-        if (affinityData != null) {
-            int availablePoints = affinityData.getAvailablePoints(school);
-            int totalPoints = affinityData.getSchoolPoints(school);
-            int allocatedCount = PerkAllocationManager.getAllocatedPerks(player, school).size();
-            
-            tooltip.add(Component.literal("Available Points: " + availablePoints));
-            tooltip.add(Component.literal("Total Points: " + totalPoints));
-            tooltip.add(Component.literal("Allocated Perks: " + allocatedCount));
-            tooltip.add(Component.literal(""));
-            tooltip.add(Component.literal("Click to open perk tree"));
-        }
-        
-        return tooltip;
     }
 
 
     private void renderSchoolIcon(GuiGraphics guiGraphics, SpellSchool school, int x, int y) {
         ResourceLocation iconTexture = school.getTexturePath();
         guiGraphics.blit(iconTexture, x, y, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+    }
+    
+    private void renderSchoolInfo(GuiGraphics guiGraphics, int centerX, int centerY) {
+        var affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (affinityData == null) return;
+        
+        int totalPoints = affinityData.getSchoolPoints(hoveredSchool);
+        int maxPoints = PerkTreeManager.getMaxPointsForSchool(hoveredSchool);
+        
+        // Calculate progress towards next point
+        float currentPercentage = affinityData.getSchoolPercentage(hoveredSchool);
+        
+        int progressPercent = 0;
+        if (maxPoints > 0) {
+            // If we have all points, show 100%
+            if (totalPoints >= maxPoints) {
+                progressPercent = 100;
+            } else {
+                // Use the same logic as the natural progression system
+                int thresholdInterval = 100 / maxPoints; // Integer division like in addSchoolProgress
+                
+                // Calculate which point we're working towards (next point after current points)
+                int nextPointThreshold = totalPoints; // We're working towards the next point
+                int nextPointStart = nextPointThreshold * thresholdInterval;
+                int nextPointEnd = (nextPointThreshold + 1) * thresholdInterval;
+                
+                // Calculate progress within the next point range
+                if (nextPointEnd > nextPointStart && currentPercentage >= nextPointStart) {
+                    float progressInNextPoint = (currentPercentage - nextPointStart) / (float)(nextPointEnd - nextPointStart);
+                    progressPercent = (int) Math.floor(progressInNextPoint * 100);
+                } else if (currentPercentage < nextPointStart) {
+                    // If we haven't reached the next point threshold yet, show 0%
+                    progressPercent = 0;
+                }
+            }
+        }
+        
+        String schoolName = hoveredSchool.getTextComponent().getString();
+        String progressText = progressPercent + "%";
+        String perksText = totalPoints + "/" + maxPoints;
+        
+        int startY = centerY - (3 * this.font.lineHeight) / 2;
+        
+        // School name
+        int nameWidth = this.font.width(schoolName);
+        guiGraphics.drawString(this.font, schoolName, centerX - nameWidth / 2, startY, 0x333333, false);
+        
+        // Progress percentage
+        int progressWidth = this.font.width(progressText);
+        guiGraphics.drawString(this.font, progressText, centerX - progressWidth / 2, startY + this.font.lineHeight, 0x555555, false);
+        
+        // Perks count
+        int perksWidth = this.font.width(perksText);
+        guiGraphics.drawString(this.font, perksText, centerX - perksWidth / 2, startY + (2 * this.font.lineHeight), 0x555555, false);
     }
 
     @Override

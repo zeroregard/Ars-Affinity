@@ -73,24 +73,37 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        // Convert percentage to points using the actual max points for the school
-        int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
-        int targetPoints = Math.round((percentage / 100.0f) * maxPoints);
-        int currentPoints = data.getSchoolPoints(school);
+        // Set the percentage and let the natural progression system handle point distribution
+        float currentPercentage = data.getSchoolPercentage(school);
+        float percentageIncrease = percentage - currentPercentage;
         
-        int pointsToAdd = targetPoints - currentPoints;
-        
-        if (pointsToAdd > 0) {
-            data.addSchoolPoints(school, pointsToAdd);
+        if (percentageIncrease > 0) {
+            // Use the natural progression system to add progress
+            int pointsAwarded = data.addSchoolProgress(school, percentageIncrease);
             
-            SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
-                player, school, pointsToAdd, data.getSchoolPoints(school)
-            );
-            NeoForge.EVENT_BUS.post(event);
-        } else if (pointsToAdd < 0) {
-            data.setSchoolPoints(school, targetPoints);
+            if (pointsAwarded > 0) {
+                SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                    player, school, pointsAwarded, data.getSchoolPoints(school)
+                );
+                NeoForge.EVENT_BUS.post(event);
+            }
+        } else if (percentageIncrease < 0) {
+            // For decreasing percentage, we need to reset and set to target
+            data.resetSchoolPercentage(school);
+            data.setSchoolPoints(school, 0);
+            
+            // Then add progress up to the target percentage
+            int pointsAwarded = data.addSchoolProgress(school, percentage);
+            
+            if (pointsAwarded > 0) {
+                SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                    player, school, pointsAwarded, data.getSchoolPoints(school)
+                );
+                NeoForge.EVENT_BUS.post(event);
+            }
         }
 
+        int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
         source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (%d/%d points)", 
             schoolName, percentage, data.getSchoolPoints(school), maxPoints)), true);
 
