@@ -26,7 +26,8 @@
       "category": "PASSIVE",
       "amount": 1,
       "time": 400,
-      "prerequisites": ["conjuration_summoning_power_1"]
+      "prerequisites": ["conjuration_summoning_power_1"],
+      "prerequisite_glyph": "ars_nouveau:glyph_summon_undead"
     },
     {
       "id": "conjuration_conjuration_resistance_1",

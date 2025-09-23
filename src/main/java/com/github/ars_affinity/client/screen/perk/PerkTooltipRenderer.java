@@ -1,17 +1,23 @@
 package com.github.ars_affinity.client.screen.perk;
 
+import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkDescriptionHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
+import com.github.ars_affinity.perk.GlyphPrerequisiteHelper;
 import com.github.ars_affinity.perk.PerkAllocation;
 import com.github.ars_affinity.perk.PerkAllocationManager;
 import com.github.ars_affinity.perk.PerkCategory;
 import com.github.ars_affinity.perk.PerkNode;
+import com.github.ars_affinity.perk.PerkPrerequisiteChecker;
+import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
+import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
+import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -21,14 +27,32 @@ import java.util.Map;
 public class PerkTooltipRenderer {
     private final Player player;
     private final Map<String, PerkAllocation> allocatedPerks;
+    private int width = 400; // Default screen width
+    private int height = 300; // Default screen height
     
     public PerkTooltipRenderer(Player player, Map<String, PerkAllocation> allocatedPerks) {
         this.player = player;
         this.allocatedPerks = allocatedPerks;
     }
     
+    public void setScreenDimensions(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    private AbstractSpellPart getGlyphSpellPart(String glyphId) {
+        try {
+            ResourceLocation glyphLocation = ResourceLocation.parse(glyphId);
+            return GlyphRegistry.getSpellpartMap().get(glyphLocation);
+        } catch (Exception e) {
+            ArsAffinity.LOGGER.warn("Error getting glyph SpellPart for {}: {}", glyphId, e.getMessage());
+        }
+        return null;
+    }
+    
     public void renderNodeTooltip(GuiGraphics guiGraphics, Font font, PerkNode node, PerkAllocation allocation, int mouseX, int mouseY) {
         List<Component> tooltip = new ArrayList<>();
+        AbstractSpellPart glyphPart = null;
         
         boolean isUnlocked = allocation != null || PerkAllocationManager.canAllocate(player, node.getId());
         boolean isActiveAbility = node.getPerkType().name().startsWith("ACTIVE_");
@@ -55,18 +79,39 @@ public class PerkTooltipRenderer {
         }
         
         if (allocation != null) {
-            tooltip.add(Component.literal("✓ Allocated").withStyle(Style.EMPTY.withColor(0x00FF00)));
+            tooltip.add(Component.literal("Unlocked").withStyle(Style.EMPTY.withColor(0x66FF66)));
         } else if (PerkAllocationManager.canAllocate(player, node.getId())) {
-            tooltip.add(Component.literal("Click to allocate").withStyle(Style.EMPTY.withColor(0x0088FF)));
+            tooltip.add(Component.literal("Click to unlock").withStyle(Style.EMPTY.withColor(0x0088FF)));
         } else {
-            // Check if the issue is specifically about having a different active ability
-            if (PerkAllocationManager.hasDifferentActiveAbility(player, node.getId())) {
-                tooltip.add(Component.literal("You already have one active ability").withStyle(Style.EMPTY.withColor(0xFF6666)));
+            // Use the detailed prerequisite checker
+            PerkPrerequisiteChecker.PrerequisiteResult result = PerkPrerequisiteChecker.checkPrerequisites(player, node);
+            if (!result.canAllocate() && result.hasReasons()) {
+                // Check if we need to render glyph texture
+                if (node.hasPrerequisiteGlyph()) {
+                    glyphPart = getGlyphSpellPart(node.getPrerequisiteGlyph());
+                }
+                
+                // Add the main prerequisite message
+                tooltip.add(Component.translatable("ars_affinity.tooltip.prerequisites_not_met").withStyle(Style.EMPTY.withColor(0xFF6666)));
+                
+                // Add each reason as a separate line
+                for (String reason : result.getReasons()) {
+                    if (reason.contains("Glyph") && glyphPart != null) {
+                        // Special handling for glyph prerequisites
+                        String glyphName = GlyphPrerequisiteHelper.getGlyphDisplayName(node.getPrerequisiteGlyph());
+                        Component glyphComponent = Component.literal("• Glyph ").withStyle(Style.EMPTY.withColor(0xFF6666))
+                            .append(Component.literal("'" + glyphName + "' not unlocked").withStyle(Style.EMPTY.withColor(0xFF6666)));
+                        tooltip.add(glyphComponent);
+                    } else {
+                        tooltip.add(Component.literal("• " + reason).withStyle(Style.EMPTY.withColor(0xFF6666)));
+                    }
+                }
             } else {
                 tooltip.add(Component.literal("Prerequisites not met").withStyle(Style.EMPTY.withColor(0xFF6666)));
             }
         }
         
+        // Render the tooltip
         guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
     }
     
@@ -179,6 +224,57 @@ public class PerkTooltipRenderer {
                 return new AffinityPerk.SimplePerk(perkType, isBuff);
             default:
                 return new AffinityPerk.SimplePerk(perkType, isBuff);
+        }
+    }
+    
+    public void renderGlyphPrerequisite(GuiGraphics guiGraphics, Font font, PerkNode node, int nodeX, int nodeY, int nodeSize, int mouseX, int mouseY) {
+        if (!node.hasPrerequisiteGlyph()) {
+            return;
+        }
+        
+        AbstractSpellPart glyphPart = getGlyphSpellPart(node.getPrerequisiteGlyph());
+        if (glyphPart == null) {
+            return;
+        }
+        
+        // Check if the glyph is unlocked
+        boolean isGlyphUnlocked = PerkAllocationManager.canAllocate(player, node.getId());
+        
+        // Render glyph texture to the left of the perk node
+        int glyphX = nodeX - 12; // 20 pixels to the left
+        int glyphY = nodeY + (nodeSize - 16) / 2 - 4;
+        
+        // Render background square behind the glyph
+        int backgroundSize = 14;
+        int backgroundX = glyphX + (16 - backgroundSize) / 2; // Center the background
+        int backgroundY = glyphY + (16 - backgroundSize) / 2; // Center the background
+        guiGraphics.fill(backgroundX, backgroundY, backgroundX + backgroundSize, backgroundY + backgroundSize, 0xFF041536);
+        
+        // Render with appropriate opacity
+        guiGraphics.pose().pushPose();
+        if (!isGlyphUnlocked) {
+            guiGraphics.pose().translate(0, 0, 0.1); // Slight Z offset for visual separation
+        }
+        RenderUtils.drawSpellPart(glyphPart, guiGraphics, glyphX, glyphY, 16, !isGlyphUnlocked);
+        guiGraphics.pose().popPose();
+        
+        // Check if mouse is hovering over the glyph texture
+        if (mouseX >= glyphX && mouseX < glyphX + 16 && mouseY >= glyphY && mouseY < glyphY + 16) {
+            // Show glyph name tooltip with status
+            String glyphName = GlyphPrerequisiteHelper.getGlyphDisplayName(node.getPrerequisiteGlyph());
+            Component tooltipText;
+            
+            if (isGlyphUnlocked) {
+                // Just show the glyph name if unlocked
+                tooltipText = Component.literal(glyphName);
+            } else {
+                // Show glyph name + "not unlocked yet" in red if not unlocked
+                tooltipText = Component.literal(glyphName + " - not unlocked yet")
+                    .withStyle(Style.EMPTY.withColor(0xFF6666));
+            }
+            
+            List<Component> glyphTooltip = List.of(tooltipText);
+            guiGraphics.renderComponentTooltip(font, glyphTooltip, mouseX, mouseY);
         }
     }
 }

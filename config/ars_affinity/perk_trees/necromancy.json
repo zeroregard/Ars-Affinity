@@ -15,7 +15,8 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 0.1,
-      "prerequisites": ["necromancy_anima_power_1"]
+      "prerequisites": ["necromancy_anima_power_1"],
+      "prerequisite_glyph": "ars_elemental:glyph_charm"
     },
     {
       "id": "necromancy_anima_resistance_1",

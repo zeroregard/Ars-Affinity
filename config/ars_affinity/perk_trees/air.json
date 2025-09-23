@@ -45,7 +45,8 @@
       "cooldown": 100,
       "dashLength": 10.0,
       "dashDuration": 0.3,
-      "prerequisites": ["air_air_power_2", "air_air_resistance_2"]
+      "prerequisites": ["air_air_power_2", "air_air_resistance_2"],
+      "prerequisite_glyph": "ars_nouveau:glyph_leap"
     }
   ]
 }

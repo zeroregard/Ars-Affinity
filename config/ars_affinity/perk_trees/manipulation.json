@@ -90,7 +90,8 @@
       "category": "ACTIVE",
       "manaCost": 0.2,
       "cooldown": 200,
-      "prerequisites": ["manipulation_manipulation_power_2", "manipulation_manipulation_resistance_2"]
+      "prerequisites": ["manipulation_manipulation_power_2", "manipulation_manipulation_resistance_2"],
+      "prerequisite_glyph": "ars_nouveau:glyph_blink"
     }
   ]
 }

@@ -5,7 +5,6 @@ import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.world.entity.player.Player;
-import com.github.ars_affinity.perk.ActiveAbilityHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +38,13 @@ public class PerkAllocationManager {
         // Check prerequisites
         for (String prereq : node.getPrerequisites()) {
             if (!data.isPerkAllocated(prereq)) {
+                return false;
+            }
+        }
+        
+        // Check glyph prerequisite
+        if (node.hasPrerequisiteGlyph()) {
+            if (!GlyphPrerequisiteHelper.hasUnlockedGlyph(player, node.getPrerequisiteGlyph())) {
                 return false;
             }
         }

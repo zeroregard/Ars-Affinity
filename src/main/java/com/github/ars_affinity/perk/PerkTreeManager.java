@@ -134,7 +134,9 @@ public class PerkTreeManager {
             }
         }
         
-        return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
+        String prerequisiteGlyph = nodeData.has("prerequisite_glyph") ? nodeData.get("prerequisite_glyph").getAsString() : null;
+        
+        return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, prerequisiteGlyph,
                            category, amount, time, cooldown, manaCost, damage,
                            freezeTime, radius, dashLength, dashDuration, health, hunger);
     }

@@ -15,7 +15,8 @@
       "pointCost": 1,
       "category": "PASSIVE",
       "amount": 0.25,
-      "prerequisites": ["fire_fire_power_1"]
+      "prerequisites": ["fire_fire_power_1"],
+      "prerequisite_glyph": "ars_nouveau:glyph_ignite"
     },
     {
       "id": "fire_fire_resistance_1",

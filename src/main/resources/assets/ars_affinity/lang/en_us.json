@@ -28,6 +28,7 @@
   "ars_affinity.perk.ACTIVE_FIRE_DASH": "Dash forward leaving a trail of flames, shooting blaze fireballs at entities in your path. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.PASSIVE_GHOST_STEP": "On death, cancel death and heal %d%% health, become invisible for %d seconds, create decoy (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_UNSTABLE_SUMMONING": "%d%% chance to transform summons into random creatures",
+  "ars_affinity.tooltip.prerequisites_not_met": "Prerequisites not met:",
   "ars_affinity.perk.PASSIVE_ROTTING_GUISE": "Undead creatures ignore you",
   "ars_affinity.perk.PASSIVE_ABJURATION_POWER": "Adds +%d to your Abjuration Power",
   "ars_affinity.perk.PASSIVE_AIR_POWER": "Adds +%d to your Air Power",

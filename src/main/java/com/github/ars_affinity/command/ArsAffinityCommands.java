@@ -4,6 +4,7 @@ package com.github.ars_affinity.command;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
+import com.github.ars_affinity.event.SchoolAffinityPointAllocatedEvent;
 import com.github.ars_affinity.perk.AffinityPerkType;
 
 import com.github.ars_affinity.perk.PerkAllocation;
@@ -22,6 +23,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,14 +75,27 @@ public class ArsAffinityCommands {
 
         // Convert percentage to points using the actual max points for the school
         int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
-        int points = Math.round((percentage / 100.0f) * maxPoints);
-        data.setSchoolPoints(school, points);
+        int targetPoints = Math.round((percentage / 100.0f) * maxPoints);
+        int currentPoints = data.getSchoolPoints(school);
+        
+        int pointsToAdd = targetPoints - currentPoints;
+        
+        if (pointsToAdd > 0) {
+            data.addSchoolPoints(school, pointsToAdd);
+            
+            SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                player, school, pointsToAdd, data.getSchoolPoints(school)
+            );
+            NeoForge.EVENT_BUS.post(event);
+        } else if (pointsToAdd < 0) {
+            data.setSchoolPoints(school, targetPoints);
+        }
 
         source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (%d/%d points)", 
-            schoolName, percentage, points, maxPoints)), true);
+            schoolName, percentage, data.getSchoolPoints(school), maxPoints)), true);
 
         ArsAffinity.LOGGER.info("Player {} set {} affinity to {}% ({} points)", 
-            player.getName().getString(), schoolName, percentage, points);
+            player.getName().getString(), schoolName, percentage, data.getSchoolPoints(school));
 
         return 1;
     }

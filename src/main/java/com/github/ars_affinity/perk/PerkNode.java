@@ -15,6 +15,7 @@ public class PerkNode {
     private final int tier;
     private final int pointCost;
     private final List<String> prerequisites;
+    private final String prerequisiteGlyph;
     private final PerkCategory category;
     
     // Configurable perk values
@@ -31,7 +32,7 @@ public class PerkNode {
     private final float hunger;
     
     public PerkNode(String id, AffinityPerkType perkType, SpellSchool school, int tier, 
-                   int pointCost, List<String> prerequisites, PerkCategory category,
+                   int pointCost, List<String> prerequisites, String prerequisiteGlyph, PerkCategory category,
                    float amount, int time, int cooldown, float manaCost, float damage,
                    int freezeTime, float radius, float dashLength, float dashDuration,
                    float health, float hunger) {
@@ -41,6 +42,7 @@ public class PerkNode {
         this.tier = tier;
         this.pointCost = pointCost;
         this.prerequisites = prerequisites != null ? new ArrayList<>(prerequisites) : new ArrayList<>();
+        this.prerequisiteGlyph = prerequisiteGlyph;
         this.category = category;
         this.amount = amount;
         this.time = time;
@@ -62,6 +64,7 @@ public class PerkNode {
     public int getTier() { return tier; }
     public int getPointCost() { return pointCost; }
     public List<String> getPrerequisites() { return new ArrayList<>(prerequisites); }
+    public String getPrerequisiteGlyph() { return prerequisiteGlyph; }
     public PerkCategory getCategory() { return category; }
     
     // Configurable perk value getters
@@ -80,6 +83,10 @@ public class PerkNode {
     // Utility methods
     public boolean hasPrerequisites() {
         return !prerequisites.isEmpty();
+    }
+    
+    public boolean hasPrerequisiteGlyph() {
+        return prerequisiteGlyph != null && !prerequisiteGlyph.isEmpty();
     }
     
     public boolean isRootNode() {
@@ -107,6 +114,7 @@ public class PerkNode {
         tag.putString("school", school.getId().toString());
         tag.putInt("tier", tier);
         tag.putInt("pointCost", pointCost);
+        tag.putString("prerequisiteGlyph", prerequisiteGlyph != null ? prerequisiteGlyph : "");
         tag.putString("category", category.name());
         tag.putFloat("amount", amount);
         tag.putInt("time", time);
@@ -135,6 +143,8 @@ public class PerkNode {
         SpellSchool school = parseSpellSchool(tag.getString("school"));
         int tier = tag.getInt("tier");
         int pointCost = tag.getInt("pointCost");
+        String prerequisiteGlyph = tag.getString("prerequisiteGlyph");
+        if (prerequisiteGlyph.isEmpty()) prerequisiteGlyph = null;
         PerkCategory category = PerkCategory.valueOf(tag.getString("category"));
         float amount = tag.getFloat("amount");
         int time = tag.getInt("time");
@@ -156,7 +166,7 @@ public class PerkNode {
             }
         }
         
-        return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, 
+        return new PerkNode(id, perkType, school, tier, pointCost, prerequisites, prerequisiteGlyph,
                            category, amount, time, cooldown, manaCost, damage,
                            freezeTime, radius, dashLength, dashDuration, health, hunger);
     }

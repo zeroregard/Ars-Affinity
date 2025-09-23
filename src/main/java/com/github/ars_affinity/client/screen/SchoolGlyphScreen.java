@@ -1,7 +1,6 @@
 package com.github.ars_affinity.client.screen;
 
 import com.hollingsworth.arsnouveau.api.documentation.DocClientUtils;
-import com.hollingsworth.arsnouveau.api.documentation.DocAssets;
 import com.hollingsworth.arsnouveau.api.documentation.entry.DocEntry;
 import com.hollingsworth.arsnouveau.api.registry.DocumentationRegistry;
 import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
@@ -65,6 +64,10 @@ public class SchoolGlyphScreen extends BaseDocScreen {
             maxArrowIndex = 1 + (this.entries.size() - 17) / 18;
         } else {
             maxArrowIndex = 0;
+        }
+        
+        if (this.arrowIndex > this.maxArrowIndex) {
+            this.arrowIndex = this.maxArrowIndex;
         }
     }
 
@@ -191,6 +194,7 @@ public class SchoolGlyphScreen extends BaseDocScreen {
                     selectedSchool = school;
                     updateGlyphsForSchool();
                     initButtons();
+                    onArrowIndexChange();
                     return true;
                 }
             }

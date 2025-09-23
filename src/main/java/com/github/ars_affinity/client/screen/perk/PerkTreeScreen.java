@@ -368,6 +368,9 @@ public class PerkTreeScreen extends Screen {
             // Render node without roman numerals
             nodeRenderer.renderNodeWithoutNumerals(guiGraphics, font, node, nodeX, nodeY, mouseX, mouseY);
             
+            // Render glyph prerequisite if this node has one
+            tooltipRenderer.renderGlyphPrerequisite(guiGraphics, font, node, nodeX, nodeY, 32, mouseX, mouseY);
+            
             if (nodeRenderer.isNodeHovered(node, nodeX, nodeY, mouseX, mouseY)) {
                 hoveredNode = node;
                 hoveredAllocation = allocatedPerks.get(node.getId());
@@ -513,18 +516,24 @@ public class PerkTreeScreen extends Screen {
         int panelX = centerX - panelWidth / 2;
         int panelY = centerY - panelHeight / 2;
         
-        int buttonSize = 20;
-        int buttonX = panelX + panelWidth - buttonSize - 10;
-        int buttonY = panelY + 10;
+        int buttonSize = 18;
+        int buttonX = panelX + panelWidth - buttonSize - 10; // Top right corner
+        int buttonY = panelY + 10; // Same Y as back button
         
         if (mouseX >= buttonX && mouseX < buttonX + buttonSize && 
             mouseY >= buttonY && mouseY < buttonY + buttonSize) {
-            minecraft.setScreen(new SchoolGlyphScreen(this, school));
+            ArsAffinity.LOGGER.info("Glyph button clicked for school: {}", school);
+            try {
+                minecraft.setScreen(new SchoolGlyphScreen(this, school));
+            } catch (Exception e) {
+                ArsAffinity.LOGGER.error("Error opening SchoolGlyphScreen: {}", e.getMessage(), e);
+            }
             return true;
         }
         
         return false;
     }
+
     
     private boolean handleNodeClick(int mouseX, int mouseY) {
         int startX = layout.getStartX(width, scrollX);

@@ -95,7 +95,8 @@
       "damage": 8.0,
       "freezeTime": 100,
       "radius": 6.0,
-      "prerequisites": ["water_water_power_2", "water_water_resistance_2"]
+      "prerequisites": ["water_water_power_2", "water_water_resistance_2"],
+      "prerequisite_glyph": "ars_nouveau:glyph_cold_snap"
     },
     {
       "id": "water_water_resistance_2",
