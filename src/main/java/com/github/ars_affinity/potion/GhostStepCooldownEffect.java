@@ -15,6 +15,5 @@ public class GhostStepCooldownEffect extends MobEffect {
 
     @Override
     public void fillEffectCures(@NotNull Set<EffectCure> cures, @NotNull MobEffectInstance effectInstance) {
-        // No cures - this cooldown cannot be removed
     }
 }
