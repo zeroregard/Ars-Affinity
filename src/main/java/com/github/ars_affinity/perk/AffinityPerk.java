@@ -25,17 +25,26 @@ public abstract class AffinityPerk {
             boolean isBuff = jsonObject.get("isBuff").getAsBoolean();
 
             switch (perkType) {
-                case PASSIVE_DOUSED:
-                case PASSIVE_DEHYDRATED:
-                case PASSIVE_BURIED:
-                case PASSIVE_GROUNDED:
                 case PASSIVE_FIRE_THORNS:
                 case PASSIVE_MANA_TAP:
                 case PASSIVE_HEALING_AMPLIFICATION:
-                case PASSIVE_BLIGHTED:
-                case PASSIVE_FREE_JUMP:
-                case PASSIVE_PACIFIST:
                 case PASSIVE_SOULSPIKE:
+                case PASSIVE_SUMMONING_POWER:
+                case PASSIVE_ABJURATION_POWER:
+                case PASSIVE_AIR_POWER:
+                case PASSIVE_EARTH_POWER:
+                case PASSIVE_FIRE_POWER:
+                case PASSIVE_MANIPULATION_POWER:
+                case PASSIVE_ANIMA_POWER:
+                case PASSIVE_WATER_POWER:
+                case PASSIVE_ABJURATION_RESISTANCE:
+                case PASSIVE_CONJURATION_RESISTANCE:
+                case PASSIVE_AIR_RESISTANCE:
+                case PASSIVE_EARTH_RESISTANCE:
+                case PASSIVE_FIRE_RESISTANCE:
+                case PASSIVE_MANIPULATION_RESISTANCE:
+                case PASSIVE_ANIMA_RESISTANCE:
+                case PASSIVE_WATER_RESISTANCE:
                     float amount = jsonObject.get("amount").getAsFloat();
                     return new AmountBasedPerk(perkType, amount, isBuff);
                 case PASSIVE_COLD_WALKER:
@@ -43,7 +52,6 @@ public abstract class AffinityPerk {
                     return new AmountBasedPerk(perkType, perkAmount, isBuff);
                 case PASSIVE_DEFLECTION:
                 case PASSIVE_SUMMON_HEALTH:
-                case PASSIVE_SUMMONING_POWER:
                 case PASSIVE_SUMMON_DEFENSE:
                 case PASSIVE_STONE_SKIN:
                     float durationAmount = jsonObject.get("amount").getAsFloat();
@@ -53,9 +61,6 @@ public abstract class AffinityPerk {
                     float healthRestore = jsonObject.get("health").getAsFloat();
                     float hungerRestore = jsonObject.get("hunger").getAsFloat();
                     return new LichFeastPerk(perkType, healthRestore, hungerRestore, isBuff);
-                case PASSIVE_MOB_PACIFICATION:
-                    java.util.List<String> entities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
-                    return new EntityBasedPerk(perkType, isBuff, entities);
                 case ACTIVE_ICE_BLAST:
                     float manaCost = jsonObject.get("manaCost").getAsFloat();
                     int cooldown = jsonObject.get("cooldown").getAsInt();
@@ -87,10 +92,6 @@ public abstract class AffinityPerk {
                     float curseMana = jsonObject.get("manaCost").getAsFloat();
                     int curseCd = jsonObject.get("cooldown").getAsInt();
                     return new ActiveAbilityPerk(perkType, curseMana, curseCd, 0.0f, 0, 0.0f, isBuff);
-                case ACTIVE_SWARM:
-                    float swarmMana = jsonObject.get("manaCost").getAsFloat();
-                    int swarmCd = jsonObject.get("cooldown").getAsInt();
-                    return new ActiveAbilityPerk(perkType, swarmMana, swarmCd, 0.0f, 0, 0.0f, isBuff);
                 case PASSIVE_UNSTABLE_SUMMONING:
                     float chance = jsonObject.get("chance").getAsFloat();
                     java.util.List<String> possibleEntities = context.deserialize(jsonObject.get("entities"), java.util.List.class);
@@ -100,14 +101,12 @@ public abstract class AffinityPerk {
                     int invisibilityTime = jsonObject.get("time").getAsInt();
                     int cooldownTime = jsonObject.get("cooldown").getAsInt();
                     return new GhostStepPerk(perkType, healAmount, invisibilityTime, cooldownTime, isBuff);
-                case PASSIVE_MANIPULATION_SICKNESS:
-                    int sicknessDuration = jsonObject.get("duration").getAsInt();
-                    int hungerAmount = jsonObject.get("hunger").getAsInt();
-                    return new ManipulationSicknessPerk(perkType, sicknessDuration, hungerAmount, isBuff);
                 case PASSIVE_HYDRATION:
                     float maxAmplification = jsonObject.get("amount").getAsFloat();
                     int countdownTicks = jsonObject.get("time").getAsInt();
                     return new DurationBasedPerk(perkType, maxAmplification, countdownTicks, isBuff);
+                case PASSIVE_ROTTING_GUISE:
+                    return new SimplePerk(perkType, isBuff);
                 default:
                     throw new JsonParseException("Unknown perk type: " + perkTypeStr);
             }
@@ -235,5 +234,10 @@ public abstract class AffinityPerk {
         }
     }
     
+    public static class SimplePerk extends AffinityPerk {
+        public SimplePerk(AffinityPerkType perk, boolean isBuff) {
+            super(perk, isBuff);
+        }
+    }
 
 }

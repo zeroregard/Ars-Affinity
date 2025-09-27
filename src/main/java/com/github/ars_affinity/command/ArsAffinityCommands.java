@@ -2,12 +2,14 @@
 package com.github.ars_affinity.command;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.config.ArsAffinityConfig;
+import com.github.ars_affinity.event.SchoolAffinityPointAllocatedEvent;
 import com.github.ars_affinity.perk.AffinityPerkType;
 
-import com.github.ars_affinity.perk.PerkReference;
+import com.github.ars_affinity.perk.PerkAllocation;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
+import com.github.ars_affinity.util.ChatMessageHelper;
 import com.github.ars_affinity.util.GlyphBlacklistHelper;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.mojang.brigadier.CommandDispatcher;
@@ -21,6 +23,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +44,9 @@ public class ArsAffinityCommands {
                     .suggests(getSchoolSuggestions())
                     .executes(ArsAffinityCommands::getAffinity)))
             .then(Commands.literal("reset")
-                .executes(ArsAffinityCommands::resetAllAffinities))
+                .then(Commands.argument("target", StringArgumentType.word())
+                    .suggests(getResetSuggestions())
+                    .executes(ArsAffinityCommands::resetAffinity)))
             .then(Commands.literal("list")
                 .executes(ArsAffinityCommands::listAllAffinities))
             .then(Commands.literal("list-perks")
@@ -56,9 +61,9 @@ public class ArsAffinityCommands {
         String schoolName = StringArgumentType.getString(context, "school");
         float percentage = FloatArgumentType.getFloat(context, "percentage");
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            source.sendFailure(Component.literal("Failed to get affinity progress for player"));
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
+            source.sendFailure(Component.literal("Failed to get affinity data for player"));
             return 0;
         }
 
@@ -68,15 +73,42 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        // Convert percentage to affinity (0.0 to 1.0)
-        float affinity = percentage / 100.0f;
-        progress.setAffinity(school, affinity);
+        // Set the percentage and let the natural progression system handle point distribution
+        float currentPercentage = data.getSchoolPercentage(school);
+        float percentageIncrease = percentage - currentPercentage;
+        
+        if (percentageIncrease > 0) {
+            // Use the natural progression system to add progress
+            int pointsAwarded = data.addSchoolProgress(school, percentageIncrease);
+            
+            if (pointsAwarded > 0) {
+                SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                    player, school, pointsAwarded, data.getSchoolPoints(school)
+                );
+                NeoForge.EVENT_BUS.post(event);
+            }
+        } else if (percentageIncrease < 0) {
+            // For decreasing percentage, we need to reset and set to target
+            data.resetSchoolPercentage(school);
+            data.setSchoolPoints(school, 0);
+            
+            // Then add progress up to the target percentage
+            int pointsAwarded = data.addSchoolProgress(school, percentage);
+            
+            if (pointsAwarded > 0) {
+                SchoolAffinityPointAllocatedEvent event = new SchoolAffinityPointAllocatedEvent(
+                    player, school, pointsAwarded, data.getSchoolPoints(school)
+                );
+                NeoForge.EVENT_BUS.post(event);
+            }
+        }
 
-        source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (Tier %d)", 
-            schoolName, percentage, SchoolRelationshipHelper.calculateTierFromAffinity(affinity))), true);
+        int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
+        source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (%d/%d points)", 
+            schoolName, percentage, data.getSchoolPoints(school), maxPoints)), true);
 
-        ArsAffinity.LOGGER.info("Player {} set {} affinity to {}%", 
-            player.getName().getString(), schoolName, percentage);
+        ArsAffinity.LOGGER.info("Player {} set {} affinity to {}% ({} points)", 
+            player.getName().getString(), schoolName, percentage, data.getSchoolPoints(school));
 
         return 1;
     }
@@ -86,9 +118,9 @@ public class ArsAffinityCommands {
         ServerPlayer player = source.getPlayerOrException();
         String schoolName = StringArgumentType.getString(context, "school");
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            source.sendFailure(Component.literal("Failed to get affinity progress for player"));
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
+            source.sendFailure(Component.literal("Failed to get affinity data for player"));
             return 0;
         }
 
@@ -98,58 +130,87 @@ public class ArsAffinityCommands {
             return 0;
         }
 
-        float affinity = progress.getAffinity(school);
-        float percentage = affinity * 100.0f;
-        int tier = SchoolRelationshipHelper.calculateTierFromAffinity(affinity);
+        int currentPoints = data.getSchoolPoints(school);
+        int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
+        float percentage = data.getSchoolAffinityPercentage(school) * 100.0f;
 
-        source.sendSuccess(() -> Component.literal(String.format("%s: %.1f%% (Tier %d)", 
-            schoolName, percentage, tier)), false);
+        source.sendSuccess(() -> Component.literal(String.format("%s: %d/%d points (%.1f%%)", 
+            schoolName, currentPoints, maxPoints, percentage)), false);
 
         return 1;
     }
 
-    private static int resetAllAffinities(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int resetAffinity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         ServerPlayer player = source.getPlayerOrException();
+        String target = StringArgumentType.getString(context, "target");
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            source.sendFailure(Component.literal("Failed to get affinity progress for player"));
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
+            ChatMessageHelper.sendAllSchoolsResetFailureMessage(player, "Failed to get affinity data for player");
             return 0;
         }
 
-        // Reset all schools to equal distribution (1/schools.length)
-        float equalAffinity = 1.0f / SchoolRelationshipHelper.ALL_SCHOOLS.length;
-        for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            progress.setAffinity(school, equalAffinity);
+        if (target.equalsIgnoreCase("all")) {
+            // Reset all schools - deallocate all perks and reset points
+            int totalPointsReset = 0;
+            for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
+                int currentPoints = data.getSchoolPoints(school);
+                totalPointsReset += currentPoints;
+            }
+            
+            // Use respecAll to properly deallocate all perks
+            data.respecAll();
+            
+            // Reset all school points and percentages to 0
+            for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
+                data.setSchoolPoints(school, 0);
+                data.resetSchoolPercentage(school);
+            }
+            
+            ChatMessageHelper.sendAllSchoolsResetMessage(player, totalPointsReset);
+            return 1;
+        } else {
+            // Reset specific school - deallocate perks and reset points
+            SpellSchool school = parseSpellSchool(target);
+            if (school == null) {
+                source.sendFailure(Component.literal("Unknown school: " + target + ". Use 'all' to reset all schools or a valid school name."));
+                return 0;
+            }
+            
+            int currentPoints = data.getSchoolPoints(school);
+            
+            // Use respecSchool to properly deallocate perks for this school
+            data.respecSchool(school);
+            
+            // Reset school points and percentage to 0
+            data.setSchoolPoints(school, 0);
+            data.resetSchoolPercentage(school);
+            
+            ChatMessageHelper.sendSchoolResetMessage(player, school, currentPoints);
+            return 1;
         }
-
-        float percentage = equalAffinity * 100.0f;
-        source.sendSuccess(() -> Component.literal(String.format("Reset all affinities to %.1f%% each", percentage)), true);
-        ArsAffinity.LOGGER.info("Player {} reset all affinities to {}% each", player.getName().getString(), percentage);
-
-        return 1;
     }
 
     private static int listAllAffinities(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         ServerPlayer player = source.getPlayerOrException();
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) {
-            source.sendFailure(Component.literal("Failed to get affinity progress for player"));
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        if (data == null) {
+            source.sendFailure(Component.literal("Failed to get affinity data for player"));
             return 0;
         }
 
         source.sendSuccess(() -> Component.literal("Current Affinities:"), false);
         
         for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
-            float affinity = progress.getAffinity(school);
-            float percentage = affinity * 100.0f;
-            int tier = SchoolRelationshipHelper.calculateTierFromAffinity(affinity);
+            int currentPoints = data.getSchoolPoints(school);
+            int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
+            float progressPercentage = data.getSchoolPercentage(school);
             
-            source.sendSuccess(() -> Component.literal(String.format("  %s: %.1f%% (Tier %d)", 
-                school.getId(), percentage, tier)), false);
+            source.sendSuccess(() -> Component.literal(String.format("  %s: %d/%d points (%.1f%% progress)", 
+                school.getId(), currentPoints, maxPoints, progressPercentage)), false);
         }
 
         return 1;
@@ -185,26 +246,26 @@ public class ArsAffinityCommands {
 
     private static int listPerks(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
+        var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         
-        if (progress == null) {
-            context.getSource().sendFailure(Component.literal("Failed to get affinity progress"));
+        if (data == null) {
+            context.getSource().sendFailure(Component.literal("Failed to get affinity data"));
             return 0;
         }
         
-        Set<PerkReference> activePerkRefs = progress.getAllActivePerkReferences();
+        Set<PerkAllocation> activePerkAllocations = data.getAllAllocatedPerks();
         
-        if (activePerkRefs.isEmpty()) {
+        if (activePerkAllocations.isEmpty()) {
             context.getSource().sendSuccess(() -> Component.literal("No active perks"), false);
             return 1;
         }
         
         context.getSource().sendSuccess(() -> Component.literal("Active perks:"), false);
         
-        for (PerkReference perkRef : activePerkRefs) {
-            AffinityPerkType perkType = perkRef.getPerkType();
-            SpellSchool school = perkRef.getSourceSchool();
-            int tier = perkRef.getSourceTier();
+        for (PerkAllocation allocation : activePerkAllocations) {
+            AffinityPerkType perkType = allocation.getPerkType();
+            SpellSchool school = allocation.getSchool();
+            int tier = allocation.getTier();
             
             String perkName = perkType.name().replace("_", " ").toLowerCase();
             String schoolName = school.getId().toString().replace("ars_nouveau:", "").replace("_", " ").toLowerCase();
@@ -217,6 +278,19 @@ public class ArsAffinityCommands {
 
     private static SuggestionProvider<CommandSourceStack> getSchoolSuggestions() {
         return (context, builder) -> {
+            String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
+                .map(SpellSchool::getId)
+                .toArray(String[]::new);
+            return SharedSuggestionProvider.suggest(schoolNames, builder);
+        };
+    }
+    
+    private static SuggestionProvider<CommandSourceStack> getResetSuggestions() {
+        return (context, builder) -> {
+            // Add "all" as the first suggestion
+            builder.suggest("all");
+            
+            // Add all school names
             String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
                 .map(SpellSchool::getId)
                 .toArray(String[]::new);

@@ -2,6 +2,7 @@ package com.github.ars_affinity.common.ability;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
+import com.github.ars_affinity.registry.ModPotions;
 import com.hollingsworth.arsnouveau.api.mana.IManaCap;
 import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 
@@ -12,6 +13,7 @@ import com.github.ars_affinity.helper.MathUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class SwapAbilityHelper {
     
@@ -36,6 +38,11 @@ public class SwapAbilityHelper {
             return;
         }
         
+        if (isPlayerOnCooldown(player)) {
+            ArsAffinity.LOGGER.info("SWAP ABILITY: Player {} is on cooldown", player.getName().getString());
+            return;
+        }
+        
         ArsAffinity.LOGGER.info("SWAP ABILITY: Attempting to find entity with range {}", MAX_DISTANCE);
         var entityHitResult = MathUtils.getLookedAtEntity(player, MAX_DISTANCE);
         ArsAffinity.LOGGER.info("SWAP ABILITY: getLookedAtEntity returned: {}", entityHitResult);
@@ -57,6 +64,7 @@ public class SwapAbilityHelper {
         
 
         
+        applyCooldown(player, perk.cooldown);
         performSwap(player, targetEntity);
         consumeMana(player, perk);
         
@@ -111,5 +119,13 @@ public class SwapAbilityHelper {
             int manaToConsume = (int)perk.manaCost;
             manaCap.removeMana(manaToConsume);
         }
+    }
+    
+    private static boolean isPlayerOnCooldown(ServerPlayer player) {
+        return player.hasEffect(ModPotions.SWAP_COOLDOWN_EFFECT);
+    }
+    
+    private static void applyCooldown(ServerPlayer player, int cooldownTicks) {
+        player.addEffect(new MobEffectInstance(ModPotions.SWAP_COOLDOWN_EFFECT, cooldownTicks, 0, false, true, true));
     }
 } 

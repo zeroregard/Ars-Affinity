@@ -1,7 +1,7 @@
 package com.github.ars_affinity.event;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -50,19 +50,15 @@ public class PassiveSoulspikeEvents {
             return;
         }
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
-
-        int animaTier = progress.getTier(SpellSchools.NECROMANCY);
-        if (animaTier > 0) {
-            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-                if (RANDOM.nextFloat() < amountPerk.amount) {
-                    applySoulspike(player, attacker, false);
-                    
-                    ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
-                        player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
-                }
-            });
+        // Check if player has the soulspike perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_SOULSPIKE);
+            if (RANDOM.nextFloat() < amount) {
+                applySoulspike(player, attacker, false);
+                
+                ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                    player.getName().getString(), attacker.getName().getString(), (int)(amount * 100));
+            }
         }
     }
 
@@ -79,25 +75,21 @@ public class PassiveSoulspikeEvents {
         var hitEntity = entityHitResult.getEntity();
         if (!(hitEntity instanceof Player player)) return;
 
-        var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-        if (progress == null) return;
-
-        int animaTier = progress.getTier(SpellSchools.NECROMANCY);
-        if (animaTier > 0) {
-            AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-                float rangedChance = amountPerk.amount * 0.5f;
-                if (RANDOM.nextFloat() < rangedChance) {
-                    LivingEntity attacker = projectile.getOwner() instanceof LivingEntity ? 
-                        (LivingEntity) projectile.getOwner() : null;
+        // Check if player has the soulspike perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_SOULSPIKE)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_SOULSPIKE);
+            float rangedChance = amount * 0.5f;
+            if (RANDOM.nextFloat() < rangedChance) {
+                LivingEntity attacker = projectile.getOwner() instanceof LivingEntity ? 
+                    (LivingEntity) projectile.getOwner() : null;
+                
+                if (attacker != null) {
+                    applySoulspike(player, attacker, true);
                     
-                    if (attacker != null) {
-                        applySoulspike(player, attacker, true);
-                        
-                        ArsAffinity.LOGGER.info("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
-                            player.getName().getString(), attacker.getName().getString(), (int)(rangedChance * 100));
-                    }
+                    ArsAffinity.LOGGER.info("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                        player.getName().getString(), attacker.getName().getString(), (int)(rangedChance * 100));
                 }
-            });
+            }
         }
     }
 

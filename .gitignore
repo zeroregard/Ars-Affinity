@@ -15,3 +15,6 @@ node_modules/
 .github/scripts/debug/
 
 MR_ROBOT.md 
+
+# Build artifacts - config files copied to resources
+src/main/resources/data/ars_affinity/config/perk_trees/

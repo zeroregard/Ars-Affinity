@@ -1,10 +1,9 @@
 package com.github.ars_affinity.common.ability;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.capability.SchoolAffinityProgressHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.common.ability.field.SanctuaryHelper;
 import com.github.ars_affinity.common.ability.field.CurseFieldHelper;
-import com.github.ars_affinity.common.ability.SwarmHelper;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.perk.AffinityPerkHelper;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -26,35 +25,27 @@ public class ActiveAbilityManager {
 		SCHOOL_ABILITY_MAP.put(SpellSchools.MANIPULATION, AffinityPerkType.ACTIVE_SWAP_ABILITY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.ABJURATION, AffinityPerkType.ACTIVE_SANCTUARY);
 		SCHOOL_ABILITY_MAP.put(SpellSchools.NECROMANCY, AffinityPerkType.ACTIVE_CURSE_FIELD);
-		SCHOOL_ABILITY_MAP.put(SpellSchools.CONJURATION, AffinityPerkType.ACTIVE_SWARM);
    
 	}
 
 	public static void triggerActiveAbility(ServerPlayer player) {
 		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Trigger requested by {}", player.getName().getString());
-		var progress = SchoolAffinityProgressHelper.getAffinityProgress(player);
-		if (progress == null) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No progress capability for {}", player.getName().getString());
+		var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+		if (data == null) {
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No affinity data for {}", player.getName().getString());
 			return;
 		}
 
-		AffinityPerk activePerk = null;
-
-		for (Map.Entry<SpellSchool, AffinityPerkType> entry : SCHOOL_ABILITY_MAP.entrySet()) {
-			SpellSchool school = entry.getKey();
-			AffinityPerkType perkType = entry.getValue();
-
-			// O(1) perk lookup using the new perk index
-			AffinityPerk perk = AffinityPerkHelper.getActivePerk(progress, perkType);
-			if (perk != null) {
-				activePerk = perk;
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Selected perk {} for school {}", ((AffinityPerk.ActiveAbilityPerk) activePerk).perk, school.getId());
-				break;
-			}
+		AffinityPerkType currentActiveAbilityType = data.getCurrentActiveAbilityType();
+		if (currentActiveAbilityType == null) {
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability allocated for {}", player.getName().getString());
+			return;
 		}
 
+                AffinityPerk activePerk = AffinityPerkHelper.getAllocatedPerk(player, currentActiveAbilityType);
 		if (activePerk == null || !(activePerk instanceof AffinityPerk.ActiveAbilityPerk)) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability perk available for {}", player.getName().getString());
+			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability perk available for {} (type: {})", 
+				player.getName().getString(), currentActiveAbilityType);
 			return;
 		}
 
@@ -89,10 +80,6 @@ public class ActiveAbilityManager {
 			case ACTIVE_CURSE_FIELD:
 				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch CURSE FIELD");
 				CurseFieldHelper.toggleOrStart(player, abilityPerk);
-				break;
-			case ACTIVE_SWARM:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SWARM");
-				SwarmHelper.executeAbility(player, abilityPerk);
 				break;
 			default:
 				ArsAffinity.LOGGER.warn("Unknown active ability perk type: {}", abilityPerk.perk);

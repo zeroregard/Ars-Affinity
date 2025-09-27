@@ -26,14 +26,16 @@ public class FireThornsEvents {
         
         if (attacker == null) return;
 
-        AffinityPerkHelper.applyActivePerk(player, AffinityPerkType.PASSIVE_FIRE_THORNS, AffinityPerk.AmountBasedPerk.class, amountPerk -> {
-            if (RANDOM.nextFloat() < amountPerk.amount) {
+        // Check if player has the fire thorns perk
+        if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_FIRE_THORNS)) {
+            float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_FIRE_THORNS);
+            if (RANDOM.nextFloat() < amount) {
                 // Set the attacker on fire
                 attacker.setRemainingFireTicks(3 * 20);
                 
                 ArsAffinity.LOGGER.info("Fire Thorns activated! Player {} ignited attacker {} ({}% chance)", 
-                    player.getName().getString(), attacker.getName().getString(), (int)(amountPerk.amount * 100));
+                    player.getName().getString(), attacker.getName().getString(), (int)(amount * 100));
             }
-        });
+        }
     }
 } 
