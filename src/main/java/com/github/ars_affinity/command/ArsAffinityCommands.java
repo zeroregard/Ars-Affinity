@@ -104,11 +104,12 @@ public class ArsAffinityCommands {
         }
 
         int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
+        String displayName = getSchoolDisplayName(school);
         source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (%d/%d points)", 
-            schoolName, percentage, data.getSchoolPoints(school), maxPoints)), true);
+            displayName, percentage, data.getSchoolPoints(school), maxPoints)), true);
 
         ArsAffinity.LOGGER.info("Player {} set {} affinity to {}% ({} points)", 
-            player.getName().getString(), schoolName, percentage, data.getSchoolPoints(school));
+            player.getName().getString(), displayName, percentage, data.getSchoolPoints(school));
 
         return 1;
     }
@@ -134,8 +135,9 @@ public class ArsAffinityCommands {
         int maxPoints = com.github.ars_affinity.perk.PerkTreeManager.getMaxPointsForSchool(school);
         float percentage = data.getSchoolAffinityPercentage(school) * 100.0f;
 
+        String displayName = getSchoolDisplayName(school);
         source.sendSuccess(() -> Component.literal(String.format("%s: %d/%d points (%.1f%%)", 
-            schoolName, currentPoints, maxPoints, percentage)), false);
+            displayName, currentPoints, maxPoints, percentage)), false);
 
         return 1;
     }
@@ -279,7 +281,7 @@ public class ArsAffinityCommands {
     private static SuggestionProvider<CommandSourceStack> getSchoolSuggestions() {
         return (context, builder) -> {
             String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
-                .map(SpellSchool::getId)
+                .map(school -> getSchoolDisplayName(school))
                 .toArray(String[]::new);
             return SharedSuggestionProvider.suggest(schoolNames, builder);
         };
@@ -292,7 +294,7 @@ public class ArsAffinityCommands {
             
             // Add all school names
             String[] schoolNames = Arrays.stream(SchoolRelationshipHelper.ALL_SCHOOLS)
-                .map(SpellSchool::getId)
+                .map(school -> getSchoolDisplayName(school))
                 .toArray(String[]::new);
             return SharedSuggestionProvider.suggest(schoolNames, builder);
         };
@@ -306,10 +308,21 @@ public class ArsAffinityCommands {
             case "air" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.ELEMENTAL_AIR;
             case "abjuration" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.ABJURATION;
             case "conjuration" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.CONJURATION;
-            case "necromancy" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.NECROMANCY;
+            case "necromancy", "anima" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.NECROMANCY;
             case "manipulation" -> com.hollingsworth.arsnouveau.api.spell.SpellSchools.MANIPULATION;
             default -> null;
         };
+    }
+    
+    /**
+     * Gets the display name for a spell school for commands and chat messages.
+     * Necromancy is displayed as "anima" instead of "necromancy".
+     */
+    private static String getSchoolDisplayName(SpellSchool school) {
+        if (school == com.hollingsworth.arsnouveau.api.spell.SpellSchools.NECROMANCY) {
+            return "anima";
+        }
+        return school.getId().toString().replaceAll("_", " ");
     }
 
 } 

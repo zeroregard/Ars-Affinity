@@ -1,11 +1,19 @@
 package com.github.ars_affinity.client.particles;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.util.SchoolColors;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import com.github.ars_affinity.registry.ParticleRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -15,44 +23,37 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SpiralParticleHelper {
     
-    private static final Map<SpellSchool, ParticleColor> SCHOOL_COLORS = new HashMap<>();
     private static final Map<SpellSchool, Float> SCHOOL_SCALES = new HashMap<>();
+    private static final Map<SpellSchool, ResourceLocation> SCHOOL_PARTICLE_TYPES = new HashMap<>();
     
     // Track active particle effects for position updates (no memory leak - auto-cleanup)
     private static final Map<String, SpiralParticleCenter> activeEffects = new ConcurrentHashMap<>();
     
     static {
-        // Fire - Red/Orange
-        SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_FIRE, new ParticleColor(255, 100, 0));
+        // Initialize particle scales and types
         SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_FIRE, 1.2f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.ELEMENTAL_FIRE, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.FLAME));
         
-        // Water - Blue/Cyan
-        SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_WATER, new ParticleColor(0, 150, 255));
         SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_WATER, 1.0f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.ELEMENTAL_WATER, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.BUBBLE));
         
-        // Earth - Brown/Green
-        SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_EARTH, new ParticleColor(139, 69, 19));
-        SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_EARTH, 1.1f);
+                SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_EARTH, 1.1f);
+                SCHOOL_PARTICLE_TYPES.put(SpellSchools.ELEMENTAL_EARTH, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.DUST_PLUME));
+                
+                SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_AIR, 0.9f);
+                SCHOOL_PARTICLE_TYPES.put(SpellSchools.ELEMENTAL_AIR, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ELECTRIC_SPARK));
         
-        // Air - White/Light Blue
-        SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_AIR, new ParticleColor(200, 220, 255));
-        SCHOOL_SCALES.put(SpellSchools.ELEMENTAL_AIR, 0.9f);
-        
-        // Manipulation - Purple
-        SCHOOL_COLORS.put(SpellSchools.MANIPULATION, new ParticleColor(128, 0, 128));
         SCHOOL_SCALES.put(SpellSchools.MANIPULATION, 1.0f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.MANIPULATION, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.FIREWORK));
         
-        // Abjuration - Gold/Yellow (holy looking)
-        SCHOOL_COLORS.put(SpellSchools.ABJURATION, new ParticleColor(255, 215, 0));
         SCHOOL_SCALES.put(SpellSchools.ABJURATION, 1.1f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.ABJURATION, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.HEART));
         
-        // Necromancy - Dark Purple/Black (death looking)
-        SCHOOL_COLORS.put(SpellSchools.NECROMANCY, new ParticleColor(75, 0, 130));
         SCHOOL_SCALES.put(SpellSchools.NECROMANCY, 1.0f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.NECROMANCY, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.SOUL));
         
-        // Conjuration - Green (nature/summoning)
-        SCHOOL_COLORS.put(SpellSchools.CONJURATION, new ParticleColor(0, 128, 0));
         SCHOOL_SCALES.put(SpellSchools.CONJURATION, 1.0f);
+        SCHOOL_PARTICLE_TYPES.put(SpellSchools.CONJURATION, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.ENCHANT));
     }
     
     public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount) {
@@ -68,11 +69,10 @@ public class SpiralParticleHelper {
             return;
         }
         
-        ParticleColor color = SCHOOL_COLORS.get(school);
+        ParticleColor color = SchoolColors.getParticleColor(school);
         Float scale = SCHOOL_SCALES.get(school);
         
-        if (color == null || scale == null) {
-            color = new ParticleColor(255, 255, 255);
+        if (scale == null) {
             scale = 1.0f;
         }
         
@@ -84,7 +84,7 @@ public class SpiralParticleHelper {
         for (int i = 0; i < particleCount; i++) {
             String spriteType = getSpriteTypeForSchool(school);
             SpiralParticleTypeData particleData = new SpiralParticleTypeData(
-                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(),
+                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(), // Use default for position-based spawning
                 color, 
                 false, 
                 1.0f,
@@ -128,14 +128,12 @@ public class SpiralParticleHelper {
             return;
         }
         
-        ParticleColor color = SCHOOL_COLORS.get(school);
+        ParticleColor color = SchoolColors.getParticleColor(school);
         Float scale = SCHOOL_SCALES.get(school);
         
-        if (color == null || scale == null) {
-            // Default to white particles if school not found
-            ArsAffinity.LOGGER.warn("SpiralParticleHelper: School not found in color/scale maps, using defaults");
-            ArsAffinity.LOGGER.warn("SpiralParticleHelper: Available schools: {}", SCHOOL_COLORS.keySet());
-            color = new ParticleColor(255, 255, 255);
+        if (scale == null) {
+            // Default scale if school not found
+            ArsAffinity.LOGGER.warn("SpiralParticleHelper: School not found in scale map, using default");
             scale = 1.0f;
         }
         
@@ -163,7 +161,7 @@ public class SpiralParticleHelper {
             
             String spriteType = getSpriteTypeForSchool(school);
             SpiralParticleTypeData particleData = new SpiralParticleTypeData(
-                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(),
+                getParticleTypeForSchool(school),
                 color, 
                 false, 
                 1.0f,
@@ -198,7 +196,7 @@ public class SpiralParticleHelper {
     }
     
     public static ParticleColor getSchoolColor(SpellSchool school) {
-        return SCHOOL_COLORS.getOrDefault(school, new ParticleColor(255, 255, 255));
+        return SchoolColors.getParticleColor(school);
     }
     
     public static float getSchoolScale(SpellSchool school) {
@@ -236,6 +234,21 @@ public class SpiralParticleHelper {
         String key = playerId + "_" + schoolId;
         return activeEffects.get(key);
     }
+    
+    public static ParticleType<SpiralParticleTypeData> getParticleTypeForSchool(SpellSchool school) {
+        return switch (school.getId().toString()) {
+            case "fire" -> ParticleRegistry.SPIRAL_FIRE.get();
+            case "water" -> ParticleRegistry.SPIRAL_WATER.get();
+            case "earth" -> ParticleRegistry.SPIRAL_EARTH.get();
+            case "air" -> ParticleRegistry.SPIRAL_AIR.get();
+            case "manipulation" -> ParticleRegistry.SPIRAL_MANIPULATION.get();
+            case "abjuration" -> ParticleRegistry.SPIRAL_ABJURATION.get();
+            case "necromancy" -> ParticleRegistry.SPIRAL_NECROMANCY.get();
+            case "conjuration" -> ParticleRegistry.SPIRAL_CONJURATION.get();
+            default -> ParticleRegistry.SPIRAL_PARTICLE_TYPE.get();
+        };
+    }
+    
     
     // Inner class for particle center with auto-cleanup
     public static class SpiralParticleCenter {

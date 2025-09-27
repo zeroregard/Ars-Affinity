@@ -13,11 +13,12 @@ public class SpiralParticle extends TextureSheetParticle {
     private final String schoolId;
     private final float initialAngle;
     private final float initialQuadSize;
+    private final float chaosAmount;
 
     protected SpiralParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b, float scale, int lifetime, SpriteSet sprite, int playerId, String schoolId) {
         super(worldIn, x, y, z, 0, 0, 0);
         this.radius = 5f * scale;
-        this.speed = 0.1f;
+        this.speed = 0.05f; // Reduced speed
         
         // Store player and school info for position tracking
         this.playerId = playerId;
@@ -25,6 +26,9 @@ public class SpiralParticle extends TextureSheetParticle {
         
         // Each particle gets a random starting angle offset
         this.initialAngle = (float) (Math.random() * 2 * Math.PI);
+        
+        // Random chaos intensity per particle for "frizzle" effect
+        this.chaosAmount = (float) (Math.random() * 0.5f + 0.25f);
         
         this.quadSize = scale * 0.25f + (float)(Math.random() * 0.05f);
         this.initialQuadSize = this.quadSize;
@@ -74,6 +78,19 @@ public class SpiralParticle extends TextureSheetParticle {
 
         // --- EaseOutExpo on upward movement ---
         double easedY = centerY + easeOutExpo(progress) * 2f; // up to 2 blocks high
+        
+        // --- School-specific chaos modifier using easeInQuad for "frizzle" effect ---
+        // Only apply chaos to Air and Fire schools
+        if (shouldApplyChaos(schoolId)) {
+            float chaosProgress = easeInQuad(progress); // More chaos as particle ages, kicks in earlier
+            double chaosX = (Math.random() - 0.5) * 2.0 * chaosAmount * chaosProgress;
+            double chaosY = (Math.random() - 0.5) * 2.0 * chaosAmount * chaosProgress;
+            double chaosZ = (Math.random() - 0.5) * 2.0 * chaosAmount * chaosProgress;
+            
+            x += chaosX;
+            easedY += chaosY;
+            z += chaosZ;
+        }
 
         // --- EaseOutExpo for size fade from initial size to 0 over lifetime ---
         float sizeProgress = Math.min((float) this.age / this.lifetime, 1.0f);
@@ -86,6 +103,22 @@ public class SpiralParticle extends TextureSheetParticle {
     // --- Utility easing ---
     private static float easeOutExpo(float t) {
         return (t == 1.0f) ? 1.0f : (float)(1 - Math.pow(2, -10 * t));
+    }
+    
+    private static float easeInExpo(float t) {
+        return (t == 0.0f) ? 0.0f : (float) Math.pow(2, 10 * (t - 1));
+    }
+    
+    private static float easeInQuad(float t) {
+        return t * t;
+    }
+    
+    /**
+     * Determines if chaos effect should be applied based on the school.
+     * Only Air and Fire schools get the chaos "frizzle" effect.
+     */
+    private static boolean shouldApplyChaos(String schoolId) {
+        return "elemental_fire".equals(schoolId) || "elemental_air".equals(schoolId);
     }
 
     @Override

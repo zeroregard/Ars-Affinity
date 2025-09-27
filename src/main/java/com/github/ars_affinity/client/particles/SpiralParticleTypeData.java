@@ -36,6 +36,7 @@ public class SpiralParticleTypeData implements ParticleOptions {
     public String spriteType = "default";
     public int playerId = 0;
     public String schoolId = "default";
+    public boolean useVanillaSprites = true;
 
     public SpiralParticleTypeData(float r, float g, float b, boolean disableDepthTest, float size, float alpha, int age) {
         this(null, new ParticleColor(r, g, b), disableDepthTest, size, alpha, age, "default");
@@ -83,6 +84,11 @@ public class SpiralParticleTypeData implements ParticleOptions {
         this.spriteType = spriteType;
         this.playerId = playerId;
         this.schoolId = schoolId;
+        this.useVanillaSprites = true;
+    }
+    
+    public SpiralParticleTypeData(float r, float g, float b, boolean disableDepthTest, float size, float alpha, int age, String spriteType, int playerId, String schoolId) {
+        this(null, new ParticleColor(r, g, b), disableDepthTest, size, alpha, age, spriteType, playerId, schoolId);
     }
     
     public void setType(ParticleType<? extends SpiralParticleTypeData> type) {
@@ -103,6 +109,9 @@ public class SpiralParticleTypeData implements ParticleOptions {
         buf.writeFloat(data.alpha);
         buf.writeInt(data.age);
         buf.writeUtf(data.spriteType);
+        buf.writeInt(data.playerId);
+        buf.writeUtf(data.schoolId);
+        buf.writeBoolean(data.useVanillaSprites);
     }
 
     public static SpiralParticleTypeData fromNetwork(RegistryFriendlyByteBuf buffer) {
@@ -114,6 +123,9 @@ public class SpiralParticleTypeData implements ParticleOptions {
         float alpha = buffer.readFloat();
         int age = buffer.readInt();
         String spriteType = buffer.readUtf();
-        return new SpiralParticleTypeData(r, g, b, disableDepthTest, size, alpha, age, spriteType);
+        int playerId = buffer.readInt();
+        String schoolId = buffer.readUtf();
+        boolean useVanillaSprites = buffer.readBoolean();
+        return new SpiralParticleTypeData(r, g, b, disableDepthTest, size, alpha, age, spriteType, playerId, schoolId);
     }
 }
