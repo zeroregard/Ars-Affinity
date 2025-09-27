@@ -31,9 +31,11 @@ public class PerkAllocationManager {
         // Check if already allocated
         if (data.isPerkAllocated(perkId)) return false;
         
-        // Check if player has enough points
+        // Check if player has enough points (using dynamic cost)
         int availablePoints = data.getAvailablePoints(node.getSchool());
-        if (availablePoints < node.getPointCost()) return false;
+        int currentPointsInSchool = data.getSchoolPoints(node.getSchool());
+        int dynamicCost = node.getDynamicPointCost(currentPointsInSchool);
+        if (availablePoints < dynamicCost) return false;
         
         // Check prerequisites
         for (String prereq : node.getPrerequisites()) {
@@ -226,17 +228,15 @@ public class PerkAllocationManager {
      * Get the total cost of all allocated perks for a school.
      * @param player The player
      * @param school The spell school
-     * @return Total point cost
+     * @return Total point cost (using actual costs paid when perks were allocated)
      */
     public static int getTotalAllocatedCost(Player player, SpellSchool school) {
         Map<String, PerkAllocation> allocatedPerks = getAllocatedPerks(player, school);
         int totalCost = 0;
         
+        // Sum up the actual points invested for each allocated perk
         for (PerkAllocation allocation : allocatedPerks.values()) {
-            PerkNode node = PerkTreeManager.getNode(allocation.getNodeId());
-            if (node != null) {
-                totalCost += node.getPointCost();
-            }
+            totalCost += allocation.getPointsInvested();
         }
         
         return totalCost;

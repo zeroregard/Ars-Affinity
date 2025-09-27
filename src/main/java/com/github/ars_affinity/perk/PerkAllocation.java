@@ -15,6 +15,12 @@ public class PerkAllocation {
         this.isActive = true;
     }
     
+    public PerkAllocation(PerkNode node, int dynamicCost) {
+        this.node = node;
+        this.pointsInvested = dynamicCost;
+        this.isActive = true;
+    }
+    
     public PerkAllocation(PerkNode node, int pointsInvested, boolean isActive) {
         this.node = node;
         this.pointsInvested = pointsInvested;

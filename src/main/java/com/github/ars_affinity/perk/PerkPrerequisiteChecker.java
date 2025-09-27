@@ -56,7 +56,10 @@ public class PerkPrerequisiteChecker {
         
         // Check if player has enough points
         int availablePoints = data.getAvailablePoints(node.getSchool());
-        if (availablePoints < node.getPointCost()) {
+        // Check using dynamic cost
+        int currentPointsInSchool = data.getSchoolPoints(node.getSchool());
+        int dynamicCost = node.getDynamicPointCost(currentPointsInSchool);
+        if (availablePoints < dynamicCost) {
             reasons.add("No points available");
         }
         
