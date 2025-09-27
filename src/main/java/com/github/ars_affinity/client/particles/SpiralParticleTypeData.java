@@ -34,6 +34,8 @@ public class SpiralParticleTypeData implements ParticleOptions {
     public float alpha = 1.0f;
     public int age = 36;
     public String spriteType = "default";
+    public int playerId = 0;
+    public String schoolId = "default";
 
     public SpiralParticleTypeData(float r, float g, float b, boolean disableDepthTest, float size, float alpha, int age) {
         this(null, new ParticleColor(r, g, b), disableDepthTest, size, alpha, age, "default");
@@ -67,6 +69,20 @@ public class SpiralParticleTypeData implements ParticleOptions {
         this.alpha = alpha;
         this.age = age;
         this.spriteType = spriteType;
+        this.playerId = 0;
+        this.schoolId = "default";
+    }
+    
+    public SpiralParticleTypeData(ParticleType<? extends SpiralParticleTypeData> particleTypeData, ParticleColor color, boolean disableDepthTest, float size, float alpha, int age, String spriteType, int playerId, String schoolId) {
+        this.type = particleTypeData;
+        this.color = color;
+        this.disableDepthTest = disableDepthTest;
+        this.size = size;
+        this.alpha = alpha;
+        this.age = age;
+        this.spriteType = spriteType;
+        this.playerId = playerId;
+        this.schoolId = schoolId;
     }
     
     public void setType(ParticleType<? extends SpiralParticleTypeData> type) {

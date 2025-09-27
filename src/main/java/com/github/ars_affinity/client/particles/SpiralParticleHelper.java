@@ -11,11 +11,15 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpiralParticleHelper {
     
     private static final Map<SpellSchool, ParticleColor> SCHOOL_COLORS = new HashMap<>();
     private static final Map<SpellSchool, Float> SCHOOL_SCALES = new HashMap<>();
+    
+    // Track active particle effects for position updates (no memory leak - auto-cleanup)
+    private static final Map<String, SpiralParticleCenter> activeEffects = new ConcurrentHashMap<>();
     
     static {
         // Fire - Red/Orange
@@ -53,6 +57,59 @@ public class SpiralParticleHelper {
     
     public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount) {
         spawnSpiralParticles(level, player, school, particleCount, 0);
+    }
+    
+    public static void spawnSpiralParticlesAtPosition(ClientLevel level, Vec3 position, SpellSchool school, int particleCount) {
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper.spawnSpiralParticlesAtPosition called at position ({}, {}, {})", 
+            position.x, position.y, position.z);
+            
+        if (level == null || position == null || school == null) {
+            ArsAffinity.LOGGER.warn("SpiralParticleHelper: Null parameters detected for position spawn");
+            return;
+        }
+        
+        ParticleColor color = SCHOOL_COLORS.get(school);
+        Float scale = SCHOOL_SCALES.get(school);
+        
+        if (color == null || scale == null) {
+            color = new ParticleColor(255, 255, 255);
+            scale = 1.0f;
+        }
+        
+        double x = position.x;
+        double y = position.y;
+        double z = position.z;
+        
+        int successfulSpawns = 0;
+        for (int i = 0; i < particleCount; i++) {
+            String spriteType = getSpriteTypeForSchool(school);
+            SpiralParticleTypeData particleData = new SpiralParticleTypeData(
+                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(),
+                color, 
+                false, 
+                1.0f,
+                1.0f, 
+                40,
+                spriteType,
+                0,
+                "default"
+            );
+            
+            try {
+                level.addParticle(
+                    particleData,
+                    x,
+                    y,
+                    z,
+                    0, 0, 0
+                );
+                successfulSpawns++;
+            } catch (Exception e) {
+                ArsAffinity.LOGGER.error("SpiralParticleHelper: Error spawning particle {}: {}", i, e.getMessage(), e);
+            }
+        }
+        
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Successfully spawned {}/{} particles at position", successfulSpawns, particleCount);
     }
     
     public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount, int delayTicks) {
@@ -94,6 +151,9 @@ public class SpiralParticleHelper {
         ArsAffinity.LOGGER.info("SpiralParticleHelper: Spawning particles at position ({}, {}, {})", x, y, z);
         ArsAffinity.LOGGER.info("SpiralParticleHelper: Particle type: {}", ParticleRegistry.SPIRAL_PARTICLE_TYPE.get());
         
+        // Register the particle effect for position tracking
+        registerParticleEffect(player.getId(), school.getId().toString(), x, y, z);
+        
         int successfulSpawns = 0;
         for (int i = 0; i < particleCount; i++) {
             // Add some randomness to the spawn position
@@ -103,14 +163,16 @@ public class SpiralParticleHelper {
             
             String spriteType = getSpriteTypeForSchool(school);
             SpiralParticleTypeData particleData = new SpiralParticleTypeData(
+                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(),
                 color, 
                 false, 
                 1.0f,
                 1.0f, 
                 40,
-                spriteType
+                spriteType,
+                player.getId(),
+                school.getId().toString()
             );
-            particleData.setType(ParticleRegistry.SPIRAL_PARTICLE_TYPE.get());
             
             try {
                 level.addParticle(
@@ -149,5 +211,71 @@ public class SpiralParticleHelper {
             case "elemental_water" -> "bubble";
             default -> "flame"; // Use default generic sprites for all other schools
         };
+    }
+    
+    // Particle center tracking methods
+    public static void updateParticleCenter(int playerId, String schoolId, double x, double y, double z) {
+        String key = playerId + "_" + schoolId;
+        SpiralParticleCenter center = activeEffects.get(key);
+        if (center != null) {
+            center.updateTargetPosition(x, y, z);
+        }
+    }
+    
+    public static void registerParticleEffect(int playerId, String schoolId, double x, double y, double z) {
+        String key = playerId + "_" + schoolId;
+        activeEffects.put(key, new SpiralParticleCenter(x, y, z));
+    }
+    
+    public static void unregisterParticleEffect(int playerId, String schoolId) {
+        String key = playerId + "_" + schoolId;
+        activeEffects.remove(key);
+    }
+    
+    public static SpiralParticleCenter getParticleCenter(int playerId, String schoolId) {
+        String key = playerId + "_" + schoolId;
+        return activeEffects.get(key);
+    }
+    
+    // Inner class for particle center with auto-cleanup
+    public static class SpiralParticleCenter {
+        private double currentX, currentY, currentZ;
+        private double targetX, targetY, targetZ;
+        private double prevX, prevY, prevZ;
+        private long lastUpdateTime;
+        private long creationTime;
+        
+        public SpiralParticleCenter(double x, double y, double z) {
+            this.currentX = this.targetX = this.prevX = x;
+            this.currentY = this.targetY = this.prevY = y;
+            this.currentZ = this.targetZ = this.prevZ = z;
+            this.lastUpdateTime = System.currentTimeMillis();
+            this.creationTime = System.currentTimeMillis();
+        }
+        
+        public void updateTargetPosition(double x, double y, double z) {
+            // Update position immediately - no interpolation
+            this.currentX = x;
+            this.currentY = y;
+            this.currentZ = z;
+            this.lastUpdateTime = System.currentTimeMillis();
+        }
+        
+        public double getCurrentX() {
+            return currentX;
+        }
+        
+        public double getCurrentY() {
+            return currentY;
+        }
+        
+        public double getCurrentZ() {
+            return currentZ;
+        }
+        
+        // Auto-cleanup after 5 seconds
+        public boolean isExpired() {
+            return System.currentTimeMillis() - creationTime > 5000;
+        }
     }
 }

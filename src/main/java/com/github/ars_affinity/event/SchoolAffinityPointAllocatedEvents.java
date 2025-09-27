@@ -111,6 +111,9 @@ public class SchoolAffinityPointAllocatedEvents {
         try {
             Networking.sendToNearbyClient(player.level(), player.blockPosition(), packet);
             ArsAffinity.LOGGER.info("Particle packet sent successfully to nearby clients");
+            
+            // Schedule position updates every 3 ticks for 60 ticks (3 seconds)
+            ParticleUpdateScheduler.startPositionUpdates(player, school.getId().toString());
         } catch (Exception e) {
             ArsAffinity.LOGGER.error("Failed to send particle packet: {}", e.getMessage(), e);
         }
@@ -119,4 +122,5 @@ public class SchoolAffinityPointAllocatedEvents {
             particleCount, school.getId(), pointsGained);
         ArsAffinity.LOGGER.info("=== PARTICLE SPAWNING COMPLETE ===");
     }
+    
 }

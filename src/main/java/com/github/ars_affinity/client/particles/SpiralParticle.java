@@ -9,19 +9,19 @@ import net.minecraft.client.particle.TextureSheetParticle;
 public class SpiralParticle extends TextureSheetParticle {
     private final float radius;
     private final float speed;
-    private final double centerX, centerY, centerZ;
+    private final int playerId;
+    private final String schoolId;
     private final float initialAngle;
     private final float initialQuadSize;
 
-    protected SpiralParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b, float scale, int lifetime, SpriteSet sprite) {
+    protected SpiralParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b, float scale, int lifetime, SpriteSet sprite, int playerId, String schoolId) {
         super(worldIn, x, y, z, 0, 0, 0);
         this.radius = 5f * scale;
         this.speed = 0.1f;
         
-        // Store the center point (where all particles should spiral around)
-        this.centerX = x;
-        this.centerY = y;
-        this.centerZ = z;
+        // Store player and school info for position tracking
+        this.playerId = playerId;
+        this.schoolId = schoolId;
         
         // Each particle gets a random starting angle offset
         this.initialAngle = (float) (Math.random() * 2 * Math.PI);
@@ -58,7 +58,17 @@ public class SpiralParticle extends TextureSheetParticle {
         // Spiral radius growth
         float currentRadius = radius * (0.1f + progress * 0.01f);
 
-        // Calculate spiral position relative to the center point
+        // Get current interpolated center from helper
+        SpiralParticleHelper.SpiralParticleCenter center = SpiralParticleHelper.getParticleCenter(playerId, schoolId);
+        if (center == null) {
+            this.remove(); // Remove particle if center is no longer tracked
+            return;
+        }
+        double centerX = center.getCurrentX();
+        double centerY = center.getCurrentY();
+        double centerZ = center.getCurrentZ();
+        
+        // Calculate spiral position relative to the interpolated center point
         double x = centerX + currentRadius * Math.sin(currentAngle);
         double z = centerZ + currentRadius * Math.cos(currentAngle);
 
@@ -77,7 +87,6 @@ public class SpiralParticle extends TextureSheetParticle {
     private static float easeOutExpo(float t) {
         return (t == 1.0f) ? 1.0f : (float)(1 - Math.pow(2, -10 * t));
     }
-
 
     @Override
     public ParticleRenderType getRenderType() {

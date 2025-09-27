@@ -51,7 +51,7 @@ public class SpiralParticleWrapper implements ParticleProvider<SpiralParticleTyp
         
         return new SpiralParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(), data.color.getBlue(),
                 data.size,
-                data.age, spriteSet);
+                data.age, spriteSet, data.playerId, data.schoolId);
     }
     
     private SpriteSet getSpriteSetForType(String spriteType) {
