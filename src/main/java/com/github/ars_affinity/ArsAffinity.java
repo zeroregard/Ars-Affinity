@@ -8,20 +8,15 @@ import com.github.ars_affinity.capability.WetTicksCapability;
 import com.github.ars_affinity.capability.WetTicksProvider;
 import com.github.ars_affinity.client.ArsAffinityClient;
 import com.github.ars_affinity.command.ArsAffinityCommands;
-import com.github.ars_affinity.command.TestParticleCommand;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.event.*;
 import com.github.ars_affinity.perk.PerkTreeManager;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModPotions;
-<<<<<<< HEAD
 import com.github.ars_affinity.registry.ParticleRegistry;
-=======
 import com.github.ars_affinity.common.ritual.RitualAmnesia;
 import com.hollingsworth.arsnouveau.setup.registry.APIRegistry;
-
->>>>>>> 00bcb64105ef9f2f558979be9b6a22b8028fac00
 import com.github.ars_affinity.registry.ModSounds;
 import com.github.ars_affinity.common.network.Networking;
 
@@ -68,7 +63,6 @@ public class ArsAffinity {
         ModCreativeTabs.TABS.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
         ParticleRegistry.PARTICLES.register(modEventBus);
-        
         modEventBus.addListener(Networking::register);
         
         // Register ritual

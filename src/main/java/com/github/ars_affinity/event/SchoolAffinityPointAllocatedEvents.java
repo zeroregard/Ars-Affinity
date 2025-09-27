@@ -63,7 +63,8 @@ public class SchoolAffinityPointAllocatedEvents {
         }
         
         playPointAllocatedSound(player, school);
-        sendPointAllocatedMessage(player, school, pointsGained, totalPoints);
+        // TODO: remove this?
+        // sendPointAllocatedMessage(player, school, pointsGained, totalPoints);
         spawnPointAllocatedParticles(player, school, pointsGained);
     }
     
@@ -83,6 +84,24 @@ public class SchoolAffinityPointAllocatedEvents {
                 1.0f, // Volume
                 1.0f  // Pitch
         );
+    }
+    
+    private static void sendPointAllocatedMessage(Player player, SpellSchool school, int pointsGained, int totalPoints) {
+        // Create the message components
+        Component schoolName = school.getTextComponent();
+        Component pointsText = Component.literal("+" + pointsGained + " points");
+        Component totalText = Component.literal("(" + totalPoints + " total)");
+        
+        // Create the full message: "Your affinity in %s has increased by +X points (Y total)"
+        Component message = Component.translatable(
+            "ars_affinity.point_allocated.message",
+            schoolName,
+            pointsText,
+            totalText
+        );
+        
+        // Send the message to the player
+        player.sendSystemMessage(message);
     }
     
     private static void spawnPointAllocatedParticles(Player player, SpellSchool school, int pointsGained) {
