@@ -6,7 +6,6 @@ import com.github.ars_affinity.common.network.ParticleEffectPacket;
 import com.github.ars_affinity.registry.ModSounds;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -55,7 +54,6 @@ public class SchoolAffinityPointAllocatedEvents {
         Player player = event.getPlayer();
         SpellSchool school = event.getSchool();
         int pointsGained = event.getPointsGained();
-        int totalPoints = event.getTotalPoints();
         
         // Only handle server-side events
         if (player.level().isClientSide()) {
@@ -63,8 +61,6 @@ public class SchoolAffinityPointAllocatedEvents {
         }
         
         playPointAllocatedSound(player, school);
-        // TODO: remove this?
-        // sendPointAllocatedMessage(player, school, pointsGained, totalPoints);
         spawnPointAllocatedParticles(player, school, pointsGained);
     }
     
@@ -85,25 +81,7 @@ public class SchoolAffinityPointAllocatedEvents {
                 1.0f  // Pitch
         );
     }
-    
-    private static void sendPointAllocatedMessage(Player player, SpellSchool school, int pointsGained, int totalPoints) {
-        // Create the message components
-        Component schoolName = school.getTextComponent();
-        Component pointsText = Component.literal("+" + pointsGained + " points");
-        Component totalText = Component.literal("(" + totalPoints + " total)");
-        
-        // Create the full message: "Your affinity in %s has increased by +X points (Y total)"
-        Component message = Component.translatable(
-            "ars_affinity.point_allocated.message",
-            schoolName,
-            pointsText,
-            totalText
-        );
-        
-        // Send the message to the player
-        player.sendSystemMessage(message);
-    }
-    
+
     private static void spawnPointAllocatedParticles(Player player, SpellSchool school, int pointsGained) {
         ArsAffinity.LOGGER.info("=== SPAWNING POINT ALLOCATED PARTICLES ===");
         ArsAffinity.LOGGER.info("spawnPointAllocatedParticles called for player {} school {} points {}", 
