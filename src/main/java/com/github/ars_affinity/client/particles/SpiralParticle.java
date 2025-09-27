@@ -9,19 +9,26 @@ import net.minecraft.client.particle.TextureSheetParticle;
 public class SpiralParticle extends TextureSheetParticle {
     private final float radius;
     private final float speed;
-    private float angle;
-    public float initScale;
+    private final double centerX, centerY, centerZ;
+    private final float initialAngle;
     private final float initialQuadSize;
 
     protected SpiralParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz, float r, float g, float b, float scale, int lifetime, SpriteSet sprite) {
         super(worldIn, x, y, z, 0, 0, 0);
-        this.radius = 0.3f * scale;
-        this.speed = 0.2f;
-        this.angle = (float) (Math.random() * 2 * Math.PI);
-        this.quadSize = scale * 0.15f + (float)(Math.random() * 0.05f);
+        this.radius = 5f * scale;
+        this.speed = 0.1f;
+        
+        // Store the center point (where all particles should spiral around)
+        this.centerX = x;
+        this.centerY = y;
+        this.centerZ = z;
+        
+        // Each particle gets a random starting angle offset
+        this.initialAngle = (float) (Math.random() * 2 * Math.PI);
+        
+        this.quadSize = scale * 0.25f + (float)(Math.random() * 0.05f);
         this.initialQuadSize = this.quadSize;
         this.hasPhysics = false;
-        this.initScale = scale * 0.01f;
         this.xd = ParticleUtil.inRange(-0.01, 0.01);
         this.yd = 0.001;
         this.zd = ParticleUtil.inRange(-0.01, 0.01);
@@ -29,7 +36,7 @@ public class SpiralParticle extends TextureSheetParticle {
         this.friction = 0.99F;
         this.speedUpWhenYMotionIsBlocked = false;
         this.setColor(r, g, b);
-        this.lifetime = 40;
+        this.lifetime = 60;
 
         this.pickSprite(sprite);
         
@@ -41,24 +48,27 @@ public class SpiralParticle extends TextureSheetParticle {
     public void tick() {
         super.tick();
 
-        angle += speed;
-
         float progress = Math.min((float) this.age / this.lifetime, 1.0f);
+        
+        // Calculate the current spiral rotation angle (shared by all particles)
+        // Accelerate rotational speed over time using easeOutExpo (starts slow, speeds up)
+        float rotationalAcceleration = 1.0f + easeOutExpo(progress) * 3.0f; // 1x to 4x speed
+        float currentAngle = initialAngle + (this.age * speed * rotationalAcceleration);
 
         // Spiral radius growth
-        float currentRadius = radius * (0.3f + progress * 0.7f);
+        float currentRadius = radius * (0.1f + progress * 0.01f);
 
-        // Spiral X/Z
-        double x = this.x + currentRadius * Math.sin(angle);
-        double z = this.z + currentRadius * Math.cos(angle);
+        // Calculate spiral position relative to the center point
+        double x = centerX + currentRadius * Math.sin(currentAngle);
+        double z = centerZ + currentRadius * Math.cos(currentAngle);
 
         // --- EaseOutExpo on upward movement ---
-        double easedY = this.y + easeOutExpo(progress) * 1.0; // up to 2 blocks high
+        double easedY = centerY + easeOutExpo(progress) * 2f; // up to 2 blocks high
 
-        // --- EaseOutExpo inverse for size fade ---
-        float sizeProgress = Math.min((float) this.age / 10.0f, 1.0f);
-        float sizeFade = 1.0f - easeOutExpo(sizeProgress);
-        // this.quadSize = this.initialQuadSize * sizeFade;
+        // --- EaseOutExpo for size fade from initial size to 0 over lifetime ---
+        float sizeProgress = Math.min((float) this.age / this.lifetime, 1.0f);
+        float sizeFade = 1.0f - easeOutExpo(sizeProgress * 0.75f);
+        this.quadSize = this.initialQuadSize * sizeFade;
 
         this.setPos(x, easedY, z);
     }

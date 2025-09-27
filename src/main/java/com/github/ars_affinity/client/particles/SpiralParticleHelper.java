@@ -52,6 +52,10 @@ public class SpiralParticleHelper {
     }
     
     public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount) {
+        spawnSpiralParticles(level, player, school, particleCount, 0);
+    }
+    
+    public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount, int delayTicks) {
         ArsAffinity.LOGGER.info("=== SPIRAL PARTICLE HELPER START ===");
         ArsAffinity.LOGGER.info("SpiralParticleHelper.spawnSpiralParticles called with level={}, player={}, school={}, count={}",
             level != null ? "ClientLevel" : "null", 
