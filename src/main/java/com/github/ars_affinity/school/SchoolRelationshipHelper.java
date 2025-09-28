@@ -1,6 +1,7 @@
 package com.github.ars_affinity.school;
 
 import com.github.ars_affinity.config.ArsAffinityConfig;
+import com.github.ars_affinity.util.SchoolColors;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import java.util.HashMap;
@@ -141,24 +142,6 @@ public class SchoolRelationshipHelper {
     }
 
     public static int getColorForSchool(SpellSchool school) {
-        if (school == SpellSchools.ELEMENTAL_FIRE) {
-            return 0xFFf06666;
-        } else if (school == SpellSchools.ELEMENTAL_WATER) {
-            return 0xFF82a2ed;
-        } else if (school == SpellSchools.ELEMENTAL_EARTH) {
-            return 0xFF62e296;
-        } else if (school == SpellSchools.ELEMENTAL_AIR) {
-            return 0xFFd4cf5a;
-        } else if (school == SpellSchools.ABJURATION) {
-            return 0xFFeb7cce;
-        } else if (school == SpellSchools.NECROMANCY) {
-            return 0xFF6d6d6d;
-        } else if (school == SpellSchools.CONJURATION) {
-            return 0xFF6ae3ce;
-        } else if (school == SpellSchools.MANIPULATION) {
-            return 0xFFFF8800;
-        } else {
-            return 0xFFe99a58;
-        }
+        return SchoolColors.getHexColor(school);
     }
 }
