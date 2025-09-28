@@ -173,23 +173,8 @@ public class PerkTreeManager {
     }
     
     public static int calculatePointCost(SpellSchool school, int currentPoints) {
-        // Implement quadratic per-point cost curve inside each school
-        // 1st point: ×1, 2nd point: ×1.5, 3rd point: ×2.25, 4th point: ×3.3, etc.
-        // This makes the first 2-3 points relatively cheap (encourages dipping), 
-        // but mastery requires heavy grind
-        
-        if (currentPoints <= 0) {
-            return 1; // First point always costs 1
-        }
-        
-        // Quadratic scaling: cost multiplier increases exponentially
-        // Using formula: cost = baseCost * (1.5 ^ (currentPoints - 1))
-        // This gives us: 1st=1, 2nd=1.5, 3rd=2.25, 4th=3.375, etc.
-        double baseCost = 1.0;
-        double scalingFactor = Math.pow(1.5, currentPoints - 1);
-        double totalCost = baseCost * scalingFactor;
-        
-        return Math.max(1, (int) Math.round(totalCost));
+        // All perks cost 1 point - no quadratic scaling
+        return 1;
     }
     
     public static int convertAffinityToPoints(float affinityPercentage) {

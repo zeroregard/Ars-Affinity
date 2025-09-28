@@ -247,10 +247,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     // Perk Allocation
     public boolean canAllocatePerk(PerkNode node) {
         // Check if player has enough points
-        // Check using dynamic cost
-        int currentPointsInSchool = getSchoolPoints(node.getSchool());
-        int dynamicCost = node.getDynamicPointCost(currentPointsInSchool);
-        if (getAvailablePoints(node.getSchool()) < dynamicCost) {
+        if (getAvailablePoints(node.getSchool()) < node.getPointCost()) {
             return false;
         }
         
@@ -284,12 +281,8 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             return false;
         }
         
-        // Calculate dynamic cost based on current points in school
-        int currentPointsInSchool = getSchoolPoints(node.getSchool());
-        int dynamicCost = node.getDynamicPointCost(currentPointsInSchool);
-        
-        // Allocate the perk with dynamic cost
-        PerkAllocation allocation = new PerkAllocation(node, dynamicCost);
+        // Allocate the perk
+        PerkAllocation allocation = new PerkAllocation(node);
         allocatedPerks.put(nodeId, allocation);
         unlockedNodes.add(nodeId);
         
@@ -302,7 +295,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             updateActiveAbilityData();
         }
         
-        ArsAffinity.LOGGER.info("Allocated perk: {} for {} points (dynamic cost)", nodeId, dynamicCost);
+        ArsAffinity.LOGGER.info("Allocated perk: {} for {} points", nodeId, node.getPointCost());
         return true;
     }
     

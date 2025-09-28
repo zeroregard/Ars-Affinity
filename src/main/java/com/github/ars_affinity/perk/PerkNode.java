@@ -63,17 +63,6 @@ public class PerkNode {
     public SpellSchool getSchool() { return school; }
     public int getTier() { return tier; }
     public int getPointCost() { return pointCost; }
-    
-    /**
-     * Get the dynamic point cost for this perk based on current points in the school.
-     * This implements the quadratic scaling system where later points cost more.
-     * 
-     * @param currentPointsInSchool Current total points allocated in this school
-     * @return Dynamic point cost for this perk
-     */
-    public int getDynamicPointCost(int currentPointsInSchool) {
-        return PerkTreeManager.calculatePointCost(this.school, currentPointsInSchool);
-    }
     public List<String> getPrerequisites() { return new ArrayList<>(prerequisites); }
     public String getPrerequisiteGlyph() { return prerequisiteGlyph; }
     public PerkCategory getCategory() { return category; }
