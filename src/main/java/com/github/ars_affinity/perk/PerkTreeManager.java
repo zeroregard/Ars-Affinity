@@ -173,19 +173,8 @@ public class PerkTreeManager {
     }
     
     public static int calculatePointCost(SpellSchool school, int currentPoints) {
-        // Use the same scaling formula as the old system
-        double scalingDecay = ArsAffinityConfig.AFFINITY_SCALING_DECAY_STRENGTH.get();
-        double minimumFactor = ArsAffinityConfig.AFFINITY_SCALING_MINIMUM_FACTOR.get();
-        
-        // Calculate the scaling factor based on current points
-        // This is the inverse of the old system - we want to know how much it costs to gain the next point
-        double scalingFactor = Math.max(minimumFactor, Math.pow(1.0 - (currentPoints / 1000.0), scalingDecay));
-        
-        // Base cost for gaining a point
-        double baseCost = 1.0;
-        double scaledCost = baseCost / scalingFactor;
-        
-        return Math.max(1, (int) Math.round(scaledCost));
+        // All perks cost 1 point - no quadratic scaling
+        return 1;
     }
     
     public static int convertAffinityToPoints(float affinityPercentage) {
