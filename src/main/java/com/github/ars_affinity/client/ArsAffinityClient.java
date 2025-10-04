@@ -5,6 +5,7 @@ import com.github.ars_affinity.client.screen.AffinityScreen;
 import com.github.ars_affinity.common.ability.ActiveAbilityPressDownPacket;
 import com.github.ars_affinity.common.ability.ActiveAbilityReleasePacket;
 import com.github.ars_affinity.common.ability.NetworkHandler;
+import com.github.ars_affinity.registry.ParticleRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +37,8 @@ public class ArsAffinityClient {
     
     public static void init(IEventBus modEventBus) {
         ArsAffinity.LOGGER.info("Initializing Ars Affinity client...");
+        
+        ParticleRegistry.PARTICLES.register(modEventBus);
         
         modEventBus.addListener(ArsAffinityClient::clientSetup);
         modEventBus.addListener(ArsAffinityClient::registerKeybindings);

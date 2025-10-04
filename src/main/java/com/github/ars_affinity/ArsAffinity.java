@@ -14,7 +14,6 @@ import com.github.ars_affinity.perk.PerkTreeManager;
 import com.github.ars_affinity.registry.ModCreativeTabs;
 import com.github.ars_affinity.registry.ModDataComponents;
 import com.github.ars_affinity.registry.ModPotions;
-import com.github.ars_affinity.registry.ParticleRegistry;
 import com.github.ars_affinity.common.ritual.RitualAmnesia;
 import com.hollingsworth.arsnouveau.setup.registry.APIRegistry;
 import com.github.ars_affinity.registry.ModSounds;
@@ -62,7 +61,6 @@ public class ArsAffinity {
         ModDataComponents.DATA.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
-        ParticleRegistry.PARTICLES.register(modEventBus);
         modEventBus.addListener(Networking::register);
         
         // Register ritual
