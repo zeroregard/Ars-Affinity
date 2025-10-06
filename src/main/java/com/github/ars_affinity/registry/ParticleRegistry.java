@@ -1,7 +1,6 @@
 package com.github.ars_affinity.registry;
 
 import com.github.ars_affinity.ArsAffinity;
-import com.github.ars_affinity.client.particles.SpiralParticleWrapper;
 import com.github.ars_affinity.client.particles.SpiralParticleTypeData;
 import com.github.ars_affinity.client.particles.SpiralParticleType;
 import com.github.ars_affinity.client.particles.VanillaWrappedSpiralProvider;
@@ -20,9 +19,6 @@ public class ParticleRegistry {
 
     public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, ArsAffinity.MOD_ID);
 
-    // Original spiral particle type
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SpiralParticleTypeData>> SPIRAL_PARTICLE_TYPE = PARTICLES.register("spiral_particle", SpiralParticleType::new);
-    
     // School-specific spiral particle types that use vanilla sprites
     public static final DeferredHolder<ParticleType<?>, ParticleType<SpiralParticleTypeData>> SPIRAL_FIRE = PARTICLES.register("spiral_fire", SpiralParticleType::new);
     public static final DeferredHolder<ParticleType<?>, ParticleType<SpiralParticleTypeData>> SPIRAL_WATER = PARTICLES.register("spiral_water", SpiralParticleType::new);
@@ -35,9 +31,6 @@ public class ParticleRegistry {
 
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent evt) {
-        // Original spiral particle
-        evt.registerSpriteSet(SPIRAL_PARTICLE_TYPE.get(), SpiralParticleWrapper::new);
-        
         // School-specific particles using vanilla sprites
         evt.registerSpriteSet(SPIRAL_FIRE.get(), (sprites) -> new VanillaWrappedSpiralProvider(ParticleTypes.FLAME, sprites));
         evt.registerSpriteSet(SPIRAL_WATER.get(), (sprites) -> new VanillaWrappedSpiralProvider(ParticleTypes.BUBBLE, sprites));

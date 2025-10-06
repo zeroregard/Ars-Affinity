@@ -84,7 +84,7 @@ public class SpiralParticleHelper {
         for (int i = 0; i < particleCount; i++) {
             String spriteType = getSpriteTypeForSchool(school);
             SpiralParticleTypeData particleData = new SpiralParticleTypeData(
-                ParticleRegistry.SPIRAL_PARTICLE_TYPE.get(), // Use default for position-based spawning
+                ParticleRegistry.SPIRAL_FIRE.get(), // Use fire as default for position-based spawning
                 color, 
                 false, 
                 1.0f,
@@ -147,7 +147,7 @@ public class SpiralParticleHelper {
         ArsAffinity.LOGGER.info("SpiralParticleHelper: Player position: ({}, {}, {}), eye height: {}", 
             playerPos.x, playerPos.y, playerPos.z, player.getEyeHeight());
         ArsAffinity.LOGGER.info("SpiralParticleHelper: Spawning particles at position ({}, {}, {})", x, y, z);
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Particle type: {}", ParticleRegistry.SPIRAL_PARTICLE_TYPE.get());
+        ArsAffinity.LOGGER.info("SpiralParticleHelper: Particle type: {}", ParticleRegistry.SPIRAL_FIRE.get());
         
         // Register the particle effect for position tracking
         registerParticleEffect(player.getId(), school.getId().toString(), x, y, z);
@@ -245,7 +245,7 @@ public class SpiralParticleHelper {
             case "abjuration" -> ParticleRegistry.SPIRAL_ABJURATION.get();
             case "necromancy" -> ParticleRegistry.SPIRAL_NECROMANCY.get();
             case "conjuration" -> ParticleRegistry.SPIRAL_CONJURATION.get();
-            default -> ParticleRegistry.SPIRAL_PARTICLE_TYPE.get();
+            default -> ParticleRegistry.SPIRAL_FIRE.get();
         };
     }
     
