@@ -7,6 +7,7 @@ import com.github.ars_affinity.client.screen.perk.SchoolColorHelper;
 import com.github.ars_affinity.perk.PerkTreeManager;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
+import com.hollingsworth.arsnouveau.api.documentation.DocAssets;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -28,6 +29,8 @@ public class AffinityScreen extends Screen {
     private static final ResourceLocation AFFINITY_FRAME = ArsAffinity.prefix("textures/gui/affinity_frame.png");
 
     private final Player player;
+    private final boolean showBackButton;
+    private final Screen parentScreen;
     private final List<SpellSchool> schools = List.of(
             SpellSchools.ELEMENTAL_EARTH,      // Top left
             SpellSchools.MANIPULATION,         // Top right
@@ -48,10 +51,21 @@ public class AffinityScreen extends Screen {
     private boolean isFadingIn = false;
     private boolean isFadingOut = false;
     private boolean isAnimating = false;
+    private boolean helpButtonHovered = false;
 
     public AffinityScreen(Player player) {
+        this(player, false, null);
+    }
+    
+    public AffinityScreen(Player player, boolean showBackButton) {
+        this(player, showBackButton, null);
+    }
+    
+    public AffinityScreen(Player player, boolean showBackButton, Screen parentScreen) {
         super(Component.translatable("ars_affinity.screen.affinity.title"));
         this.player = player;
+        this.showBackButton = showBackButton;
+        this.parentScreen = parentScreen;
     }
 
     private ResourceLocation getConstellationTexture(SpellSchool school) {
@@ -104,8 +118,6 @@ public class AffinityScreen extends Screen {
             float fadeProgress = Math.min(fadeElapsed / 200.0f, 1.0f); // 200ms = 0.2 seconds
             alpha = (1.0f - fadeProgress) * 0.8f; // Max 80% opacity
             
-            // Debug output
-            System.out.println("Fading out: elapsed=" + fadeElapsed + "ms, progress=" + fadeProgress + ", alpha=" + alpha);
             
             if (fadeProgress >= 1.0f) {
                 isFadingOut = false;
@@ -182,6 +194,19 @@ public class AffinityScreen extends Screen {
         // Render the frame overlay outside the clipped area
         renderFrameOverlay(guiGraphics);
         
+        // Render back button if opened from spell book
+        if (showBackButton) {
+            renderBackButtonIcon(guiGraphics, (int) mouseX, (int) mouseY);
+        }
+        
+        // Render help button
+        renderHelpButton(guiGraphics, (int) mouseX, (int) mouseY);
+        
+        // Render help tooltip if hovered
+        if (helpButtonHovered) {
+            renderHelpTooltip(guiGraphics, (int) mouseX, (int) mouseY);
+        }
+        
         if (hoveredSchool != null) {
             renderSchoolInfo(guiGraphics, centerX, centerY);
         }
@@ -248,21 +273,25 @@ public class AffinityScreen extends Screen {
         int nodeX = x - (PERK_NODE_SIZE - ICON_SIZE) / 2;
         int nodeY = y - (PERK_NODE_SIZE - ICON_SIZE) / 2;
         
-        // Get school color for the border
-        int schoolColor = SchoolColorHelper.getSchoolColor(school);
+        // Get player's affinity data to check for available points
+        var affinityData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+        boolean hasAvailablePoints = affinityData != null && affinityData.getAvailablePoints(school) > 0;
         
         // Render the perk background (no coloring)
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         guiGraphics.blit(PERK_BACKGROUND_TEXTURE, nodeX, nodeY, 0, 0, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE);
         
-        // Render the colored border
-        RenderSystem.setShaderColor(
-            (schoolColor >> 16 & 0xFF) / 255.0f,
-            (schoolColor >> 8 & 0xFF) / 255.0f,
-            (schoolColor & 0xFF) / 255.0f,
-            1.0f
-        );
-        guiGraphics.blit(PERK_BORDER_TEXTURE, nodeX, nodeY, 0, 0, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE);
+        // Only render the colored border if there are available points to spend
+        if (hasAvailablePoints) {
+            int schoolColor = SchoolColorHelper.getSchoolColor(school);
+            RenderSystem.setShaderColor(
+                (schoolColor >> 16 & 0xFF) / 255.0f,
+                (schoolColor >> 8 & 0xFF) / 255.0f,
+                (schoolColor & 0xFF) / 255.0f,
+                1.0f
+            );
+            guiGraphics.blit(PERK_BORDER_TEXTURE, nodeX, nodeY, 0, 0, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE, PERK_NODE_SIZE);
+        }
         
         // Reset color for icon rendering
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -381,7 +410,159 @@ public class AffinityScreen extends Screen {
                 }
             }
         }
+        
+        // Check if back button was clicked
+        if (showBackButton && handleBackButtonClick((int) mouseX, (int) mouseY)) {
+            return true;
+        }
+        
+        // Check if help button was clicked
+        if (handleHelpButtonClick((int) mouseX, (int) mouseY)) {
+            return true;
+        }
+        
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+    
+    private void renderBackButtonIcon(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = BACKGROUND_HEIGHT; // 194x194 panel
+        int panelHeight = BACKGROUND_HEIGHT;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonWidth = DocAssets.ARROW_BACK.width();
+        int buttonHeight = DocAssets.ARROW_BACK.height();
+        int buttonX = panelX + 10; // Position relative to panel
+        int buttonY = panelY + 10; // Position relative to panel
+        
+        // Determine which texture to use based on hover state
+        boolean isHovered = mouseX >= buttonX && mouseX < buttonX + buttonWidth && 
+                           mouseY >= buttonY && mouseY < buttonY + buttonHeight;
+        
+        var backIcon = isHovered ? DocAssets.ARROW_BACK_HOVER : DocAssets.ARROW_BACK;
+        
+        // Render the back arrow icon above the frame (Z > 0)
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.15f); // Above frame
+        guiGraphics.blit(
+            backIcon.location(), 
+            buttonX, buttonY, 
+            backIcon.u(), backIcon.v(), 
+            buttonWidth, buttonHeight, 
+            backIcon.width(), backIcon.height()
+        );
+        guiGraphics.pose().popPose();
+    }
+    
+    private boolean handleBackButtonClick(int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = BACKGROUND_HEIGHT; // 194x194 panel
+        int panelHeight = BACKGROUND_HEIGHT;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonWidth = DocAssets.ARROW_BACK.width();
+        int buttonHeight = DocAssets.ARROW_BACK.height();
+        int buttonX = panelX + 10;
+        int buttonY = panelY + 10;
+        
+        if (mouseX >= buttonX && mouseX < buttonX + buttonWidth && 
+            mouseY >= buttonY && mouseY < buttonY + buttonHeight) {
+            if (parentScreen != null) {
+                this.minecraft.setScreen(parentScreen);
+            } else {
+                onClose();
+            }
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private void renderHelpButton(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = BACKGROUND_HEIGHT; // 194x194 panel
+        int panelHeight = BACKGROUND_HEIGHT;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonSize = 16;
+        int buttonX = panelX + panelWidth - buttonSize - 10; // Top right corner
+        int buttonY = panelY + 10; // Top right corner
+        
+        // Determine if button is hovered
+        helpButtonHovered = mouseX >= buttonX && mouseX < buttonX + buttonSize && 
+                           mouseY >= buttonY && mouseY < buttonY + buttonSize;
+        
+        // Debug output
+        if (helpButtonHovered) {
+            System.out.println("Help button hovered at: " + mouseX + ", " + mouseY);
+        }
+        
+        // Render only the "?" symbol with no background
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 0.1f); // Above other elements
+        int textColor = helpButtonHovered ? 0xFFFFFFFF : 0xFFCCCCCC; // White when hovered, light grey when not
+        guiGraphics.drawCenteredString(font, "?", buttonX + buttonSize / 2, buttonY + 4, textColor);
+        guiGraphics.pose().popPose();
+    }
+    
+    private void renderHelpTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Create tooltip text explaining the progression system
+        List<Component> tooltipLines = List.of(
+            Component.literal("§6Affinity Progression"),
+            Component.literal(""),
+            Component.literal("§7Casting spells builds affinity"),
+            Component.literal("§7with their respective schools."),
+            Component.literal(""),
+            Component.literal("§7Higher affinity unlocks powerful"),
+            Component.literal("§7perks and abilities related to"),
+            Component.literal("§7that school's magic."),
+            Component.literal(""),
+            Component.literal("§7As you progress, you'll gain"),
+            Component.literal("§7increased spell power and"),
+            Component.literal("§7resistance for that school,"),
+            Component.literal("§7plus unique passive abilities."),
+            Component.literal(""),
+            Component.literal("§7Click on a school to view"),
+            Component.literal("§7detailed perks and abilities.")
+        );
+        
+        // Convert Components to FormattedCharSequence for tooltip rendering
+        List<net.minecraft.util.FormattedCharSequence> formattedLines = tooltipLines.stream()
+            .map(component -> component.getVisualOrderText())
+            .toList();
+        
+        // Render tooltip with higher Z-order
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 1000); // High Z-order to ensure visibility
+        guiGraphics.renderTooltip(font, formattedLines, mouseX + 10, mouseY - 10);
+        guiGraphics.pose().popPose();
+    }
+    
+    private boolean handleHelpButtonClick(int mouseX, int mouseY) {
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        int panelWidth = BACKGROUND_HEIGHT; // 194x194 panel
+        int panelHeight = BACKGROUND_HEIGHT;
+        int panelX = centerX - panelWidth / 2;
+        int panelY = centerY - panelHeight / 2;
+        
+        int buttonSize = 16;
+        int buttonX = panelX + panelWidth - buttonSize - 10; // Top right corner
+        int buttonY = panelY + 10; // Top right corner
+        
+        if (mouseX >= buttonX && mouseX < buttonX + buttonSize && 
+            mouseY >= buttonY && mouseY < buttonY + buttonSize) {
+            // Show help tooltip - this will be handled by the render method
+            return true;
+        }
+        
+        return false;
     }
 
 }

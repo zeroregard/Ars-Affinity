@@ -500,7 +500,6 @@ public class PerkTreeScreen extends Screen {
         
         if (mouseX >= buttonX && mouseX < buttonX + buttonWidth && 
             mouseY >= buttonY && mouseY < buttonY + buttonHeight) {
-            System.out.println("Back button clicked!"); // Debug logging
             onClose();
             return true;
         }

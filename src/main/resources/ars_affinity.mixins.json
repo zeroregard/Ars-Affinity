@@ -10,6 +10,8 @@
     "PlayerPowderedSnowMixin"
   ],
   "client": [
+    "GuiSpellBookMixin",
+    "ScreenInvoker"
   ],
   "server": [
   ],

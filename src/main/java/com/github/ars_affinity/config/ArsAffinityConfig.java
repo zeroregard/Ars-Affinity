@@ -40,6 +40,9 @@ public class ArsAffinityConfig {
     // Glyph Blacklist Configuration
     public static ModConfigSpec.ConfigValue<List<? extends String>> GLYPH_BLACKLIST;
     
+    // UI Configuration
+    public static ModConfigSpec.BooleanValue ENABLE_SPELL_BOOK_BUTTON;
+    
     static {
         ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
         
@@ -124,6 +127,12 @@ public class ArsAffinityConfig {
         GLYPH_BLACKLIST = SERVER_BUILDER
             .comment("List of glyph IDs to ignore for affinity progress tracking. Use format 'modid:glyph_name' (e.g., 'ars_nouveau:glyph_break')")
             .defineList("blacklistedGlyphs", List.of("ars_nouveau:glyph_break", "ars_nouveau:glyph_craft"), () -> "", o -> o instanceof String);
+        SERVER_BUILDER.pop();
+        
+        SERVER_BUILDER.comment("UI Configuration").push("ui");
+        ENABLE_SPELL_BOOK_BUTTON = SERVER_BUILDER
+            .comment("Enable the Ars Affinity button in the spell book GUI")
+            .define("enableSpellBookButton", true);
         SERVER_BUILDER.pop();
         
         SERVER_CONFIG = SERVER_BUILDER.build();
