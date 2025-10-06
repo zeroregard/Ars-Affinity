@@ -75,6 +75,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         return availablePoints.getOrDefault(school, 0);
     }
     
+    public boolean hasAnyAvailablePoints() {
+        return availablePoints.values().stream().anyMatch(points -> points > 0);
+    }
+    
     // Percentage Management
     public float getSchoolPercentage(SpellSchool school) {
         return schoolPercentages.getOrDefault(school, 0.0f);

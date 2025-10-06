@@ -145,14 +145,14 @@ const PerkTreeSVG: React.FC<PerkTreeSVGProps> = ({
                     
                     {/* Necromancy (Anima) gradient */}
                     <linearGradient id="necromancy-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#8b0606"/>
-                        <stop offset="100%" stopColor="#282828"/>
+                        <stop offset="0%" stopColor="#FFFFFF"/>
+                        <stop offset="100%" stopColor="#FFFFFF"/>
                     </linearGradient>
                     
                     {/* Necromancy (Anima) hover gradient */}
                     <linearGradient id="necromancy-gradient-hover" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#a00a0a"/>
-                        <stop offset="100%" stopColor="#404040"/>
+                        <stop offset="0%" stopColor="#FFFFFF"/>
+                        <stop offset="100%" stopColor="#FFFFFF"/>
                     </linearGradient>
                 </defs>
                 <rect x="-2000" y="-2000" width="4000" height="4000" fill="url(#grid)" />

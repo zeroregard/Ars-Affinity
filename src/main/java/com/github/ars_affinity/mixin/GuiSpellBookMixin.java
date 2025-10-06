@@ -1,10 +1,10 @@
 package com.github.ars_affinity.mixin;
 
 import com.github.ars_affinity.client.gui.ArsAffinityDocAssets;
+import com.github.ars_affinity.client.gui.buttons.AffinityButton;
 import com.github.ars_affinity.client.screen.AffinityScreen;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook;
-import com.hollingsworth.arsnouveau.client.gui.buttons.GuiImageButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +26,7 @@ public abstract class GuiSpellBookMixin {
         int bookTop = spellBook.bookTop;
 
         ((ScreenInvoker) (Object) this).callAddRenderableWidget(
-            new GuiImageButton(
+            new AffinityButton(
                 bookLeft - 15,
                 bookTop + 140,
                 ArsAffinityDocAssets.AFFINITY_TAB,

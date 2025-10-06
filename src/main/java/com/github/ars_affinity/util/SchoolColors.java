@@ -36,8 +36,8 @@ public class SchoolColors {
         // Abjuration - Magenta
         PARTICLE_COLORS.put(SpellSchools.ABJURATION, new ParticleColor(235, 124, 206)); // 0xFFeb7cce -> RGB
         
-        // Necromancy - Gray
-        PARTICLE_COLORS.put(SpellSchools.NECROMANCY, new ParticleColor(109, 109, 109)); // 0xFF6d6d6d -> RGB
+        // Necromancy - White
+        PARTICLE_COLORS.put(SpellSchools.NECROMANCY, new ParticleColor(255, 255, 255)); // 0xFFFFFFFF -> RGB
         
         // Conjuration - Teal
         PARTICLE_COLORS.put(SpellSchools.CONJURATION, new ParticleColor(106, 227, 206)); // 0xFF6ae3ce -> RGB
@@ -49,7 +49,7 @@ public class SchoolColors {
         HEX_COLORS.put(SpellSchools.ELEMENTAL_AIR, 0xFFd4cf5a);
         HEX_COLORS.put(SpellSchools.MANIPULATION, 0xFFFF8800);
         HEX_COLORS.put(SpellSchools.ABJURATION, 0xFFeb7cce);
-        HEX_COLORS.put(SpellSchools.NECROMANCY, 0xFF6d6d6d);
+        HEX_COLORS.put(SpellSchools.NECROMANCY, 0xFFFFFFFF);
         HEX_COLORS.put(SpellSchools.CONJURATION, 0xFF6ae3ce);
     }
     

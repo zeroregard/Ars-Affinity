@@ -18,10 +18,10 @@ export const SCHOOL_COLORS: Record<School, {
     'manipulation': { primary: '#e99a58', hover: '#f2b366', allocated: '#10B981' },
     'fire': { primary: '#f06666', hover: '#f58a8a', allocated: '#10B981' },
     'necromancy': { 
-        primary: 'url(#necromancy-gradient)', 
-        hover: 'url(#necromancy-gradient-hover)', 
+        primary: '#FFFFFF', 
+        hover: '#FFFFFF', 
         allocated: '#10B981',
-        gradient: { from: '#282828', to: '#8b0606' }
+        gradient: { from: '#FFFFFF', to: '#FFFFFF' }
     },
     'air': { primary: '#d4cf5a', hover: '#e0dc7a', allocated: '#10B981' },
     'conjuration': { primary: '#6ae3ce', hover: '#8ae9d6', allocated: '#10B981' },
