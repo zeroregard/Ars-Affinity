@@ -18,6 +18,7 @@
   "ars_affinity.perk.PASSIVE_STONE_SKIN": "Melee attacks against you are negated (%d second cooldown)",
   "ars_affinity.perk.PASSIVE_MANIPULATION_SICKNESS": "Casting manipulation spells applies sickness for %d seconds and costs hunger",
   "ars_affinity.perk.PASSIVE_HYDRATION": "Restore 1 hunger down to every %d seconds when wet",
+  "ars_affinity.gui.affinity": "Ars Affinity",
   "ars_affinity.perk.ACTIVE_GROUND_SLAM": "Slam the ground, creating a shockwave that damages and knocks back nearby entities. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_ICE_BLAST": "Blast your surroundings with ice. Press §bF§r to activate. %d second cooldown",
   "ars_affinity.perk.ACTIVE_SWAP_ABILITY": "Swap positions with entities. Press §bF§r to activate. %d second cooldown",
