@@ -23,6 +23,7 @@ public class Networking {
         final PayloadRegistrar reg = event.registrar("1");
         reg.playToClient(ParticleEffectPacket.TYPE, ParticleEffectPacket.CODEC, Networking::handle);
         reg.playToClient(ParticleEffectPacket.UPDATE_TYPE, ParticleEffectPacket.CODEC, Networking::handle);
+        reg.playToClient(LoopingSoundPacket.TYPE, LoopingSoundPacket.CODEC, Networking::handle);
     }
 
     public static <T extends AbstractPacket> void handle(T message, IPayloadContext ctx) {

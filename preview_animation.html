@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Texture Animation Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .preview-container {
+            background: #2d2d2d;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        #canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            border: 2px solid #555;
+            background: repeating-conic-gradient(#808080 0% 25%, #606060 0% 50%) 50% / 20px 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #005a9e;
+        }
+        
+        input[type="range"] {
+            width: 200px;
+        }
+        
+        .info {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Affinity Button Border Animation Preview</h1>
+    
+    <div class="preview-container">
+        <canvas id="canvas"></canvas>
+    </div>
+    
+    <div class="controls">
+        <button id="playPause">Pause</button>
+        <label>
+            Speed (FPS): 
+            <input type="range" id="speed" min="1" max="60" value="20">
+            <span id="speedValue">20</span>
+        </label>
+        <label>
+            Scale: 
+            <input type="range" id="scale" min="1" max="20" value="10">
+            <span id="scaleValue">10x</span>
+        </label>
+        <label>
+            Frame: 
+            <input type="range" id="frameSlider" min="0" max="0" value="0">
+            <span id="frameValue">0/0</span>
+        </label>
+    </div>
+    
+    <div class="info">
+        <div class="info-row">
+            <strong>Total Frames:</strong>
+            <span id="totalFrames">-</span>
+        </div>
+        <div class="info-row">
+            <strong>Frame Size:</strong>
+            <span id="frameSize">-</span>
+        </div>
+        <div class="info-row">
+            <strong>Current Frame:</strong>
+            <span id="currentFrame">-</span>
+        </div>
+        <div class="info-row">
+            <strong>Animation Duration:</strong>
+            <span id="duration">-</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const playPauseBtn = document.getElementById('playPause');
+        const speedSlider = document.getElementById('speed');
+        const speedValue = document.getElementById('speedValue');
+        const scaleSlider = document.getElementById('scale');
+        const scaleValue = document.getElementById('scaleValue');
+        const frameSlider = document.getElementById('frameSlider');
+        const frameValue = document.getElementById('frameValue');
+        
+        let img = new Image();
+        let currentFrame = 0;
+        let totalFrames = 0;
+        let frameWidth = 0;
+        let frameHeight = 20;
+        let isPlaying = true;
+        let animationInterval = null;
+        let scale = 10;
+        
+        img.src = 'src/main/resources/assets/ars_affinity/textures/gui/affinity_button_border_animation.png';
+        
+        img.onload = function() {
+            frameWidth = img.width;
+            totalFrames = img.height / frameHeight;
+            
+            canvas.width = frameWidth * scale;
+            canvas.height = frameHeight * scale;
+            
+            frameSlider.max = totalFrames - 1;
+            
+            document.getElementById('totalFrames').textContent = totalFrames;
+            document.getElementById('frameSize').textContent = `${frameWidth}x${frameHeight}`;
+            document.getElementById('duration').textContent = `${(totalFrames / 20).toFixed(2)}s @ 20 TPS`;
+            
+            updateFrame();
+            startAnimation();
+        };
+        
+        function updateFrame() {
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.drawImage(
+                img,
+                0, currentFrame * frameHeight,
+                frameWidth, frameHeight,
+                0, 0,
+                frameWidth * scale, frameHeight * scale
+            );
+            
+            document.getElementById('currentFrame').textContent = currentFrame;
+            frameSlider.value = currentFrame;
+            frameValue.textContent = `${currentFrame}/${totalFrames - 1}`;
+        }
+        
+        function startAnimation() {
+            if (animationInterval) clearInterval(animationInterval);
+            
+            const fps = parseInt(speedSlider.value);
+            animationInterval = setInterval(() => {
+                if (isPlaying) {
+                    currentFrame = (currentFrame + 1) % totalFrames;
+                    updateFrame();
+                }
+            }, 1000 / fps);
+        }
+        
+        playPauseBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playPauseBtn.textContent = isPlaying ? 'Pause' : 'Play';
+        });
+        
+        speedSlider.addEventListener('input', (e) => {
+            speedValue.textContent = e.target.value;
+            startAnimation();
+        });
+        
+        scaleSlider.addEventListener('input', (e) => {
+            scale = parseInt(e.target.value);
+            scaleValue.textContent = scale + 'x';
+            canvas.width = frameWidth * scale;
+            canvas.height = frameHeight * scale;
+            updateFrame();
+        });
+        
+        frameSlider.addEventListener('input', (e) => {
+            currentFrame = parseInt(e.target.value);
+            updateFrame();
+        });
+    </script>
+</body>
+</html>
+
+

@@ -2,6 +2,8 @@ package com.github.ars_affinity.common.ability.field;
 
 import com.github.ars_affinity.registry.ModPotions;
 import com.github.ars_affinity.perk.AffinityPerk;
+import com.github.ars_affinity.common.network.LoopingSoundPacket;
+import com.github.ars_affinity.common.network.Networking;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +28,10 @@ public class SanctuaryHelper extends AbstractFieldAbility {
 
 	public static void toggleOrStart(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
 		if (player.hasEffect(ModPotions.SANCTUARY_COOLDOWN_EFFECT)) return;
-		ActiveFieldRegistry.toggleOrStart(player, () -> new SanctuaryHelper(player, perk.manaCost, perk.cooldown));
+		boolean wasStarted = ActiveFieldRegistry.toggleOrStart(player, () -> new SanctuaryHelper(player, perk.manaCost, perk.cooldown));
+		if (wasStarted) {
+			Networking.sendToPlayerClient(new LoopingSoundPacket(player.getId(), "sanctuary", true), player);
+		}
 	}
 
 	@Override
@@ -40,6 +45,7 @@ public class SanctuaryHelper extends AbstractFieldAbility {
 	@Override
 	public void onRelease() {
 		player.addEffect(new MobEffectInstance(ModPotions.SANCTUARY_COOLDOWN_EFFECT, cooldownTicks, 0, false, true, true));
+		Networking.sendToPlayerClient(new LoopingSoundPacket(player.getId(), "sanctuary", false), player);
 	}
 
 	@Override

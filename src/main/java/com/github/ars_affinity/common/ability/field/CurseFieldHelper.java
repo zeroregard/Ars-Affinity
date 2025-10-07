@@ -2,6 +2,8 @@ package com.github.ars_affinity.common.ability.field;
 
 import com.github.ars_affinity.registry.ModPotions;
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.common.network.LoopingSoundPacket;
+import com.github.ars_affinity.common.network.Networking;
 import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,7 +32,10 @@ public class CurseFieldHelper extends AbstractFieldAbility {
 	public static void toggleOrStart(ServerPlayer player, com.github.ars_affinity.perk.AffinityPerk.ActiveAbilityPerk perk) {
 		if (player.hasEffect(ModPotions.CURSE_FIELD_COOLDOWN_EFFECT)) return;
 		ArsAffinity.LOGGER.info("CURSE FIELD start: manaCostPerTick={} cooldownTicks={}", perk.manaCost, perk.cooldown);
-		ActiveFieldRegistry.toggleOrStart(player, () -> new CurseFieldHelper(player, perk.manaCost, perk.cooldown));
+		boolean wasStarted = ActiveFieldRegistry.toggleOrStart(player, () -> new CurseFieldHelper(player, perk.manaCost, perk.cooldown));
+		if (wasStarted) {
+			Networking.sendToPlayerClient(new LoopingSoundPacket(player.getId(), "curse_field", true), player);
+		}
 	}
 
 	@Override
@@ -51,6 +56,7 @@ public class CurseFieldHelper extends AbstractFieldAbility {
 	@Override
 	public void onRelease() {
 		player.addEffect(new MobEffectInstance(ModPotions.CURSE_FIELD_COOLDOWN_EFFECT, cooldownTicks, 0, false, true, true));
+		Networking.sendToPlayerClient(new LoopingSoundPacket(player.getId(), "curse_field", false), player);
 	}
 
 	@Override

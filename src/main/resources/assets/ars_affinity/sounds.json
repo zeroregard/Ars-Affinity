@@ -13,27 +13,7 @@
 			}
 		]
 	},
-	"tier_change_1": {
-		"sounds": [
-			{
-				"name": "ars_affinity:tier_change_1"
-			}
-		]
-	},
-	"tier_change_2": {
-		"sounds": [
-			{
-				"name": "ars_affinity:tier_change_2"
-			}
-		]
-	},
-	"tier_change_3": {
-		"sounds": [
-			{
-				"name": "ars_affinity:tier_change_3"
-			}
-		]
-	},
+
 	"tier_change_fire": {
 		"sounds": [
 			{
@@ -87,6 +67,20 @@
 		"sounds": [
 			{
 				"name": "ars_affinity:tier_change_manipulation"
+			}
+		]
+	},
+	"curse_field": {
+		"sounds": [
+			{
+				"name": "ars_affinity:curse_field"
+			}
+		]
+	},
+	"sanctuary": {
+		"sounds": [
+			{
+				"name": "ars_affinity:sanctuary"
 			}
 		]
 	}

@@ -14,7 +14,7 @@ public class SchoolColorHelper {
         // Initialize school colors based on the docs constants
         SCHOOL_COLORS.put(SpellSchools.MANIPULATION, new SchoolColor(0xFFE99A58, 0xFFF2B366, 0xFFE99A58)); // Orange
         SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_FIRE, new SchoolColor(0xFFF06666, 0xFFF58A8A, 0xFFF06666)); // Red
-        SCHOOL_COLORS.put(SpellSchools.NECROMANCY, new SchoolColor(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)); // White
+        SCHOOL_COLORS.put(SpellSchools.NECROMANCY, new SchoolColor(0xFFE3E3E3, 0xFFE3E3E3, 0xFFE3E3E3)); // White
         SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_AIR, new SchoolColor(0xFFD4CF5A, 0xFFE0DC7A, 0xFFD4CF5A)); // Yellow
         SCHOOL_COLORS.put(SpellSchools.CONJURATION, new SchoolColor(0xFF6AE3CE, 0xFF8AE9D6, 0xFF6AE3CE)); // Teal
         SCHOOL_COLORS.put(SpellSchools.ELEMENTAL_WATER, new SchoolColor(0xFF82A2ED, 0xFFA1BAF0, 0xFF82A2ED)); // Blue

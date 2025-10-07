@@ -9,12 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ActiveFieldRegistry {
 	private static final Map<UUID, AbstractFieldAbility> ACTIVE = new ConcurrentHashMap<>();
 
-	public static void toggleOrStart(ServerPlayer player, java.util.function.Supplier<AbstractFieldAbility> supplier) {
+	public static boolean toggleOrStart(ServerPlayer player, java.util.function.Supplier<AbstractFieldAbility> supplier) {
 		UUID id = player.getUUID();
 		if (ACTIVE.containsKey(id)) {
-			return;
+			return false;
 		}
 		ACTIVE.put(id, supplier.get());
+		return true;
 	}
 
 	public static void stop(ServerPlayer player) {
@@ -32,6 +33,7 @@ public class ActiveFieldRegistry {
 		boolean keep = ability.tick();
 		if (!keep) {
 			ACTIVE.remove(id);
+			ability.onRelease();
 		}
 	}
 }

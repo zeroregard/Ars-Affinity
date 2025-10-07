@@ -238,7 +238,7 @@ public class PerkTooltipRenderer {
         }
         
         // Check if the glyph is unlocked
-        boolean isGlyphUnlocked = PerkAllocationManager.canAllocate(player, node.getId());
+        boolean isGlyphUnlocked = GlyphPrerequisiteHelper.hasUnlockedGlyph(player, node.getPrerequisiteGlyph());
         
         // Render glyph texture to the left of the perk node
         int glyphX = nodeX - 12; // 20 pixels to the left
