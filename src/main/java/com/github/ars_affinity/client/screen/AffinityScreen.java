@@ -44,9 +44,6 @@ public class AffinityScreen extends Screen {
     
     private SpellSchool hoveredSchool = null;
     private SpellSchool previousHoveredSchool = null;
-    private int lastMouseX = 0;
-    private int lastMouseY = 0;
-    private long hoverStartTime = 0;
     private long fadeStartTime = 0;
     private boolean isFadingIn = false;
     private boolean isFadingOut = false;
@@ -79,8 +76,6 @@ public class AffinityScreen extends Screen {
             long currentTime = System.currentTimeMillis();
             
             if (hoveredSchool != null) {
-                // Started hovering a new school
-                hoverStartTime = currentTime;
                 fadeStartTime = currentTime;
                 isFadingIn = true;
                 isFadingOut = false;
@@ -171,10 +166,6 @@ public class AffinityScreen extends Screen {
         int panelHeight = BACKGROUND_HEIGHT;
         int panelX = centerX - panelWidth / 2;
         int panelY = centerY - panelHeight / 2;
-
-        // Update mouse position for parallax effect
-        lastMouseX = mouseX;
-        lastMouseY = mouseY;
 
         // Enable scissor test for background and schools to keep them within the panel
         guiGraphics.enableScissor(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
@@ -497,11 +488,6 @@ public class AffinityScreen extends Screen {
         // Determine if button is hovered
         helpButtonHovered = mouseX >= buttonX && mouseX < buttonX + buttonSize && 
                            mouseY >= buttonY && mouseY < buttonY + buttonSize;
-        
-        // Debug output
-        if (helpButtonHovered) {
-            System.out.println("Help button hovered at: " + mouseX + ", " + mouseY);
-        }
         
         // Render only the "?" symbol with no background
         guiGraphics.pose().pushPose();
