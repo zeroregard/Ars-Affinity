@@ -3,8 +3,8 @@ package com.github.ars_affinity.common.ability;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.perk.AffinityPerk;
 import com.github.ars_affinity.registry.ModPotions;
+import com.github.ars_affinity.registry.ModSounds;
 import com.hollingsworth.arsnouveau.api.mana.IManaCap;
-import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -110,15 +109,9 @@ public class IceBlastHelper {
         List<Entity> entitiesInRange = player.level().getEntities(player, scanArea, entity -> 
             entity instanceof LivingEntity && entity != player && !entity.isAlliedTo(player));
         
-
-        
-        int affectedCount = 0;
         for (Entity entity : entitiesInRange) {
             if (entity instanceof LivingEntity livingEntity) {
-                
-                
                 applyEntityEffects(livingEntity, damage, freezeTime);
-                affectedCount++;
             }
         }
         
@@ -154,8 +147,6 @@ public class IceBlastHelper {
     private static void placeSnowAroundPlayer(ServerPlayer player) {
         Vec3 playerPos = player.position();
 
-        
-        int snowPlaced = 0;
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
                 BlockPos snowPos = new BlockPos(
@@ -167,12 +158,9 @@ public class IceBlastHelper {
                 if (canPlaceSnow(player.level(), snowPos)) {
                     BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, 1);
                     player.level().setBlockAndUpdate(snowPos, snowState);
-                    snowPlaced++;
                 }
             }
         }
-        
-
     }
     
     private static boolean canPlaceSnow(net.minecraft.world.level.Level level, BlockPos pos) {
@@ -228,10 +216,10 @@ public class IceBlastHelper {
             playerPos.x,
             playerPos.y,
             playerPos.z,
-            SoundEvents.GLASS_FALL,
+            ModSounds.ICE_BLAST.get(),
             SoundSource.BLOCKS,
-            0.8f,
-            0.8f
+            1.0f,
+            1.0f
         );
     }
     
@@ -245,8 +233,6 @@ public class IceBlastHelper {
     private static void extinguishAreaFires(ServerPlayer player) {
         Vec3 playerPos = player.position();
 
-        
-        int firesExtinguished = 0;
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
                 for (int z = -2; z <= 2; z++) {
@@ -258,20 +244,15 @@ public class IceBlastHelper {
                     
                     if (player.level().getBlockState(firePos).is(Blocks.FIRE)) {
                         player.level().removeBlock(firePos, false);
-                        firesExtinguished++;
                     }
                 }
             }
         }
-        
-
     }
     
     private static void convertLavaToObsidian(ServerPlayer player) {
         Vec3 playerPos = player.position();
 
-        
-        int lavaConverted = 0;
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
                 for (int z = -2; z <= 2; z++) {
@@ -283,20 +264,15 @@ public class IceBlastHelper {
                     
                     if (player.level().getBlockState(lavaPos).is(Blocks.LAVA)) {
                         player.level().setBlockAndUpdate(lavaPos, Blocks.OBSIDIAN.defaultBlockState());
-                        lavaConverted++;
                     }
                 }
             }
         }
-        
-
     }
 
     private static void freezeAreaWater(ServerPlayer player) {
         Vec3 playerPos = player.position();
 
-
-        int waterFrozen = 0;
         for (int x = -2; x <= 2; x++) {
             for (int y = -2; y <= 2; y++) {
                 for (int z = -2; z <= 2; z++) {
@@ -308,19 +284,15 @@ public class IceBlastHelper {
 
                     if (player.level().getBlockState(waterPos).is(Blocks.WATER)) {
                         player.level().setBlockAndUpdate(waterPos, Blocks.ICE.defaultBlockState());
-                        waterFrozen++;
                     }
                 }
             }
         }
-
-
     }
     
     private static void consumeMana(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap != null) {
-            double currentMana = manaCap.getCurrentMana();
             double maxMana = manaCap.getMaxMana();
             double requiredMana = perk.manaCost * maxMana;
             manaCap.removeMana((int)requiredMana);

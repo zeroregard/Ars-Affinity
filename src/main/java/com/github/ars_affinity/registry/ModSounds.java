@@ -11,6 +11,7 @@ public class ModSounds {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> DASH = SOUNDS.register("dash", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("dash")));
     public static final DeferredHolder<SoundEvent, SoundEvent> GROUND_SLAM = SOUNDS.register("ground_slam", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("ground_slam")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> ICE_BLAST = SOUNDS.register("ice_blast", () -> SoundEvent.createVariableRangeEvent(ArsAffinity.prefix("ice_blast")));
     
     // School tier change sounds
    
