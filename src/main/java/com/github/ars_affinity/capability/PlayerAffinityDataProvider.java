@@ -1,8 +1,11 @@
 package com.github.ars_affinity.capability;
 
 import com.github.ars_affinity.ArsAffinity;
+import com.github.ars_affinity.common.network.Networking;
+import com.github.ars_affinity.common.network.SyncPlayerAffinityDataPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
@@ -76,6 +79,18 @@ public class PlayerAffinityDataProvider {
             }
         } else {
             ArsAffinity.LOGGER.warn("No data found in cache for player {} during save", player.getName().getString());
+        }
+    }
+    
+    public static void syncToClient(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            PlayerAffinityData data = getPlayerAffinityData(player);
+            if (data != null) {
+                SyncPlayerAffinityDataPacket syncPacket = 
+                    new SyncPlayerAffinityDataPacket(data, player);
+                Networking.sendToPlayerClient(syncPacket, serverPlayer);
+                ArsAffinity.LOGGER.debug("Synced affinity data to client for player {}", player.getName().getString());
+            }
         }
     }
     

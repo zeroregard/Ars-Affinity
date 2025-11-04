@@ -19,11 +19,11 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class Networking {
 
     public static void register(final RegisterPayloadHandlersEvent event) {
-        // Sets the current network version
         final PayloadRegistrar reg = event.registrar("1");
         reg.playToClient(ParticleEffectPacket.TYPE, ParticleEffectPacket.CODEC, Networking::handle);
         reg.playToClient(ParticleEffectPacket.UPDATE_TYPE, ParticleEffectPacket.CODEC, Networking::handle);
         reg.playToClient(LoopingSoundPacket.TYPE, LoopingSoundPacket.CODEC, Networking::handle);
+        reg.playToClient(SyncPlayerAffinityDataPacket.TYPE, SyncPlayerAffinityDataPacket.CODEC, Networking::handle);
     }
 
     public static <T extends AbstractPacket> void handle(T message, IPayloadContext ctx) {

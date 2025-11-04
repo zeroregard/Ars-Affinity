@@ -3,6 +3,7 @@ package com.github.ars_affinity.command;
 
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
 import com.github.ars_affinity.config.ArsAffinityConfig;
 import com.github.ars_affinity.event.SchoolAffinityPointAllocatedEvent;
 import com.github.ars_affinity.perk.AffinityPerkType;
@@ -110,6 +111,9 @@ public class ArsAffinityCommands {
 
         ArsAffinity.LOGGER.info("Player {} set {} affinity to {}% ({} points)", 
             player.getName().getString(), displayName, percentage, data.getSchoolPoints(school));
+        
+        PlayerAffinityDataHelper.savePlayerData(player);
+        PlayerAffinityDataProvider.syncToClient(player);
 
         return 1;
     }
@@ -161,16 +165,16 @@ public class ArsAffinityCommands {
                 totalPointsReset += currentPoints;
             }
             
-            // Use respecAll to properly deallocate all perks
             data.respecAll();
             
-            // Reset all school points and percentages to 0
             for (SpellSchool school : SchoolRelationshipHelper.ALL_SCHOOLS) {
                 data.setSchoolPoints(school, 0);
                 data.resetSchoolPercentage(school);
             }
             
             ChatMessageHelper.sendAllSchoolsResetMessage(player, totalPointsReset);
+            PlayerAffinityDataHelper.savePlayerData(player);
+            PlayerAffinityDataProvider.syncToClient(player);
             return 1;
         } else {
             // Reset specific school - deallocate perks and reset points
@@ -182,14 +186,14 @@ public class ArsAffinityCommands {
             
             int currentPoints = data.getSchoolPoints(school);
             
-            // Use respecSchool to properly deallocate perks for this school
             data.respecSchool(school);
             
-            // Reset school points and percentage to 0
             data.setSchoolPoints(school, 0);
             data.resetSchoolPercentage(school);
             
             ChatMessageHelper.sendSchoolResetMessage(player, school, currentPoints);
+            PlayerAffinityDataHelper.savePlayerData(player);
+            PlayerAffinityDataProvider.syncToClient(player);
             return 1;
         }
     }

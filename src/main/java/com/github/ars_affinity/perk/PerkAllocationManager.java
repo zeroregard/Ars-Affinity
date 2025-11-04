@@ -3,6 +3,7 @@ package com.github.ars_affinity.perk;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.world.entity.player.Player;
 
@@ -100,11 +101,12 @@ public class PerkAllocationManager {
         PerkNode node = PerkTreeManager.getNode(perkId);
         if (node == null) return false;
         
-        // Allocate the perk
         boolean success = data.allocatePerk(node);
         if (success) {
             ArsAffinity.LOGGER.info("Player {} allocated {} points to perk {}", 
                 player.getName().getString(), points, perkId);
+            PlayerAffinityDataHelper.savePlayerData(player);
+            PlayerAffinityDataProvider.syncToClient(player);
         }
         
         return success;
@@ -129,11 +131,12 @@ public class PerkAllocationManager {
             return false;
         }
         
-        // Deallocate the perk
         boolean success = data.deallocatePerk(perkId);
         if (success) {
             ArsAffinity.LOGGER.info("Player {} deallocated perk {}", 
                 player.getName().getString(), perkId);
+            PlayerAffinityDataHelper.savePlayerData(player);
+            PlayerAffinityDataProvider.syncToClient(player);
         }
         
         return success;

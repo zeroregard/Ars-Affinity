@@ -18,8 +18,10 @@ import com.github.ars_affinity.common.ritual.RitualAmnesia;
 import com.hollingsworth.arsnouveau.setup.registry.APIRegistry;
 import com.github.ars_affinity.registry.ModSounds;
 import com.github.ars_affinity.common.network.Networking;
+import com.github.ars_affinity.common.network.SyncPlayerAffinityDataPacket;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
@@ -147,6 +149,16 @@ public class ArsAffinity {
         PlayerAffinityDataProvider.loadPlayerData(event.getEntity());
         WetTicksProvider.loadPlayerWetTicks(event.getEntity());
         ActiveAbilityProvider.loadPlayerData(event.getEntity());
+        
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            var affinityData = PlayerAffinityDataProvider.getPlayerAffinityData(serverPlayer);
+            if (affinityData != null) {
+                SyncPlayerAffinityDataPacket syncPacket = 
+                    new SyncPlayerAffinityDataPacket(affinityData, serverPlayer);
+                Networking.sendToPlayerClient(syncPacket, serverPlayer);
+                LOGGER.info("Synced affinity data to client for player {}", serverPlayer.getName().getString());
+            }
+        }
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {

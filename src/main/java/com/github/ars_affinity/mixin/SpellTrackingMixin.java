@@ -4,6 +4,7 @@ package com.github.ars_affinity.mixin;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
+import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
 import com.github.ars_affinity.event.SchoolAffinityPointAllocatedEvent;
 import com.github.ars_affinity.perk.PointCalculationHelper;
 import com.github.ars_affinity.school.SchoolRelationshipHelper;
@@ -196,8 +197,8 @@ public abstract class SpellTrackingMixin {
             
             ArsAffinity.LOGGER.info("Affinity Points: {}", affinityLog.toString());
             
-            // Save the changes
             PlayerAffinityDataHelper.savePlayerData(player);
+            PlayerAffinityDataProvider.syncToClient(player);
         }
     }
     
