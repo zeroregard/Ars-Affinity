@@ -63,6 +63,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         this.player = player;
     }
     
+    public void clearPlayer() {
+        this.player = null;
+    }
+    
     private void markDirty() {
         this.isDirty = true;
     }

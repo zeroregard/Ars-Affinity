@@ -162,9 +162,13 @@ public class ArsAffinity {
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        PlayerAffinityDataProvider.savePlayerData(event.getEntity());
-        WetTicksProvider.savePlayerWetTicks(event.getEntity());
-        ActiveAbilityProvider.savePlayerData(event.getEntity());
+        Player player = event.getEntity();
+        PlayerAffinityDataProvider.savePlayerData(player);
+        WetTicksProvider.savePlayerWetTicks(player);
+        ActiveAbilityProvider.savePlayerData(player);
+        
+        PlayerAffinityDataProvider.removePlayerData(player);
+        ActiveAbilityProvider.removePlayerData(player);
     }
     
     private void onServerStopping(ServerStoppingEvent event) {

@@ -106,4 +106,16 @@ public class PlayerAffinityDataProvider {
     public static int getCacheSize() {
         return playerDataCache.size();
     }
+    
+    public static void removePlayerData(UUID playerId) {
+        PlayerAffinityData removed = playerDataCache.remove(playerId);
+        if (removed != null) {
+            removed.clearPlayer();
+            ArsAffinity.LOGGER.debug("Removed player affinity data from cache for UUID: {}", playerId);
+        }
+    }
+    
+    public static void removePlayerData(Player player) {
+        removePlayerData(player.getUUID());
+    }
 }
