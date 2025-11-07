@@ -9,6 +9,19 @@ import net.minecraft.world.entity.player.Player;
 
 public class GlyphPrerequisiteHelper {
     
+    private static ResourceLocation parseResourceLocation(String id) {
+        if (id == null || id.isEmpty()) {
+            return null;
+        }
+        
+        String[] parts = id.split(":", 2);
+        if (parts.length == 2) {
+            return ResourceLocation.fromNamespaceAndPath(parts[0], parts[1]);
+        }
+        
+        return ResourceLocation.fromNamespaceAndPath("minecraft", id);
+    }
+    
     /**
      * Check if a player has unlocked a specific glyph.
      * @param player The player to check
@@ -17,24 +30,26 @@ public class GlyphPrerequisiteHelper {
      */
     public static boolean hasUnlockedGlyph(Player player, String glyphId) {
         if (player == null || glyphId == null || glyphId.isEmpty()) {
-            return true; // No prerequisite glyph means it's always unlocked
+            return true;
         }
         
         try {
-            ResourceLocation glyphLocation = ResourceLocation.parse(glyphId);
+            ResourceLocation glyphLocation = parseResourceLocation(glyphId);
+            if (glyphLocation == null) {
+                return false;
+            }
+            
             IPlayerCap playerCap = CapabilityRegistry.getPlayerDataCap(player);
             
             if (playerCap == null) {
                 return false;
             }
             
-            // Get the glyph from the registry
             AbstractSpellPart glyph = GlyphRegistry.getSpellpartMap().get(glyphLocation);
             if (glyph == null) {
                 return false;
             }
             
-            // Check if player knows this glyph
             return playerCap.knowsGlyph(glyph);
             
         } catch (Exception e) {
@@ -54,19 +69,21 @@ public class GlyphPrerequisiteHelper {
         }
         
         try {
-            ResourceLocation glyphLocation = ResourceLocation.parse(glyphId);
-            AbstractSpellPart glyph = GlyphRegistry.getSpellpartMap().get(glyphLocation);
-            
-            if (glyph != null) {
-                return glyph.getName();
+            ResourceLocation glyphLocation = parseResourceLocation(glyphId);
+            if (glyphLocation != null) {
+                AbstractSpellPart glyph = GlyphRegistry.getSpellpartMap().get(glyphLocation);
+                
+                if (glyph != null) {
+                    return glyph.getName();
+                }
             }
             
-            // Fallback to parsing the ID
             String[] parts = glyphId.split(":");
             if (parts.length >= 2) {
                 String glyphName = parts[1].replace("glyph_", "");
-                // Capitalize first letter
-                return glyphName.substring(0, 1).toUpperCase() + glyphName.substring(1);
+                if (!glyphName.isEmpty()) {
+                    return glyphName.substring(0, 1).toUpperCase() + glyphName.substring(1);
+                }
             }
             
             return glyphId;

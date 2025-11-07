@@ -42,7 +42,18 @@ public class PerkTooltipRenderer {
     
     private AbstractSpellPart getGlyphSpellPart(String glyphId) {
         try {
-            ResourceLocation glyphLocation = ResourceLocation.parse(glyphId);
+            if (glyphId == null || glyphId.isEmpty()) {
+                return null;
+            }
+            
+            String[] parts = glyphId.split(":", 2);
+            ResourceLocation glyphLocation;
+            if (parts.length == 2) {
+                glyphLocation = ResourceLocation.fromNamespaceAndPath(parts[0], parts[1]);
+            } else {
+                glyphLocation = ResourceLocation.fromNamespaceAndPath("minecraft", glyphId);
+            }
+            
             return GlyphRegistry.getSpellpartMap().get(glyphLocation);
         } catch (Exception e) {
             ArsAffinity.LOGGER.warn("Error getting glyph SpellPart for {}: {}", glyphId, e.getMessage());
