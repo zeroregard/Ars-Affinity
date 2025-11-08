@@ -95,6 +95,7 @@ public class ArsAffinity {
         NeoForge.EVENT_BUS.register(PassiveHydrationEvents.class);
         NeoForge.EVENT_BUS.register(SanctuaryEvents.class);
         NeoForge.EVENT_BUS.register(SilencedEvents.class);
+        NeoForge.EVENT_BUS.register(SauceLibAttributeEvents.class);
 
 
 
