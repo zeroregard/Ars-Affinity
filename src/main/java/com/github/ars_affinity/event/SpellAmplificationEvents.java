@@ -10,6 +10,7 @@ import com.hollingsworth.arsnouveau.api.event.SpellResolveEvent;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectHeal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.HashMap;
@@ -86,26 +87,41 @@ public class SpellAmplificationEvents {
 
         if (event.resolveEffect instanceof EffectHeal) {
             Float amplification = playerHealingAmplification.get(player.getUUID());
-            if (amplification != null) {
-                // Add food/saturation to compensate for the exhaustion
-                // EffectHeal applies 2.5f food exhaustion, we can compensate with food
-                float compensation = 2.5f * amplification;
-                var foodData = player.getFoodData();
+            if (amplification != null && amplification > 0) {
+                Player targetPlayer = null;
                 
-                // Add food level (hunger)
-                int currentFood = foodData.getFoodLevel();
-                int foodGain = Math.round(compensation);
-                int newFood = Math.min(20, currentFood + foodGain);
-                foodData.setFoodLevel(newFood);
+                if (event.rayTraceResult instanceof EntityHitResult entityHit) {
+                    if (entityHit.getEntity() instanceof Player hitPlayer) {
+                        targetPlayer = hitPlayer;
+                    }
+                }
                 
-                // Add saturation
-                float currentSaturation = foodData.getSaturationLevel();
-                float saturationGain = compensation * 0.5f;
-                float newSaturation = Math.min(newFood, currentSaturation + saturationGain);
-                foodData.setSaturation(newSaturation);
-                
-                ArsAffinity.LOGGER.info("Compensated food exhaustion with {} food and {} saturation for player {} due to healing amplification", 
-                    foodGain, saturationGain, player.getName().getString());
+                if (targetPlayer != null && targetPlayer.getUUID().equals(player.getUUID())) {
+                    float reductionPercent = Math.min(1.0f, amplification);
+                    float baseExhaustion = 2.5f;
+                    float exhaustionToCompensate = baseExhaustion * reductionPercent;
+                    
+                    var foodData = targetPlayer.getFoodData();
+                    int currentFood = foodData.getFoodLevel();
+                    float currentSaturation = foodData.getSaturationLevel();
+                    
+                    float saturationToAdd = exhaustionToCompensate;
+                    float newSaturation = Math.min(currentFood, currentSaturation + saturationToAdd);
+                    foodData.setSaturation(newSaturation);
+                    
+                    float remainingExhaustion = exhaustionToCompensate - (newSaturation - currentSaturation);
+                    if (remainingExhaustion > 0.001f) {
+                        int foodToAdd = (int) Math.ceil(remainingExhaustion / 4.0f);
+                        int newFood = Math.min(20, currentFood + foodToAdd);
+                        foodData.setFoodLevel(newFood);
+                        
+                        ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for {}: +{} food, +{} saturation ({}% reduction)", 
+                            targetPlayer.getName().getString(), foodToAdd, saturationToAdd, (int)(reductionPercent * 100));
+                    } else {
+                        ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for {}: +{} saturation ({}% reduction)", 
+                            targetPlayer.getName().getString(), saturationToAdd, (int)(reductionPercent * 100));
+                    }
+                }
             }
         }
     }
