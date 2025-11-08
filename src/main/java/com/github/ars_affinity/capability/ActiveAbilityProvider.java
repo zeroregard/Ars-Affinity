@@ -88,4 +88,15 @@ public class ActiveAbilityProvider {
     public static int getCacheSize() {
         return playerDataCache.size();
     }
+    
+    public static void removePlayerData(UUID playerId) {
+        ActiveAbilityData removed = playerDataCache.remove(playerId);
+        if (removed != null) {
+            ArsAffinity.LOGGER.debug("Removed active ability data from cache for UUID: {}", playerId);
+        }
+    }
+    
+    public static void removePlayerData(Player player) {
+        removePlayerData(player.getUUID());
+    }
 }
