@@ -67,7 +67,12 @@ public class PerkTreeScreen extends Screen {
         
         // Back button is now rendered as just an icon without a button widget
     }
-    
+
+    public void refreshData() {
+        allocatedPerks.clear();
+        allocatedPerks.putAll(PerkAllocationManager.getAllocatedPerks(player, school));
+    }
+
     private void centerOnRootNode() {
         // Find the root node (column 0) and center the view on it
         int rootX = 0; // Root nodes are at x=0 in our coordinate system
@@ -551,8 +556,7 @@ public class PerkTreeScreen extends Screen {
                 player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 0.5f, 1.2f);
             }
             
-            allocatedPerks.clear();
-            allocatedPerks.putAll(PerkAllocationManager.getAllocatedPerks(player, school));
+            refreshData();
             
             return true;
         }

@@ -4,6 +4,8 @@ import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataHelper;
 import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
+import com.github.ars_affinity.common.network.Networking;
+import com.github.ars_affinity.common.network.PerkAllocationActionPacket;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import net.minecraft.world.entity.player.Player;
 
@@ -31,30 +33,15 @@ public class PerkAllocationManager {
         
         // Check if already allocated
         if (data.isPerkAllocated(perkId)) return false;
-        
-        // Check if player has enough points
-        int availablePoints = data.getAvailablePoints(node.getSchool());
-        if (availablePoints < node.getPointCost()) return false;
-        
-        // Check prerequisites
-        for (String prereq : node.getPrerequisites()) {
-            if (!data.isPerkAllocated(prereq)) {
-                return false;
-            }
+
+        // Use capability logic for points, prerequisites, and active ability conflicts
+        if (!data.canAllocatePerk(node)) {
+            return false;
         }
         
         // Check glyph prerequisite
         if (node.hasPrerequisiteGlyph()) {
             if (!GlyphPrerequisiteHelper.hasUnlockedGlyph(player, node.getPrerequisiteGlyph())) {
-                return false;
-            }
-        }
-        
-        // Check active ability restriction - only one active ability allowed at a time
-        // But allow if the player is trying to allocate the same active ability they currently have
-        if (ActiveAbilityHelper.isActiveAbility(node.getPerkType())) {
-            AffinityPerkType currentActiveAbility = data.getCurrentActiveAbilityType();
-            if (currentActiveAbility != null && currentActiveAbility != node.getPerkType()) {
                 return false;
             }
         }
@@ -91,6 +78,13 @@ public class PerkAllocationManager {
      * @return true if allocation was successful
      */
     public static boolean allocatePoints(Player player, String perkId, int points) {
+        if (player.level().isClientSide) {
+            if (!canAllocate(player, perkId)) {
+                return false;
+            }
+            Networking.sendToServer(new PerkAllocationActionPacket(perkId, points, true));
+            return true;
+        }
         if (!canAllocate(player, perkId)) {
             return false;
         }
@@ -119,6 +113,17 @@ public class PerkAllocationManager {
      * @return true if deallocation was successful
      */
     public static boolean deallocatePerk(Player player, String perkId) {
+        if (player.level().isClientSide) {
+            PlayerAffinityData clientData = PlayerAffinityDataHelper.getPlayerAffinityData(player);
+            if (clientData == null) {
+                return false;
+            }
+            if (!clientData.isPerkAllocated(perkId)) {
+                return false;
+            }
+            Networking.sendToServer(new PerkAllocationActionPacket(perkId, 0, false));
+            return true;
+        }
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
         if (data == null) return false;
         

@@ -24,6 +24,7 @@ public class Networking {
         reg.playToClient(ParticleEffectPacket.UPDATE_TYPE, ParticleEffectPacket.CODEC, Networking::handle);
         reg.playToClient(LoopingSoundPacket.TYPE, LoopingSoundPacket.CODEC, Networking::handle);
         reg.playToClient(SyncPlayerAffinityDataPacket.TYPE, SyncPlayerAffinityDataPacket.CODEC, Networking::handle);
+        reg.playToServer(PerkAllocationActionPacket.TYPE, PerkAllocationActionPacket.CODEC, Networking::handle);
     }
 
     public static <T extends AbstractPacket> void handle(T message, IPayloadContext ctx) {

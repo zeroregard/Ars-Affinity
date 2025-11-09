@@ -3,6 +3,7 @@ package com.github.ars_affinity.common.network;
 import com.github.ars_affinity.ArsAffinity;
 import com.github.ars_affinity.capability.PlayerAffinityData;
 import com.github.ars_affinity.capability.PlayerAffinityDataProvider;
+import com.github.ars_affinity.client.screen.perk.PerkTreeScreen;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import com.hollingsworth.arsnouveau.common.network.AbstractPacket;
@@ -93,6 +94,11 @@ public class SyncPlayerAffinityDataPacket extends AbstractPacket {
                 clientData.deserializeNBT(player.level().registryAccess(), serializedData);
                 ArsAffinity.LOGGER.info("Successfully synced affinity data to client for player {}", 
                     player.getName().getString());
+                minecraft.execute(() -> {
+                    if (minecraft.screen instanceof PerkTreeScreen screen) {
+                        screen.refreshData();
+                    }
+                });
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to deserialize affinity data on client: {}", e.getMessage(), e);
             }
