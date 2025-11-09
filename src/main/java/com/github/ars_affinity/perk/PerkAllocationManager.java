@@ -77,12 +77,12 @@ public class PerkAllocationManager {
      * @param points The number of points to allocate (usually 1)
      * @return true if allocation was successful
      */
-    public static boolean allocatePoints(Player player, String perkId, int points) {
+    public static boolean allocatePoints(Player player, String perkId) {
         if (!canAllocate(player, perkId)) {
             return false;
         }
         if (player.level().isClientSide) {
-            Networking.sendToServer(new PerkAllocationActionPacket(perkId, points, true));
+            Networking.sendToServer(new PerkAllocationActionPacket(perkId, true));
             return true;
         }
         
@@ -95,7 +95,7 @@ public class PerkAllocationManager {
         boolean success = data.allocatePerk(node);
         if (success) {
             ArsAffinity.LOGGER.info("Player {} allocated {} points to perk {}", 
-                player.getName().getString(), points, perkId);
+                player.getName().getString(), node.getPointCost(), perkId);
             PlayerAffinityDataHelper.savePlayerData(player);
             PlayerAffinityDataProvider.syncToClient(player);
         }
@@ -118,7 +118,7 @@ public class PerkAllocationManager {
             if (!clientData.isPerkAllocated(perkId)) {
                 return false;
             }
-            Networking.sendToServer(new PerkAllocationActionPacket(perkId, 0, false));
+            Networking.sendToServer(new PerkAllocationActionPacket(perkId, false));
             return true;
         }
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);

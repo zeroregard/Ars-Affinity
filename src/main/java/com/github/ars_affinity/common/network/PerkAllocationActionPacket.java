@@ -21,24 +21,20 @@ public class PerkAllocationActionPacket extends AbstractPacket {
         StreamCodec.ofMember(PerkAllocationActionPacket::encode, PerkAllocationActionPacket::new);
 
     private final String perkId;
-    private final int points;
     private final boolean allocate;
 
-    public PerkAllocationActionPacket(String perkId, int points, boolean allocate) {
+    public PerkAllocationActionPacket(String perkId, boolean allocate) {
         this.perkId = perkId;
-        this.points = points;
         this.allocate = allocate;
     }
 
     public PerkAllocationActionPacket(FriendlyByteBuf buffer) {
         this.perkId = buffer.readUtf();
-        this.points = buffer.readInt();
         this.allocate = buffer.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeUtf(perkId);
-        buffer.writeInt(points);
         buffer.writeBoolean(allocate);
     }
 
@@ -50,7 +46,7 @@ public class PerkAllocationActionPacket extends AbstractPacket {
     public void onServerReceived(MinecraftServer server, ServerPlayer player) {
         server.execute(() -> {
             if (allocate) {
-                PerkAllocationManager.allocatePoints(player, perkId, points);
+                PerkAllocationManager.allocatePoints(player, perkId);
             } else {
                 PerkAllocationManager.deallocatePerk(player, perkId);
             }

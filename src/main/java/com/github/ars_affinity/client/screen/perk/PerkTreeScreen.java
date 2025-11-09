@@ -551,7 +551,7 @@ public class PerkTreeScreen extends Screen {
                 // Play deallocation sound
                 player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 0.5f, 0.8f);
             } else {
-                PerkAllocationManager.allocatePoints(player, clickedNode.getId(), 1);
+                PerkAllocationManager.allocatePoints(player, clickedNode.getId());
                 // Play allocation sound
                 player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 0.5f, 1.2f);
             }
