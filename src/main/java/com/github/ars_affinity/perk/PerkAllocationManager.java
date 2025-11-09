@@ -78,15 +78,12 @@ public class PerkAllocationManager {
      * @return true if allocation was successful
      */
     public static boolean allocatePoints(Player player, String perkId, int points) {
-        if (player.level().isClientSide) {
-            if (!canAllocate(player, perkId)) {
-                return false;
-            }
-            Networking.sendToServer(new PerkAllocationActionPacket(perkId, points, true));
-            return true;
-        }
         if (!canAllocate(player, perkId)) {
             return false;
+        }
+        if (player.level().isClientSide) {
+            Networking.sendToServer(new PerkAllocationActionPacket(perkId, points, true));
+            return true;
         }
         
         PlayerAffinityData data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
