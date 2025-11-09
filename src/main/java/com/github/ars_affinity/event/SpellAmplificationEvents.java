@@ -95,32 +95,31 @@ public class SpellAmplificationEvents {
                         targetPlayer = hitPlayer;
                     }
                 }
-                
-                if (targetPlayer != null && targetPlayer.getUUID().equals(player.getUUID())) {
-                    float reductionPercent = Math.min(1.0f, amplification);
-                    float baseExhaustion = 2.5f;
-                    float exhaustionToCompensate = baseExhaustion * reductionPercent;
-                    
-                    var foodData = targetPlayer.getFoodData();
-                    int currentFood = foodData.getFoodLevel();
-                    float currentSaturation = foodData.getSaturationLevel();
-                    
-                    float saturationToAdd = exhaustionToCompensate;
-                    float newSaturation = Math.min(currentFood, currentSaturation + saturationToAdd);
-                    foodData.setSaturation(newSaturation);
-                    
-                    float remainingExhaustion = exhaustionToCompensate - (newSaturation - currentSaturation);
-                    if (remainingExhaustion > 0.001f) {
-                        int foodToAdd = (int) Math.ceil(remainingExhaustion / 4.0f);
-                        int newFood = Math.min(20, currentFood + foodToAdd);
-                        foodData.setFoodLevel(newFood);
-                        
-                        ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for {}: +{} food, +{} saturation ({}% reduction)", 
-                            targetPlayer.getName().getString(), foodToAdd, saturationToAdd, (int)(reductionPercent * 100));
-                    } else {
-                        ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for {}: +{} saturation ({}% reduction)", 
-                            targetPlayer.getName().getString(), saturationToAdd, (int)(reductionPercent * 100));
-                    }
+
+                String healedName = targetPlayer != null ? targetPlayer.getName().getString() : player.getName().getString();
+                float reductionPercent = Math.min(1.0f, amplification);
+                float baseExhaustion = 2.5f;
+                float exhaustionToCompensate = baseExhaustion * reductionPercent;
+
+                var foodData = player.getFoodData();
+                int currentFood = foodData.getFoodLevel();
+                float currentSaturation = foodData.getSaturationLevel();
+
+                float saturationToAdd = exhaustionToCompensate;
+                float newSaturation = Math.min(currentFood, currentSaturation + saturationToAdd);
+                foodData.setSaturation(newSaturation);
+
+                float remainingExhaustion = exhaustionToCompensate - (newSaturation - currentSaturation);
+                if (remainingExhaustion > 0.001f) {
+                    int foodToAdd = (int) Math.ceil(remainingExhaustion / 4.0f);
+                    int newFood = Math.min(20, currentFood + foodToAdd);
+                    foodData.setFoodLevel(newFood);
+
+                    ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} food, +{} saturation ({}% reduction)",
+                        player.getName().getString(), healedName, foodToAdd, saturationToAdd, (int)(reductionPercent * 100));
+                } else {
+                    ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} saturation ({}% reduction)",
+                        player.getName().getString(), healedName, saturationToAdd, (int)(reductionPercent * 100));
                 }
             }
         }
