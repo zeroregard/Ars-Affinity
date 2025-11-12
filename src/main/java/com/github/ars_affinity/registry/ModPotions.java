@@ -12,9 +12,7 @@ import com.github.ars_affinity.potion.GroundSlamCooldownEffect;
 import com.github.ars_affinity.potion.StoneSkinCooldownEffect;
 import com.github.ars_affinity.potion.AirDashCooldownEffect;
 import com.github.ars_affinity.potion.CurseFieldCooldownEffect;
-import com.github.ars_affinity.common.potion.ManipulationSicknessEffect;
 import com.github.ars_affinity.potion.HydratedEffect;
-import com.github.ars_affinity.potion.AffinityConsumableCooldownEffect;
 import com.github.ars_affinity.potion.SwapCooldownEffect;
 
 import net.minecraft.world.effect.MobEffect;
@@ -40,18 +38,9 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, SanctuaryCooldownEffect> SANCTUARY_COOLDOWN_EFFECT = EFFECTS.register("sanctuary_cooldown", SanctuaryCooldownEffect::new);
     public static final DeferredHolder<MobEffect, CurseFieldCooldownEffect> CURSE_FIELD_COOLDOWN_EFFECT = EFFECTS.register("curse_field_cooldown", CurseFieldCooldownEffect::new);
     public static final DeferredHolder<MobEffect, SilencedEffect> SILENCED_EFFECT = EFFECTS.register("silenced", SilencedEffect::new);
-    public static final DeferredHolder<MobEffect, ManipulationSicknessEffect> MANIPULATION_SICKNESS_EFFECT = EFFECTS.register("manipulation_sickness", ManipulationSicknessEffect::new);
     public static final DeferredHolder<MobEffect, HydratedEffect> HYDRATED_EFFECT = EFFECTS.register("hydrated", HydratedEffect::new);
-    public static final DeferredHolder<MobEffect, AffinityConsumableCooldownEffect> AFFINITY_CONSUMABLE_COOLDOWN_EFFECT = EFFECTS.register("affinity_consumable_cooldown", AffinityConsumableCooldownEffect::new);
     public static final DeferredHolder<MobEffect, SwapCooldownEffect> SWAP_COOLDOWN_EFFECT = EFFECTS.register("swap_cooldown", SwapCooldownEffect::new);
 
     public static final DeferredHolder<Potion, Potion> SILENCED_POTION = POTIONS.register("silenced", () -> new Potion(new MobEffectInstance(SILENCED_EFFECT, 20 * 30)));
-    
-    /**
-     * Check if a player has the affinity consumable cooldown effect
-     */
-    public static boolean hasAffinityCooldown(net.minecraft.world.entity.LivingEntity entity) {
-        return entity.hasEffect(AFFINITY_CONSUMABLE_COOLDOWN_EFFECT);
-    }
     
 } 

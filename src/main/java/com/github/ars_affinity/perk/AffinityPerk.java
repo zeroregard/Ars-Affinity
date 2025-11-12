@@ -223,17 +223,6 @@ public abstract class AffinityPerk {
         }
     }
 
-    public static class ManipulationSicknessPerk extends AffinityPerk {
-        public int duration;
-        public int hunger;
-
-        public ManipulationSicknessPerk(AffinityPerkType perk, int duration, int hunger, boolean isBuff) {
-            super(perk, isBuff);
-            this.duration = duration;
-            this.hunger = hunger;
-        }
-    }
-    
     public static class SimplePerk extends AffinityPerk {
         public SimplePerk(AffinityPerkType perk, boolean isBuff) {
             super(perk, isBuff);

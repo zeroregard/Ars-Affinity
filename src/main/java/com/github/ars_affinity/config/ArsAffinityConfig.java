@@ -12,7 +12,6 @@ public class ArsAffinityConfig {
     public static ModConfigSpec.DoubleValue AFFINITY_SCALING_MINIMUM_FACTOR;
     public static ModConfigSpec.DoubleValue GLOBAL_SCALING_DECAY_STRENGTH;
     public static ModConfigSpec.DoubleValue GLOBAL_SCALING_MINIMUM_FACTOR;
-    public static ModConfigSpec.IntValue AFFINITY_CONSUMABLE_COOLDOWN_DURATION;
     
     public static ModConfigSpec.IntValue DEEP_UNDERGROUND_Y_THRESHOLD;
     
@@ -53,9 +52,6 @@ public class ArsAffinityConfig {
         AFFINITY_GAIN_MULTIPLIER = SERVER_BUILDER
             .comment("Multiplier for affinity gain per mana spent. Higher values = faster progression (0.0001 to 0.1)")
             .defineInRange("affinityGainMultiplier", 0.001, 0.0001, 0.1);
-        AFFINITY_CONSUMABLE_COOLDOWN_DURATION = SERVER_BUILDER
-            .comment("Duration in seconds for affinity consumable cooldown effect (default 30 minutes = 1800 seconds)")
-            .defineInRange("affinityConsumableCooldownDuration", 1800, 60, 7200);
         DEEP_UNDERGROUND_Y_THRESHOLD = SERVER_BUILDER
             .comment("Y coordinate threshold for deep underground detection. Players below this Y level are considered deep underground")
             .defineInRange("deepUndergroundYThreshold", 20, -64, 320);
