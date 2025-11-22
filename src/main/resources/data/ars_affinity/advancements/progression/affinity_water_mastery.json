@@ -1,0 +1,23 @@
+{
+  "parent": "ars_affinity:progression/affinity_initiate",
+  "display": {
+    "icon": {
+      "item": "ars_nouveau:water_essence"
+    },
+    "title": {
+      "translate": "advancements.ars_affinity.affinity_water_mastery.title"
+    },
+    "description": {
+      "translate": "advancements.ars_affinity.affinity_water_mastery.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

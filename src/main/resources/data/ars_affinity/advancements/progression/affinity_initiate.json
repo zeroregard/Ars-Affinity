@@ -1,0 +1,23 @@
+{
+  "parent": "ars_nouveau:progression/root",
+  "display": {
+    "icon": {
+      "item": "ars_nouveau:novice_spell_book"
+    },
+    "title": {
+      "translate": "advancements.ars_affinity.affinity_initiate.title"
+    },
+    "description": {
+      "translate": "advancements.ars_affinity.affinity_initiate.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
