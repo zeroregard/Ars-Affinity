@@ -1,0 +1,29 @@
+{
+  "parent": "ars_nouveau:root",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "ars_nouveau:novice_spell_book"
+    },
+    "title": {
+      "translate": "advancements.ars_affinity.affinity_initiate.title"
+    },
+    "description": {
+      "translate": "advancements.ars_affinity.affinity_initiate.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
+}

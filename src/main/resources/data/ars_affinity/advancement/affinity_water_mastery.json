@@ -1,0 +1,29 @@
+{
+  "parent": "ars_affinity:affinity_initiate",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "ars_nouveau:water_essence"
+    },
+    "title": {
+      "translate": "advancements.ars_affinity.affinity_water_mastery.title"
+    },
+    "description": {
+      "translate": "advancements.ars_affinity.affinity_water_mastery.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
+}

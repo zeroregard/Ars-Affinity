@@ -1,0 +1,25 @@
+{
+  "parent": "ars_affinity:affinity_initiate",
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "ars_elemental:anima_essence"
+    },
+    "title": {
+      "translate": "advancements.ars_affinity.affinity_necromancy_mastery.title"
+    },
+    "description": {
+      "translate": "advancements.ars_affinity.affinity_necromancy_mastery.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [["manual"]]
+}
