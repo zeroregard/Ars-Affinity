@@ -1,8 +1,9 @@
 {
-  "parent": "ars_nouveau:progression/root",
+  "parent": "ars_nouveau:root",
   "display": {
     "icon": {
-      "item": "ars_nouveau:novice_spell_book"
+      "count": 1,
+      "id": "ars_nouveau:novice_spell_book"
     },
     "title": {
       "translate": "advancements.ars_affinity.affinity_initiate.title"
@@ -19,5 +20,10 @@
     "manual": {
       "trigger": "minecraft:impossible"
     }
-  }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
 }

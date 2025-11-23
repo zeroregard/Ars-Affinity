@@ -1,8 +1,9 @@
 {
-  "parent": "ars_affinity:progression/affinity_initiate",
+  "parent": "ars_affinity:affinity_initiate",
   "display": {
     "icon": {
-      "item": "ars_nouveau:anima_essence"
+      "count": 1,
+      "id": "ars_elemental:anima_essence"
     },
     "title": {
       "translate": "advancements.ars_affinity.affinity_necromancy_mastery.title"
@@ -19,5 +20,6 @@
     "manual": {
       "trigger": "minecraft:impossible"
     }
-  }
+  },
+  "requirements": [["manual"]]
 }

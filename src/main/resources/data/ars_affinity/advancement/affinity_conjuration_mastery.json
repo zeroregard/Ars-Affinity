@@ -1,8 +1,9 @@
 {
-  "parent": "ars_affinity:progression/affinity_initiate",
+  "parent": "ars_affinity:affinity_initiate",
   "display": {
     "icon": {
-      "item": "ars_nouveau:conjuration_essence"
+      "count": 1,
+      "id": "ars_nouveau:conjuration_essence"
     },
     "title": {
       "translate": "advancements.ars_affinity.affinity_conjuration_mastery.title"
@@ -19,5 +20,10 @@
     "manual": {
       "trigger": "minecraft:impossible"
     }
-  }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
 }
