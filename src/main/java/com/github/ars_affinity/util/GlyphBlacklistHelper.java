@@ -94,11 +94,11 @@ public class GlyphBlacklistHelper {
         try {
             List<? extends String> blacklist = ArsAffinityConfig.GLYPH_BLACKLIST.get();
             if (blacklist == null || blacklist.isEmpty()) {
-                ArsAffinity.LOGGER.info("Glyph blacklist is empty - no glyphs are blacklisted");
+                ArsAffinity.LOGGER.debug("Glyph blacklist is empty - no glyphs are blacklisted");
             } else {
-                ArsAffinity.LOGGER.info("Glyph blacklist contains {} entries:", blacklist.size());
+                ArsAffinity.LOGGER.debug("Glyph blacklist contains {} entries:", blacklist.size());
                 for (String glyphId : blacklist) {
-                    ArsAffinity.LOGGER.info("  - {}", glyphId);
+                    ArsAffinity.LOGGER.debug("  - {}", glyphId);
                 }
             }
         } catch (Exception e) {

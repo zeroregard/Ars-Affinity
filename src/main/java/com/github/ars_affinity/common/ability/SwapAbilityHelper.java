@@ -20,12 +20,12 @@ public class SwapAbilityHelper {
     private static final double MAX_DISTANCE = 100.0;
     
     public static void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
-        ArsAffinity.LOGGER.info("SWAP ABILITY: Starting execution for player {} with perk: manaCost={}, cooldown={}", 
+        ArsAffinity.LOGGER.debug("SWAP ABILITY: Starting execution for player {} with perk: manaCost={}, cooldown={}", 
             player.getName().getString(), perk.manaCost, perk.cooldown);
         
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap == null) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: Player {} has no mana capability", player.getName().getString());
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: Player {} has no mana capability", player.getName().getString());
             return;
         }
         
@@ -33,32 +33,32 @@ public class SwapAbilityHelper {
         double requiredMana = perk.manaCost;
         
         if (currentMana < requiredMana) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: Player {} doesn't have enough mana. Required: {}, Current: {}", 
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: Player {} doesn't have enough mana. Required: {}, Current: {}", 
                 player.getName().getString(), requiredMana, currentMana);
             return;
         }
         
         if (isPlayerOnCooldown(player)) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: Player {} is on cooldown", player.getName().getString());
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: Player {} is on cooldown", player.getName().getString());
             return;
         }
         
-        ArsAffinity.LOGGER.info("SWAP ABILITY: Attempting to find entity with range {}", MAX_DISTANCE);
+        ArsAffinity.LOGGER.debug("SWAP ABILITY: Attempting to find entity with range {}", MAX_DISTANCE);
         var entityHitResult = MathUtils.getLookedAtEntity(player, MAX_DISTANCE);
-        ArsAffinity.LOGGER.info("SWAP ABILITY: getLookedAtEntity returned: {}", entityHitResult);
+        ArsAffinity.LOGGER.debug("SWAP ABILITY: getLookedAtEntity returned: {}", entityHitResult);
         if (entityHitResult == null) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: No valid target found for player {}", player.getName().getString());
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: No valid target found for player {}", player.getName().getString());
             
             return;
         }
         
         if (!(entityHitResult.getEntity() instanceof LivingEntity targetEntity)) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: Target is not a living entity: {}", entityHitResult.getEntity().getName().getString());
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: Target is not a living entity: {}", entityHitResult.getEntity().getName().getString());
             return;
         }
         
         if (targetEntity == player) {
-            ArsAffinity.LOGGER.info("SWAP ABILITY: Player {} cannot swap with themselves", player.getName().getString());
+            ArsAffinity.LOGGER.debug("SWAP ABILITY: Player {} cannot swap with themselves", player.getName().getString());
             return;
         }
         
@@ -68,7 +68,7 @@ public class SwapAbilityHelper {
         performSwap(player, targetEntity);
         consumeMana(player, perk);
         
-        ArsAffinity.LOGGER.info("SWAP ABILITY: Successfully swapped positions between player {} and entity {}", 
+        ArsAffinity.LOGGER.debug("SWAP ABILITY: Successfully swapped positions between player {} and entity {}", 
             player.getName().getString(), targetEntity.getName().getString());
     }
     

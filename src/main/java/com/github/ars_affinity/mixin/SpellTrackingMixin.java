@@ -132,7 +132,7 @@ public abstract class SpellTrackingMixin {
     private void trackSchoolProgress(Player player, AbstractSpellPart glyph, List<AbstractAugment> augments) {
         // Check if the glyph is blacklisted
         if (GlyphBlacklistHelper.isGlyphBlacklisted(glyph)) {
-            ArsAffinity.LOGGER.info("Glyph {} is blacklisted - skipping affinity progress tracking", 
+            ArsAffinity.LOGGER.debug("Glyph {} is blacklisted - skipping affinity progress tracking", 
                 glyph.getRegistryName() != null ? glyph.getRegistryName().toString() : "unknown");
             return;
         }
@@ -195,7 +195,7 @@ public abstract class SpellTrackingMixin {
                 }
             }
             
-            ArsAffinity.LOGGER.info("Affinity Points: {}", affinityLog.toString());
+            ArsAffinity.LOGGER.debug("Affinity Points: {}", affinityLog.toString());
             
             PlayerAffinityDataHelper.savePlayerData(player);
             PlayerAffinityDataProvider.syncToClient(player);

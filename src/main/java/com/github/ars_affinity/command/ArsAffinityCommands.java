@@ -109,7 +109,7 @@ public class ArsAffinityCommands {
         source.sendSuccess(() -> Component.literal(String.format("Set %s affinity to %.1f%% (%d/%d points)", 
             displayName, percentage, data.getSchoolPoints(school), maxPoints)), true);
 
-        ArsAffinity.LOGGER.info("Player {} set {} affinity to {}% ({} points)", 
+        ArsAffinity.LOGGER.debug("Player {} set {} affinity to {}% ({} points)", 
             player.getName().getString(), displayName, percentage, data.getSchoolPoints(school));
         
         PlayerAffinityDataHelper.savePlayerData(player);

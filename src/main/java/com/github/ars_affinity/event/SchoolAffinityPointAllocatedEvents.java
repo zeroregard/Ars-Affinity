@@ -78,7 +78,7 @@ public class SchoolAffinityPointAllocatedEvents {
         // Send the message to the player
         PortUtil.sendMessage(player, message);
         
-        ArsAffinity.LOGGER.info("Sent point allocation message to player {}: {} points in {} school", 
+        ArsAffinity.LOGGER.debug("Sent point allocation message to player {}: {} points in {} school", 
             player.getName().getString(), pointsGained, school.getId());
     }
     
@@ -128,19 +128,19 @@ public class SchoolAffinityPointAllocatedEvents {
     }
 
     private static void spawnPointAllocatedParticles(Player player, SpellSchool school, int pointsGained) {
-        ArsAffinity.LOGGER.info("=== SPAWNING POINT ALLOCATED PARTICLES ===");
-        ArsAffinity.LOGGER.info("spawnPointAllocatedParticles called for player {} school {} points {}", 
+        ArsAffinity.LOGGER.debug("=== SPAWNING POINT ALLOCATED PARTICLES ===");
+        ArsAffinity.LOGGER.debug("spawnPointAllocatedParticles called for player {} school {} points {}", 
             player.getName().getString(), school.getId(), pointsGained);
-        ArsAffinity.LOGGER.info("Player position: ({}, {}, {})", 
+        ArsAffinity.LOGGER.debug("Player position: ({}, {}, {})", 
             player.getX(), player.getY(), player.getZ());
-        ArsAffinity.LOGGER.info("Player level: {}, isClientSide: {}", 
+        ArsAffinity.LOGGER.debug("Player level: {}, isClientSide: {}", 
             player.level().dimension().location(), player.level().isClientSide());
             
         // Calculate particle count based on points gained (reduced count and speed)
         int particleCount = 3 + (pointsGained * 2); // 5, 7, 9 particles for 1, 2, 3 points (half of original)
         
-        ArsAffinity.LOGGER.info("Calculated particle count: {} (base 5 + points {} * 3)", particleCount, pointsGained);
-        ArsAffinity.LOGGER.info("Creating ParticleEffectPacket with playerId={}, schoolId={}, particleCount={}", 
+        ArsAffinity.LOGGER.debug("Calculated particle count: {} (base 5 + points {} * 3)", particleCount, pointsGained);
+        ArsAffinity.LOGGER.debug("Creating ParticleEffectPacket with playerId={}, schoolId={}, particleCount={}", 
             player.getId(), school.getId().toString(), particleCount);
         
         // Send particle effect packet to all clients
@@ -150,12 +150,12 @@ public class SchoolAffinityPointAllocatedEvents {
             particleCount
         );
         
-        ArsAffinity.LOGGER.info("ParticleEffectPacket created successfully");
-        ArsAffinity.LOGGER.info("Sending particle packet to nearby clients at position: {}", player.blockPosition());
+        ArsAffinity.LOGGER.debug("ParticleEffectPacket created successfully");
+        ArsAffinity.LOGGER.debug("Sending particle packet to nearby clients at position: {}", player.blockPosition());
         
         try {
             Networking.sendToNearbyClient(player.level(), player.blockPosition(), packet);
-            ArsAffinity.LOGGER.info("Particle packet sent successfully to nearby clients");
+            ArsAffinity.LOGGER.debug("Particle packet sent successfully to nearby clients");
             
             // Schedule position updates every 3 ticks for 60 ticks (3 seconds)
             ParticleUpdateScheduler.startPositionUpdates(player, school.getId().toString());
@@ -163,9 +163,9 @@ public class SchoolAffinityPointAllocatedEvents {
             ArsAffinity.LOGGER.error("Failed to send particle packet: {}", e.getMessage(), e);
         }
         
-        ArsAffinity.LOGGER.info("Spawning {} spiral particles for {} point allocation (+{} points)", 
+        ArsAffinity.LOGGER.debug("Spawning {} spiral particles for {} point allocation (+{} points)", 
             particleCount, school.getId(), pointsGained);
-        ArsAffinity.LOGGER.info("=== PARTICLE SPAWNING COMPLETE ===");
+        ArsAffinity.LOGGER.debug("=== PARTICLE SPAWNING COMPLETE ===");
     }
     
 }

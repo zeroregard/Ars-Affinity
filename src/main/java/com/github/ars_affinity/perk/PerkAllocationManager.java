@@ -94,7 +94,7 @@ public class PerkAllocationManager {
         
         boolean success = data.allocatePerk(node);
         if (success) {
-            ArsAffinity.LOGGER.info("Player {} allocated {} points to perk {}", 
+            ArsAffinity.LOGGER.debug("Player {} allocated {} points to perk {}", 
                 player.getName().getString(), points, perkId);
             PlayerAffinityDataHelper.savePlayerData(player);
             PlayerAffinityDataProvider.syncToClient(player);
@@ -135,7 +135,7 @@ public class PerkAllocationManager {
         
         boolean success = data.deallocatePerk(perkId);
         if (success) {
-            ArsAffinity.LOGGER.info("Player {} deallocated perk {}", 
+            ArsAffinity.LOGGER.debug("Player {} deallocated perk {}", 
                 player.getName().getString(), perkId);
             PlayerAffinityDataHelper.savePlayerData(player);
             PlayerAffinityDataProvider.syncToClient(player);
@@ -221,7 +221,7 @@ public class PerkAllocationManager {
             data.deallocatePerk(perkId);
         }
         
-        ArsAffinity.LOGGER.info("Player {} reset all perks for school {}", 
+        ArsAffinity.LOGGER.debug("Player {} reset all perks for school {}", 
             player.getName().getString(), school.getId());
         
         return true;

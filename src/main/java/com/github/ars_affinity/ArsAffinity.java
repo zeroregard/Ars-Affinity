@@ -138,13 +138,13 @@ public class ArsAffinity {
             }
         );
         
-        LOGGER.info("Registered PlayerAffinityData capability");
-        LOGGER.info("Registered WetTicks capability");
+        LOGGER.debug("Registered PlayerAffinityData capability");
+        LOGGER.debug("Registered WetTicks capability");
     }
     
     private void onRegisterCommands(RegisterCommandsEvent event) {
         ArsAffinityCommands.register(event.getDispatcher());
-        LOGGER.info("Registered Ars Affinity commands");
+        LOGGER.debug("Registered Ars Affinity commands");
     }
     
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -158,7 +158,7 @@ public class ArsAffinity {
                 SyncPlayerAffinityDataPacket syncPacket = 
                     new SyncPlayerAffinityDataPacket(affinityData, serverPlayer);
                 Networking.sendToPlayerClient(syncPacket, serverPlayer);
-                LOGGER.info("Synced affinity data to client for player {}", serverPlayer.getName().getString());
+                LOGGER.debug("Synced affinity data to client for player {}", serverPlayer.getName().getString());
             }
         }
     }

@@ -41,7 +41,7 @@ public class PerkTreeManager {
         allNodes.clear();
         
         Path configDir = FMLPaths.CONFIGDIR.get().resolve("ars_affinity").resolve("perk_trees");
-        ArsAffinity.LOGGER.info("Loading perk trees from: {}", configDir.toAbsolutePath());
+        ArsAffinity.LOGGER.debug("Loading perk trees from: {}", configDir.toAbsolutePath());
         
         try {
             if (!Files.exists(configDir)) {
@@ -55,7 +55,7 @@ public class PerkTreeManager {
                 
                 // First try to load from config directory
                 if (Files.exists(schoolFile)) {
-                    ArsAffinity.LOGGER.info("Loading perk tree for school: {} from config", schoolName);
+                    ArsAffinity.LOGGER.debug("Loading perk tree for school: {} from config", schoolName);
                     loadSchoolPerkTree(school, schoolFile);
                 } else {
                     // Try to copy from JAR resources
@@ -63,7 +63,7 @@ public class PerkTreeManager {
                         String resourcePath = "data/ars_affinity/config/perk_trees/" + schoolName + ".json";
                         var resourceStream = PerkTreeManager.class.getClassLoader().getResourceAsStream(resourcePath);
                         if (resourceStream != null) {
-                            ArsAffinity.LOGGER.info("Copying perk tree for school: {} from JAR resources", schoolName);
+                            ArsAffinity.LOGGER.debug("Copying perk tree for school: {} from JAR resources", schoolName);
                             Files.createDirectories(schoolFile.getParent());
                             Files.copy(resourceStream, schoolFile);
                             loadSchoolPerkTree(school, schoolFile);
@@ -77,7 +77,7 @@ public class PerkTreeManager {
             }
             
             isLoaded = true;
-            ArsAffinity.LOGGER.info("Loaded perk trees for {} schools with {} total nodes", 
+            ArsAffinity.LOGGER.debug("Loaded perk trees for {} schools with {} total nodes", 
                 perkTrees.size(), allNodes.size());
             
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class PerkTreeManager {
         }
         
         perkTrees.put(school, schoolNodes);
-        ArsAffinity.LOGGER.info("Loaded {} nodes for school {}", schoolNodes.size(), school.getId());
+        ArsAffinity.LOGGER.debug("Loaded {} nodes for school {}", schoolNodes.size(), school.getId());
     }
     
     private static PerkNode parsePerkNode(JsonObject nodeData, SpellSchool school) {
@@ -215,7 +215,7 @@ public class PerkTreeManager {
             // Create example perk tree for Fire school
             createExampleFirePerkTree(configDir);
             
-            ArsAffinity.LOGGER.info("Created default perk trees in: {}", configDir);
+            ArsAffinity.LOGGER.debug("Created default perk trees in: {}", configDir);
             
         } catch (IOException e) {
             ArsAffinity.LOGGER.error("Failed to create default perk trees: {}", e.getMessage(), e);

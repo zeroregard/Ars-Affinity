@@ -67,7 +67,7 @@ public class PassiveUnstableSummoningEvents {
                                 EventQueue.getServerInstance().addEvent(timer);
                             }
                             
-                            ArsAffinity.LOGGER.info("Player {} triggered UNSTABLE_SUMMONING perk ({}%) - transformed summon into {}", 
+                            ArsAffinity.LOGGER.debug("Player {} triggered UNSTABLE_SUMMONING perk ({}%) - transformed summon into {}", 
                                 player.getName().getString(), (int)(chance * 100), randomEntityId);
                         }
                     } else {

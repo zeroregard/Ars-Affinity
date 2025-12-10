@@ -132,7 +132,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             updateAvailablePoints(school);
             markDirty();
             
-            ArsAffinity.LOGGER.info("Awarded {} points to {} school ({}% -> {} points)", 
+            ArsAffinity.LOGGER.debug("Awarded {} points to {} school ({}% -> {} points)", 
                 pointsAwarded, school.getId(), newPercentage, newPoints);
         }
         
@@ -303,7 +303,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             updateActiveAbilityData();
         }
         
-        ArsAffinity.LOGGER.info("Allocated perk: {} for {} points", nodeId, node.getPointCost());
+        ArsAffinity.LOGGER.debug("Allocated perk: {} for {} points", nodeId, node.getPointCost());
         return true;
     }
     
@@ -334,7 +334,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             updateActiveAbilityData();
         }
         
-        ArsAffinity.LOGGER.info("Deallocated perk: {}", nodeId);
+        ArsAffinity.LOGGER.debug("Deallocated perk: {}", nodeId);
         return true;
     }
     
@@ -419,7 +419,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             updateActiveAbilityData();
         }
         
-        ArsAffinity.LOGGER.info("Respeced {} school", school.getId());
+        ArsAffinity.LOGGER.debug("Respeced {} school", school.getId());
     }
     
     public void respecAll() {
@@ -439,12 +439,12 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         // Clear active ability data since all perks are removed
         updateActiveAbilityData();
         
-        ArsAffinity.LOGGER.info("Respeced all schools");
+        ArsAffinity.LOGGER.debug("Respeced all schools");
     }
     
     // Migration from old system
     public void migrateFromOldSystem(Map<SpellSchool, Float> oldAffinities) {
-        ArsAffinity.LOGGER.info("Migrating from old affinity system...");
+        ArsAffinity.LOGGER.debug("Migrating from old affinity system...");
         
         for (Map.Entry<SpellSchool, Float> entry : oldAffinities.entrySet()) {
             SpellSchool school = entry.getKey();
@@ -455,7 +455,7 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             schoolPoints.put(school, points);
             availablePoints.put(school, points);
             
-            ArsAffinity.LOGGER.info("Migrated {}: {}% -> {} points", 
+            ArsAffinity.LOGGER.debug("Migrated {}: {}% -> {} points", 
                 school.getId(), oldAffinity * 100, points);
         }
         

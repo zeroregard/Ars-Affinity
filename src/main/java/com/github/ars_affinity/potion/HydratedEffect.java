@@ -29,7 +29,7 @@ public class HydratedEffect extends MobEffect {
                 if (foodData.getFoodLevel() < 20) {
                     int oldFood = foodData.getFoodLevel();
                     foodData.setFoodLevel(foodData.getFoodLevel() + 1);
-                    ArsAffinity.LOGGER.info("HYDRATION - Hydrated {} effect tick for player: {} - restored hunger: {} -> {} (every {} ticks)", 
+                    ArsAffinity.LOGGER.debug("HYDRATION - Hydrated {} effect tick for player: {} - restored hunger: {} -> {} (every {} ticks)", 
                         amplifier + 1, player.getName().getString(), oldFood, foodData.getFoodLevel(), countdownTicks);
                 }
             }

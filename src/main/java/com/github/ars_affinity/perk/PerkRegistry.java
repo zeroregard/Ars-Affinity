@@ -42,7 +42,7 @@ public class PerkRegistry {
         PERK_REGISTRY.clear();
         
         Path configDir = Path.of("config", "ars_affinity", "perks");
-        ArsAffinity.LOGGER.info("Looking for perk configs in: {}", configDir.toAbsolutePath());
+        ArsAffinity.LOGGER.debug("Looking for perk configs in: {}", configDir.toAbsolutePath());
         
         try {
             if (!Files.exists(configDir)) {
@@ -56,12 +56,12 @@ public class PerkRegistry {
                     .filter(Files::isDirectory)
                     .collect(Collectors.toList());
                 
-                ArsAffinity.LOGGER.info("Found {} school directories: {}", schoolDirs.size(), 
+                ArsAffinity.LOGGER.debug("Found {} school directories: {}", schoolDirs.size(), 
                     schoolDirs.stream().map(path -> path.getFileName().toString()).collect(Collectors.joining(", ")));
                 
                 for (Path schoolDir : schoolDirs) {
                     String schoolName = schoolDir.getFileName().toString().toUpperCase();
-                    ArsAffinity.LOGGER.info("Processing school directory: {}", schoolName);
+                    ArsAffinity.LOGGER.debug("Processing school directory: {}", schoolName);
                     
                     // Walk through tier subdirectories
                     try (var tierPaths = Files.list(schoolDir)) {
@@ -69,13 +69,13 @@ public class PerkRegistry {
                             .filter(Files::isDirectory)
                             .collect(Collectors.toList());
                         
-                        ArsAffinity.LOGGER.info("Found {} tier directories in {}: {}", 
+                        ArsAffinity.LOGGER.debug("Found {} tier directories in {}: {}", 
                             tierDirs.size(), schoolName, 
                             tierDirs.stream().map(path -> path.getFileName().toString()).collect(Collectors.joining(", ")));
                         
                         for (Path tierDir : tierDirs) {
                             String tierName = tierDir.getFileName().toString();
-                            ArsAffinity.LOGGER.info("Processing tier directory: {} for school {}", tierName, schoolName);
+                            ArsAffinity.LOGGER.debug("Processing tier directory: {} for school {}", tierName, schoolName);
                             
                             try {
                                 int tier = Integer.parseInt(tierName);
@@ -87,13 +87,13 @@ public class PerkRegistry {
                                         .filter(path -> path.toString().endsWith(".json"))
                                         .collect(Collectors.toList());
                                     
-                                    ArsAffinity.LOGGER.info("Found {} JSON files in {}_{}: {}", 
+                                    ArsAffinity.LOGGER.debug("Found {} JSON files in {}_{}: {}", 
                                         jsonFiles.size(), schoolName, tier,
                                         jsonFiles.stream().map(path -> path.getFileName().toString()).collect(Collectors.joining(", ")));
                                     
                                     for (Path jsonFile : jsonFiles) {
                                         try {
-                                            ArsAffinity.LOGGER.info("Processing config file: {} for {}_{}", jsonFile, schoolName, tier);
+                                            ArsAffinity.LOGGER.debug("Processing config file: {} for {}_{}", jsonFile, schoolName, tier);
                                             loadPerkFileFromSchoolTier(schoolName, tier, jsonFile);
                                         } catch (Exception e) {
                                             ArsAffinity.LOGGER.error("Failed to load perk file: {} - {}", jsonFile, e.getMessage());
@@ -109,7 +109,7 @@ public class PerkRegistry {
                 }
             }
             
-            ArsAffinity.LOGGER.info("PerkRegistry initialized with {} perk configurations", PERK_REGISTRY.size());
+            ArsAffinity.LOGGER.debug("PerkRegistry initialized with {} perk configurations", PERK_REGISTRY.size());
             
         } catch (Exception e) {
             ArsAffinity.LOGGER.error("Error loading perk configs: {}", e.getMessage(), e);
@@ -118,7 +118,7 @@ public class PerkRegistry {
     
     private static void loadPerkFileFromSchoolTier(String schoolName, int tier, Path jsonFile) throws IOException {
         String content = Files.readString(jsonFile);
-        ArsAffinity.LOGGER.info("Loading perk file: {} for school {} tier {}", jsonFile.getFileName(), schoolName, tier);
+        ArsAffinity.LOGGER.debug("Loading perk file: {} for school {} tier {}", jsonFile.getFileName(), schoolName, tier);
         
         try {
             // Parse the JSON array of perks
@@ -131,7 +131,7 @@ public class PerkRegistry {
                 String perkTypeStr = perkObject.get("perk").getAsString();
                 String perkKey = String.format("%s_%s_%d", schoolName, perkTypeStr, tier);
                 
-                ArsAffinity.LOGGER.info("Registering perk: {} -> {}", perkKey, perkObject);
+                ArsAffinity.LOGGER.debug("Registering perk: {} -> {}", perkKey, perkObject);
                 
                 // Create AffinityPerk from JSON and then PerkData
                 try {

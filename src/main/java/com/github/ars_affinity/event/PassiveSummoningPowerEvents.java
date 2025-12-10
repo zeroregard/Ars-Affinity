@@ -45,7 +45,7 @@ public class PassiveSummoningPowerEvents {
             // Apply extended distance override
             applyExtendedDistanceOverride(event.summon.getLivingEntity(), player, time, event.world);
 
-            ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMONING_POWER perk (+{} power to player) for {} seconds, with extended distance control",
+            ArsAffinity.LOGGER.debug("Player {} summoned entity with PASSIVE_SUMMONING_POWER perk (+{} power to player) for {} seconds, with extended distance control",
                 player.getName().getString(), summonPowerBonus, time / 20);
         }
     }
@@ -78,7 +78,7 @@ public class PassiveSummoningPowerEvents {
                 EventQueue.getServerInstance().addEvent(timer);
             }
             
-            ArsAffinity.LOGGER.info("Applied +{} SUMMON_POWER to player {} for {} ticks", powerBonus, player.getName().getString(), durationTicks);
+            ArsAffinity.LOGGER.debug("Applied +{} SUMMON_POWER to player {} for {} ticks", powerBonus, player.getName().getString(), durationTicks);
         }
     }
 
@@ -90,7 +90,7 @@ public class PassiveSummoningPowerEvents {
             // Create unique modifier ID for this player
             String modifierId = "ars_affinity_summoning_power_boost_" + player.getUUID();
             attributeInstance.removeModifier(ArsAffinity.prefix(modifierId));
-            ArsAffinity.LOGGER.info("Removed SUMMON_POWER boost for player {}", player.getName().getString());
+            ArsAffinity.LOGGER.debug("Removed SUMMON_POWER boost for player {}", player.getName().getString());
         }
     }
 
@@ -174,7 +174,7 @@ public class PassiveSummoningPowerEvents {
         private void revertDistanceOverride() {
             if (goalSelector != null && customGoal != null) {
                 goalSelector.removeGoal(customGoal);
-                ArsAffinity.LOGGER.info("Reverted distance override for summon");
+                ArsAffinity.LOGGER.debug("Reverted distance override for summon");
             }
         }
     }

@@ -31,7 +31,7 @@ public class SpiralParticleWrapper implements ParticleProvider<SpiralParticleTyp
             bubble = spriteSets.get(ResourceLocation.withDefaultNamespace("bubble"));
             flame = spriteSets.get(ResourceLocation.withDefaultNamespace("flame"));
             
-            ArsAffinity.LOGGER.info("Successfully loaded sprite sets - bubble: {}, flame: {}", 
+            ArsAffinity.LOGGER.debug("Successfully loaded sprite sets - bubble: {}, flame: {}", 
                 bubble != null, flame != null);
         } catch (Exception e) {
             ArsAffinity.LOGGER.warn("Failed to load sprite sets via reflection: {}", e.getMessage());
@@ -43,7 +43,7 @@ public class SpiralParticleWrapper implements ParticleProvider<SpiralParticleTyp
 
     @Override
     public Particle createParticle(SpiralParticleTypeData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-        ArsAffinity.LOGGER.info("SpiralParticleWrapper.createParticle called at ({}, {}, {}) with color ({}, {}, {}), scale={}, lifetime={}, spriteType={}",
+        ArsAffinity.LOGGER.debug("SpiralParticleWrapper.createParticle called at ({}, {}, {}) with color ({}, {}, {}), scale={}, lifetime={}, spriteType={}",
             x, y, z, data.color.getRed(), data.color.getGreen(), data.color.getBlue(), data.size, data.age, data.spriteType);
         
         // Get the appropriate sprite set based on the sprite type

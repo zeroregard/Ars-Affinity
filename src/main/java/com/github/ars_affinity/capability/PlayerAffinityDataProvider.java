@@ -34,7 +34,7 @@ public class PlayerAffinityDataProvider {
                 if (affinityData != null && !affinityData.isEmpty()) {
                     try {
                         newData.deserializeNBT(player.level().registryAccess(), affinityData);
-                        ArsAffinity.LOGGER.info("Loaded player affinity data for player {}: {} school points", 
+                        ArsAffinity.LOGGER.debug("Loaded player affinity data for player {}: {} school points", 
                             player.getName().getString(), 
                             newData.getAllSchoolPoints().size());
                     } catch (Exception e) {
@@ -45,7 +45,7 @@ public class PlayerAffinityDataProvider {
                     ArsAffinity.LOGGER.warn("Empty affinity data found for player {}", player.getName().getString());
                 }
             } else {
-                ArsAffinity.LOGGER.info("No existing affinity data found for player {}, creating new data", 
+                ArsAffinity.LOGGER.debug("No existing affinity data found for player {}, creating new data", 
                     player.getName().getString());
             }
             
@@ -69,7 +69,7 @@ public class PlayerAffinityDataProvider {
                 CompoundTag affinityData = data.serializeNBT(player.level().registryAccess());
                 playerData.put(dataKey, affinityData);
                 
-                ArsAffinity.LOGGER.info("Saved player affinity data for player {}: {} school points", 
+                ArsAffinity.LOGGER.debug("Saved player affinity data for player {}: {} school points", 
                     player.getName().getString(),
                     data.getAllSchoolPoints().size());
                     
@@ -95,11 +95,11 @@ public class PlayerAffinityDataProvider {
     }
     
     public static void saveAllData() {
-        ArsAffinity.LOGGER.info("Saving all player data (cache size: {})", playerDataCache.size());
+        ArsAffinity.LOGGER.debug("Saving all player data (cache size: {})", playerDataCache.size());
     }
     
     public static void clearCache() {
-        ArsAffinity.LOGGER.info("Clearing player data cache (size: {})", playerDataCache.size());
+        ArsAffinity.LOGGER.debug("Clearing player data cache (size: {})", playerDataCache.size());
         playerDataCache.clear();
     }
     

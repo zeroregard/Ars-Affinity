@@ -48,7 +48,7 @@ public class AffinityAdvancementEvents {
         }
         int maxPoints = PerkTreeManager.getMaxPointsForSchool(school);
         if (maxPoints > 0 && event.getTotalPoints() >= maxPoints) {
-            ArsAffinity.LOGGER.info("Player {} reached max points ({}/{}) for school {}, awarding mastery advancement",
+            ArsAffinity.LOGGER.debug("Player {} reached max points ({}/{}) for school {}, awarding mastery advancement",
                 serverPlayer.getName().getString(), event.getTotalPoints(), maxPoints, school);
             award(serverPlayer, advancementId);
         }
@@ -72,7 +72,7 @@ public class AffinityAdvancementEvents {
             ArsAffinity.LOGGER.debug("Advancement {} already completed for player {}", advancementId, player.getName().getString());
             return;
         }
-        ArsAffinity.LOGGER.info("Awarding advancement {} to player {}", advancementId, player.getName().getString());
+        ArsAffinity.LOGGER.debug("Awarding advancement {} to player {}", advancementId, player.getName().getString());
         for (String criterion : progress.getRemainingCriteria()) {
             player.getAdvancements().award(advancement, criterion);
         }

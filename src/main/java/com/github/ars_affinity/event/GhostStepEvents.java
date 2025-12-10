@@ -29,18 +29,18 @@ public class GhostStepEvents {
             return;
         }
 
-        ArsAffinity.LOGGER.info("Ghost Step: Player {} is dying, checking for Ghost Step perk", player.getName().getString());
+        ArsAffinity.LOGGER.debug("Ghost Step: Player {} is dying, checking for Ghost Step perk", player.getName().getString());
 
         // Check if player already has cooldown
         if (player.hasEffect(ModPotions.GHOST_STEP_COOLDOWN_EFFECT)) {
-            ArsAffinity.LOGGER.info("Ghost Step: Player {} has cooldown, skipping", player.getName().getString());
+            ArsAffinity.LOGGER.debug("Ghost Step: Player {} has cooldown, skipping", player.getName().getString());
             return;
         }
 
         // Check if player has the ghost step perk
         if (AffinityPerkHelper.hasActivePerk(player, AffinityPerkType.PASSIVE_GHOST_STEP)) {
             event.setCanceled(true);
-            ArsAffinity.LOGGER.info("Ghost Step: Player {} has Ghost Step perk, activating", player.getName().getString());
+            ArsAffinity.LOGGER.debug("Ghost Step: Player {} has Ghost Step perk, activating", player.getName().getString());
             
             float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_GHOST_STEP);
             int time = AffinityPerkHelper.getPerkTime(player, AffinityPerkType.PASSIVE_GHOST_STEP);
@@ -50,12 +50,12 @@ public class GhostStepEvents {
             float maxHealth = player.getMaxHealth();
             float healAmount = maxHealth * amount;
             
-            ArsAffinity.LOGGER.info("Ghost Step: Setting health to {} (was {}), canceling event", healAmount, player.getHealth());
+            ArsAffinity.LOGGER.debug("Ghost Step: Setting health to {} (was {}), canceling event", healAmount, player.getHealth());
             
             // Set health first, then cancel the event (following TotemPerk pattern)
             player.setHealth(healAmount);
             
-            ArsAffinity.LOGGER.info("Ghost Step: Event canceled: {}, player health: {}", event.isCanceled(), player.getHealth());
+            ArsAffinity.LOGGER.debug("Ghost Step: Event canceled: {}, player health: {}", event.isCanceled(), player.getHealth());
 
             castDecoyEffect(player, time);
 
@@ -71,10 +71,10 @@ public class GhostStepEvents {
             // Apply cooldown effect
             player.addEffect(new MobEffectInstance(ModPotions.GHOST_STEP_COOLDOWN_EFFECT, cooldown, 0, false, true, true)); // cooldown is already in ticks
 
-            ArsAffinity.LOGGER.info("Player {} activated Ghost Step - healed for {} health, invisible for {} seconds",
+            ArsAffinity.LOGGER.debug("Player {} activated Ghost Step - healed for {} health, invisible for {} seconds",
                     player.getName().getString(), healAmount, time);
         } else {
-            ArsAffinity.LOGGER.info("Ghost Step: Player {} does not have Ghost Step perk", player.getName().getString());
+            ArsAffinity.LOGGER.debug("Ghost Step: Player {} does not have Ghost Step perk", player.getName().getString());
         }
     }
 
@@ -115,7 +115,7 @@ public class GhostStepEvents {
 
             EffectSummonDecoy.INSTANCE.onResolve(hitResult, level, player, spellStats, spellContext, null);
 
-            ArsAffinity.LOGGER.info("Player {} cast Decoy effect for {} seconds",
+            ArsAffinity.LOGGER.debug("Player {} cast Decoy effect for {} seconds",
                     player.getName().getString(), durationSeconds);
         } catch (Exception e) {
             ArsAffinity.LOGGER.error("Ghost Step: Error casting decoy effect", e);

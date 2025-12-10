@@ -56,7 +56,7 @@ public class PassiveSoulspikeEvents {
             if (RANDOM.nextFloat() < amount) {
                 applySoulspike(player, attacker, false);
                 
-                ArsAffinity.LOGGER.info("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                ArsAffinity.LOGGER.debug("Soulspike (Melee) activated! Player {} reflected anima at attacker {} ({}% chance)", 
                     player.getName().getString(), attacker.getName().getString(), (int)(amount * 100));
             }
         }
@@ -86,7 +86,7 @@ public class PassiveSoulspikeEvents {
                 if (attacker != null) {
                     applySoulspike(player, attacker, true);
                     
-                    ArsAffinity.LOGGER.info("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
+                    ArsAffinity.LOGGER.debug("Soulspike (Ranged) activated! Player {} reflected anima at attacker {} ({}% chance)", 
                         player.getName().getString(), attacker.getName().getString(), (int)(rangedChance * 100));
                 }
             }
@@ -124,14 +124,14 @@ public class PassiveSoulspikeEvents {
                     resolver
                 );
                 
-                ArsAffinity.LOGGER.info("Applied EffectCharm to attacker {} with amplifier {} (player max mana: {})", 
+                ArsAffinity.LOGGER.debug("Applied EffectCharm to attacker {} with amplifier {} (player max mana: {})", 
                     attacker.getName().getString(), amplifier, playerMana != null ? playerMana.getMaxMana() : 0);
             } catch (Exception e) {
                 ArsAffinity.LOGGER.error("Failed to apply EffectCharm to attacker", e);
             }
         }
         
-        ArsAffinity.LOGGER.info("Applied soulspike to attacker {} with amplifier {} (player max mana: {})", 
+        ArsAffinity.LOGGER.debug("Applied soulspike to attacker {} with amplifier {} (player max mana: {})", 
             attacker.getName().getString(), amplifier, playerMana != null ? playerMana.getMaxMana() : 0);
     }
 }

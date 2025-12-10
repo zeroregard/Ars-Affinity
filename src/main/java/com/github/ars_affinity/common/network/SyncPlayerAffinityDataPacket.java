@@ -92,7 +92,7 @@ public class SyncPlayerAffinityDataPacket extends AbstractPacket {
         if (clientData != null && serializedData != null) {
             try {
                 clientData.deserializeNBT(player.level().registryAccess(), serializedData);
-                ArsAffinity.LOGGER.info("Successfully synced affinity data to client for player {}", 
+                ArsAffinity.LOGGER.debug("Successfully synced affinity data to client for player {}", 
                     player.getName().getString());
                 minecraft.execute(() -> {
                     if (minecraft.screen instanceof PerkTreeScreen screen) {

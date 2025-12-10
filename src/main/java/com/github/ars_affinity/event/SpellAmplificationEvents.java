@@ -40,7 +40,7 @@ public class SpellAmplificationEvents {
                 // Store the amplification amount for this player
                 float amount = AffinityPerkHelper.getPerkAmount(player, AffinityPerkType.PASSIVE_HEALING_AMPLIFICATION);
                 playerHealingAmplification.put(player.getUUID(), amount);
-                ArsAffinity.LOGGER.info("Player {} cast healing spell with {}% amplification", 
+                ArsAffinity.LOGGER.debug("Player {} cast healing spell with {}% amplification", 
                     player.getName().getString(), (int)(amount * 100));
             }
         }
@@ -72,7 +72,7 @@ public class SpellAmplificationEvents {
                 double newAmp = currentAmp + amplification;
                 event.spellStats.setAmpMultiplier(newAmp);
                 
-                ArsAffinity.LOGGER.info("Applied {}% healing amplification to EffectHeal for player {}", 
+                ArsAffinity.LOGGER.debug("Applied {}% healing amplification to EffectHeal for player {}", 
                     (int)(amplification * 100), player.getName().getString());
             }
         }
@@ -115,10 +115,10 @@ public class SpellAmplificationEvents {
                     int newFood = Math.min(20, currentFood + foodToAdd);
                     foodData.setFoodLevel(newFood);
 
-                    ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} food, +{} saturation ({}% reduction)",
+                    ArsAffinity.LOGGER.debug("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} food, +{} saturation ({}% reduction)",
                         player.getName().getString(), healedName, foodToAdd, saturationToAdd, (int)(reductionPercent * 100));
                 } else {
-                    ArsAffinity.LOGGER.info("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} saturation ({}% reduction)",
+                    ArsAffinity.LOGGER.debug("Healing Amplification compensated exhaustion for caster {} while healing {}: +{} saturation ({}% reduction)",
                         player.getName().getString(), healedName, saturationToAdd, (int)(reductionPercent * 100));
                 }
             }

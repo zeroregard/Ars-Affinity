@@ -40,7 +40,7 @@ public class FireDashHelper extends AbstractDashAbility {
 		if (!player.isAlive() || !target.isAlive()) return;
 		var level = player.level();
 		if (level.isClientSide()) return;
-		ArsAffinity.LOGGER.info("FIRE DASH: igniting target immediately name={}", target.getName().getString());
+		ArsAffinity.LOGGER.debug("FIRE DASH: igniting target immediately name={}", target.getName().getString());
 		igniteTargetFallback(player, target);
 	}
 
@@ -67,7 +67,7 @@ public class FireDashHelper extends AbstractDashAbility {
 		int count = getTrailParticleCount();
 		for (int i = 0; i < count; i++) {
 			int delay = i;
-			ArsAffinity.LOGGER.info("FIRE DASH: scheduled particle tick={} delay={}t", i, delay);
+			ArsAffinity.LOGGER.debug("FIRE DASH: scheduled particle tick={} delay={}t", i, delay);
 			scheduleTask(player, delay, () -> {
 				if (!(player.level() instanceof ServerLevel serverLevel)) return;
 				double px = player.getX();
@@ -87,11 +87,11 @@ public class FireDashHelper extends AbstractDashAbility {
 		player.level().playSound(null, pos.x, pos.y, pos.z, ModSounds.DASH.get(), SoundSource.PLAYERS, 0.7f, 0.9f);
 		for (int i = 0; i < 12; i++) {
 			int delay = i;
-			ArsAffinity.LOGGER.info("FIRE DASH: schedule foot fire tick={} delay={}t", i, delay);
+			ArsAffinity.LOGGER.debug("FIRE DASH: schedule foot fire tick={} delay={}t", i, delay);
 			scheduleTask(player, delay, () -> {
 				if (!(player.level() instanceof ServerLevel serverLevel)) return;
 				BlockPos feet = BlockPos.containing(Mth.floor(player.getX()), Mth.floor(player.getY() - 0.1), Mth.floor(player.getZ()));
-				ArsAffinity.LOGGER.info("FIRE DASH: attempt place fire at {} {} {}", feet.getX(), feet.getY(), feet.getZ());
+				ArsAffinity.LOGGER.debug("FIRE DASH: attempt place fire at {} {} {}", feet.getX(), feet.getY(), feet.getZ());
 				placeMagicFireIfAir(serverLevel, feet);
 			});
 		}
@@ -99,25 +99,25 @@ public class FireDashHelper extends AbstractDashAbility {
 
 	private void placeMagicFireIfAir(ServerLevel level, BlockPos pos) {
 		var state = level.getBlockState(pos);
-		ArsAffinity.LOGGER.info("FIRE DASH: block at {} {} {} is {}", pos.getX(), pos.getY(), pos.getZ(), state);
+		ArsAffinity.LOGGER.debug("FIRE DASH: block at {} {} {} is {}", pos.getX(), pos.getY(), pos.getZ(), state);
 		if (state.isAir()) {
 			boolean placed = level.setBlock(pos, BlockRegistry.MAGIC_FIRE.get().defaultBlockState(), 3);
-			ArsAffinity.LOGGER.info("FIRE DASH: setBlock result={} at {} {} {}", placed, pos.getX(), pos.getY(), pos.getZ());
+			ArsAffinity.LOGGER.debug("FIRE DASH: setBlock result={} at {} {} {}", placed, pos.getX(), pos.getY(), pos.getZ());
 			if (!placed) {
 				level.setBlockAndUpdate(pos, BlockRegistry.MAGIC_FIRE.get().defaultBlockState());
-				ArsAffinity.LOGGER.info("FIRE DASH: fallback setBlockAndUpdate at {} {} {}", pos.getX(), pos.getY(), pos.getZ());
+				ArsAffinity.LOGGER.debug("FIRE DASH: fallback setBlockAndUpdate at {} {} {}", pos.getX(), pos.getY(), pos.getZ());
 			}
 			return;
 		}
 		BlockPos above = pos.above();
 		var stateAbove = level.getBlockState(above);
-		ArsAffinity.LOGGER.info("FIRE DASH: block above at {} {} {} is {}", above.getX(), above.getY(), above.getZ(), stateAbove);
+		ArsAffinity.LOGGER.debug("FIRE DASH: block above at {} {} {} is {}", above.getX(), above.getY(), above.getZ(), stateAbove);
 		if (stateAbove.isAir()) {
 			boolean placedAbove = level.setBlock(above, BlockRegistry.MAGIC_FIRE.get().defaultBlockState(), 3);
-			ArsAffinity.LOGGER.info("FIRE DASH: setBlock result={} at above {} {} {}", placedAbove, above.getX(), above.getY(), above.getZ());
+			ArsAffinity.LOGGER.debug("FIRE DASH: setBlock result={} at above {} {} {}", placedAbove, above.getX(), above.getY(), above.getZ());
 			if (!placedAbove) {
 				level.setBlockAndUpdate(above, BlockRegistry.MAGIC_FIRE.get().defaultBlockState());
-				ArsAffinity.LOGGER.info("FIRE DASH: fallback setBlockAndUpdate at above {} {} {}", above.getX(), above.getY(), above.getZ());
+				ArsAffinity.LOGGER.debug("FIRE DASH: fallback setBlockAndUpdate at above {} {} {}", above.getX(), above.getY(), above.getZ());
 			}
 		}
 	}

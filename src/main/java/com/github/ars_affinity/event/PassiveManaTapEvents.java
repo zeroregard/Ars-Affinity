@@ -35,7 +35,7 @@ public class PassiveManaTapEvents {
                 if (newMana > currentMana) {
                     playerMana.setMana(newMana);
                     
-                    ArsAffinity.LOGGER.info("Player {} dealt {} damage - PASSIVE_MANA_TAP restored {} mana ({}%)", 
+                    ArsAffinity.LOGGER.debug("Player {} dealt {} damage - PASSIVE_MANA_TAP restored {} mana ({}%)", 
                         player.getName().getString(), event.damage, manaRestore, (int)(amount * 100));
                 }
             }

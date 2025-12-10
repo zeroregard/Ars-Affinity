@@ -76,7 +76,7 @@ public class PassiveHydrationEvents {
                     WetTicksProvider.savePlayerWetTicks(player);
                 }
                 if (player.hasEffect(ModPotions.HYDRATED_EFFECT)) {
-                    ArsAffinity.LOGGER.info("HYDRATION - Player {} is no longer wet, removing Hydrated effect", 
+                    ArsAffinity.LOGGER.debug("HYDRATION - Player {} is no longer wet, removing Hydrated effect", 
                         player.getName().getString());
                     player.removeEffect(ModPotions.HYDRATED_EFFECT);
                     lastFoodLevels.remove(player.getUUID());
@@ -86,7 +86,7 @@ public class PassiveHydrationEvents {
     }
     
     private static void applyHydratedEffect(Player player, float maxAmplification, int wetTicks) {
-        ArsAffinity.LOGGER.info("HYDRATION - Applying Hydrated effect for player {} - Max amplification: {}, Wet ticks: {}",
+        ArsAffinity.LOGGER.debug("HYDRATION - Applying Hydrated effect for player {} - Max amplification: {}, Wet ticks: {}",
             player.getName().getString(), maxAmplification, wetTicks);
 
         int targetAmplifier = 0;

@@ -44,7 +44,7 @@ public class SpiralParticle extends TextureSheetParticle {
 
         this.pickSprite(sprite);
         
-        com.github.ars_affinity.ArsAffinity.LOGGER.info("SpiralParticle created at ({}, {}, {}) with color ({}, {}, {}), size={}, lifetime={}, radius={}, speed={}", 
+        com.github.ars_affinity.ArsAffinity.LOGGER.debug("SpiralParticle created at ({}, {}, {}) with color ({}, {}, {}), size={}, lifetime={}, radius={}, speed={}", 
             x, y, z, r, g, b, this.quadSize, this.lifetime, this.radius, this.speed);
     }
 

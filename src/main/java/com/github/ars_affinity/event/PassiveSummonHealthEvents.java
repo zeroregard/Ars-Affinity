@@ -28,7 +28,7 @@ public class PassiveSummonHealthEvents {
             int amplifier = Math.round(amount);
             event.summon.getLivingEntity().addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, time, amplifier));
             
-            ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMON_HEALTH perk ({}%) - adding health boost effect with amplifier {} for {} seconds", 
+            ArsAffinity.LOGGER.debug("Player {} summoned entity with PASSIVE_SUMMON_HEALTH perk ({}%) - adding health boost effect with amplifier {} for {} seconds", 
                 player.getName().getString(), (int)(amount * 100), amplifier, time / 20);
         }
     }

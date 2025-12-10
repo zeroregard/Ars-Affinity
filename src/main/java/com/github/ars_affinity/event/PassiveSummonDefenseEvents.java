@@ -27,7 +27,7 @@ public class PassiveSummonDefenseEvents {
                 // Get the highest tier the player has allocated for this perk
                 int highestTier = AffinityPerkHelper.getPerkTier(player, AffinityPerkType.PASSIVE_SUMMON_DEFENSE);
                 equipArmorToSummon(event.summon.getLivingEntity(), highestTier, event.world);
-                ArsAffinity.LOGGER.info("Player {} summoned entity with PASSIVE_SUMMON_DEFENSE perk at tier {}",
+                ArsAffinity.LOGGER.debug("Player {} summoned entity with PASSIVE_SUMMON_DEFENSE perk at tier {}",
                     player.getName().getString(), highestTier);
             }
         }

@@ -32,7 +32,7 @@ public class LoopingSoundManager {
         activeSounds.put(key, sound);
         Minecraft.getInstance().getSoundManager().play(sound);
         
-        ArsAffinity.LOGGER.info("Started looping sound {} for player {}", soundId, player.getName().getString());
+        ArsAffinity.LOGGER.debug("Started looping sound {} for player {}", soundId, player.getName().getString());
     }
     
     public static void stopLoopingSound(Player player, String soundId) {
@@ -41,7 +41,7 @@ public class LoopingSoundManager {
         PlayerLoopingSound sound = activeSounds.remove(key);
         if (sound != null) {
             sound.stopSound();
-            ArsAffinity.LOGGER.info("Stopped looping sound {} for player {}", soundId, player.getName().getString());
+            ArsAffinity.LOGGER.debug("Stopped looping sound {} for player {}", soundId, player.getName().getString());
         }
     }
     

@@ -31,7 +31,7 @@ public class CurseFieldHelper extends AbstractFieldAbility {
 
 	public static void toggleOrStart(ServerPlayer player, com.github.ars_affinity.perk.AffinityPerk.ActiveAbilityPerk perk) {
 		if (player.hasEffect(ModPotions.CURSE_FIELD_COOLDOWN_EFFECT)) return;
-		ArsAffinity.LOGGER.info("CURSE FIELD start: manaCostPerTick={} cooldownTicks={}", perk.manaCost, perk.cooldown);
+		ArsAffinity.LOGGER.debug("CURSE FIELD start: manaCostPerTick={} cooldownTicks={}", perk.manaCost, perk.cooldown);
 		boolean wasStarted = ActiveFieldRegistry.toggleOrStart(player, () -> new CurseFieldHelper(player, perk.manaCost, perk.cooldown));
 		if (wasStarted) {
 			Networking.sendToPlayerClient(new LoopingSoundPacket(player.getId(), "curse_field", true), player);

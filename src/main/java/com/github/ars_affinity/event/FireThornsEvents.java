@@ -33,7 +33,7 @@ public class FireThornsEvents {
                 // Set the attacker on fire
                 attacker.setRemainingFireTicks(3 * 20);
                 
-                ArsAffinity.LOGGER.info("Fire Thorns activated! Player {} ignited attacker {} ({}% chance)", 
+                ArsAffinity.LOGGER.debug("Fire Thorns activated! Player {} ignited attacker {} ({}% chance)", 
                     player.getName().getString(), attacker.getName().getString(), (int)(amount * 100));
             }
         }

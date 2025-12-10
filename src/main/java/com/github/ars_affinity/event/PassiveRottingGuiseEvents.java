@@ -29,7 +29,7 @@ public class PassiveRottingGuiseEvents {
             // Make the undead mob ignore the player
             event.setNewAboutToBeSetTarget(null);
             
-            ArsAffinity.LOGGER.info("ROTTING_GUISE - Player {} with PASSIVE_ROTTING_GUISE made {} ignore them", 
+            ArsAffinity.LOGGER.debug("ROTTING_GUISE - Player {} with PASSIVE_ROTTING_GUISE made {} ignore them", 
                 player.getName().getString(), mob.getType().getDescription().getString());
         }
     }

@@ -19,7 +19,7 @@ public class TestParticleCommand {
             .executes(context -> {
                 if (context.getSource().getEntity() instanceof net.minecraft.world.entity.player.Player player) {
                     if (player.level().isClientSide()) {
-                        ArsAffinity.LOGGER.info("TestParticleCommand: Spawning test particles on client");
+                        ArsAffinity.LOGGER.debug("TestParticleCommand: Spawning test particles on client");
                         SpiralParticleHelper.spawnSpiralParticles(
                             (net.minecraft.client.multiplayer.ClientLevel) player.level(),
                             player,

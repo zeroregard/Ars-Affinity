@@ -84,15 +84,15 @@ public class ParticleEffectPacket extends AbstractPacket {
     
     private static class Handle {
         public static void handle(ParticleEffectPacket packet, Minecraft minecraft, Player player) {
-            ArsAffinity.LOGGER.info("=== PARTICLE EFFECT PACKET RECEIVED ===");
-            ArsAffinity.LOGGER.info("ParticleEffectPacket.handle called with playerId={}, schoolId={}, isUpdate={}", 
+            ArsAffinity.LOGGER.debug("=== PARTICLE EFFECT PACKET RECEIVED ===");
+            ArsAffinity.LOGGER.debug("ParticleEffectPacket.handle called with playerId={}, schoolId={}, isUpdate={}", 
                 packet.playerId, packet.schoolId, packet.isUpdate);
-            ArsAffinity.LOGGER.info("Minecraft level: {}, isClientSide: {}", 
+            ArsAffinity.LOGGER.debug("Minecraft level: {}, isClientSide: {}", 
                 minecraft.level != null ? minecraft.level.dimension().location() : "null", 
                 minecraft.level != null ? minecraft.level.isClientSide() : "null");
                 
             if (minecraft.level != null && minecraft.level.isClientSide()) {
-                ArsAffinity.LOGGER.info("ParticleEffectPacket: Client-side level confirmed");
+                ArsAffinity.LOGGER.debug("ParticleEffectPacket: Client-side level confirmed");
                 
                 if (packet.isUpdate) {
                     // Handle position update - update the center of existing particles
@@ -105,14 +105,14 @@ public class ParticleEffectPacket extends AbstractPacket {
                     Player targetPlayer = minecraft.level.getEntity(packet.playerId) instanceof Player p ? p : null;
                     
                     if (targetPlayer != null) {
-                        ArsAffinity.LOGGER.info("ParticleEffectPacket: Target player found: {} at position ({}, {}, {})", 
+                        ArsAffinity.LOGGER.debug("ParticleEffectPacket: Target player found: {} at position ({}, {}, {})", 
                             targetPlayer.getName().getString(), targetPlayer.getX(), targetPlayer.getY(), targetPlayer.getZ());
                         
                         SpellSchool school = getSchoolFromId(packet.schoolId);
                         if (school != null) {
-                            ArsAffinity.LOGGER.info("ParticleEffectPacket: School found: {}, spawning {} particles", 
+                            ArsAffinity.LOGGER.debug("ParticleEffectPacket: School found: {}, spawning {} particles", 
                                 school.getId(), packet.particleCount);
-                            ArsAffinity.LOGGER.info("ParticleEffectPacket: Calling SpiralParticleHelper.spawnSpiralParticles");
+                            ArsAffinity.LOGGER.debug("ParticleEffectPacket: Calling SpiralParticleHelper.spawnSpiralParticles");
                                 
                             try {
                                 SpiralParticleHelper.spawnSpiralParticles(
@@ -122,7 +122,7 @@ public class ParticleEffectPacket extends AbstractPacket {
                                     packet.particleCount
                                 );
                                 
-                                ArsAffinity.LOGGER.info("ParticleEffectPacket: Particles spawned successfully");
+                                ArsAffinity.LOGGER.debug("ParticleEffectPacket: Particles spawned successfully");
                             } catch (Exception e) {
                                 ArsAffinity.LOGGER.error("ParticleEffectPacket: Error spawning particles: {}", e.getMessage(), e);
                             }
@@ -136,7 +136,7 @@ public class ParticleEffectPacket extends AbstractPacket {
             } else {
                 ArsAffinity.LOGGER.warn("ParticleEffectPacket: Not on client side or level is null");
             }
-            ArsAffinity.LOGGER.info("=== PARTICLE EFFECT PACKET HANDLING COMPLETE ===");
+            ArsAffinity.LOGGER.debug("=== PARTICLE EFFECT PACKET HANDLING COMPLETE ===");
         }
         
         private static SpellSchool getSchoolFromId(String schoolId) {

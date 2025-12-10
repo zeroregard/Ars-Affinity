@@ -26,7 +26,7 @@ public class ChatMessageHelper {
             schoolName, pointsReset));
         player.sendSystemMessage(message);
         
-        ArsAffinity.LOGGER.info("Player {} reset {} affinity (removed {} points)", 
+        ArsAffinity.LOGGER.debug("Player {} reset {} affinity (removed {} points)", 
             player.getName().getString(), schoolName, pointsReset);
     }
     
@@ -41,7 +41,7 @@ public class ChatMessageHelper {
             totalPointsReset));
         player.sendSystemMessage(message);
         
-        ArsAffinity.LOGGER.info("Player {} reset all affinities (removed {} total points)", 
+        ArsAffinity.LOGGER.debug("Player {} reset all affinities (removed {} total points)", 
             player.getName().getString(), totalPointsReset);
     }
     

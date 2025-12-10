@@ -13,15 +13,15 @@ public class PerkRegistryInitializer {
     
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        ArsAffinity.LOGGER.info("Initializing PerkRegistry...");
+        ArsAffinity.LOGGER.debug("Initializing PerkRegistry...");
         
         PerkRegistry.initializeFromConfig();
         
-        ArsAffinity.LOGGER.info("PerkRegistry initialization complete. Registered {} perk configurations.", 
+        ArsAffinity.LOGGER.debug("PerkRegistry initialization complete. Registered {} perk configurations.", 
             PerkRegistry.getTotalPerkCount());
         
         // Log some sample perks to verify they're loaded
-        ArsAffinity.LOGGER.info("Sample perk keys: {}", 
+        ArsAffinity.LOGGER.debug("Sample perk keys: {}", 
             PerkRegistry.getAllPerkKeys().stream().limit(10).collect(Collectors.joining(", ")));
     }
 }

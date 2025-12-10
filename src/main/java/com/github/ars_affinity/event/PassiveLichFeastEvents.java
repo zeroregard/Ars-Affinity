@@ -46,7 +46,7 @@ public class PassiveLichFeastEvents {
                 foodData.setSaturation(newSaturation);
             }
             
-            ArsAffinity.LOGGER.info("Player {} killed non-undead entity {} - PASSIVE_LICH_FEAST restored {} health and {} hunger", 
+            ArsAffinity.LOGGER.debug("Player {} killed non-undead entity {} - PASSIVE_LICH_FEAST restored {} health and {} hunger", 
                 player.getName().getString(), killedEntity.getName().getString(), health, hunger);
         }
     }

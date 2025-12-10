@@ -29,56 +29,56 @@ public class ActiveAbilityManager {
 	}
 
 	public static void triggerActiveAbility(ServerPlayer player) {
-		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Trigger requested by {}", player.getName().getString());
+		ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Trigger requested by {}", player.getName().getString());
 		var data = PlayerAffinityDataHelper.getPlayerAffinityData(player);
 		if (data == null) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No affinity data for {}", player.getName().getString());
+			ArsAffinity.LOGGER.debug("ACTIVE ABILITY: No affinity data for {}", player.getName().getString());
 			return;
 		}
 
 		AffinityPerkType currentActiveAbilityType = data.getCurrentActiveAbilityType();
 		if (currentActiveAbilityType == null) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability allocated for {}", player.getName().getString());
+			ArsAffinity.LOGGER.debug("ACTIVE ABILITY: No active ability allocated for {}", player.getName().getString());
 			return;
 		}
 
                 AffinityPerk activePerk = AffinityPerkHelper.getAllocatedPerk(player, currentActiveAbilityType);
 		if (activePerk == null || !(activePerk instanceof AffinityPerk.ActiveAbilityPerk)) {
-			ArsAffinity.LOGGER.info("ACTIVE ABILITY: No active ability perk available for {} (type: {})", 
+			ArsAffinity.LOGGER.debug("ACTIVE ABILITY: No active ability perk available for {} (type: {})", 
 				player.getName().getString(), currentActiveAbilityType);
 			return;
 		}
 
 		AffinityPerk.ActiveAbilityPerk abilityPerk = (AffinityPerk.ActiveAbilityPerk) activePerk;
-		ArsAffinity.LOGGER.info("ACTIVE ABILITY: Executing {} for {}", abilityPerk.perk, player.getName().getString());
+		ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Executing {} for {}", abilityPerk.perk, player.getName().getString());
 
 		switch (abilityPerk.perk) {
 			case ACTIVE_ICE_BLAST:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch ICE BLAST");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch ICE BLAST");
 				IceBlastHelper.executeAbility(player, abilityPerk);
 				break;
 			case ACTIVE_SWAP_ABILITY:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SWAP ABILITY");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch SWAP ABILITY");
 				SwapAbilityHelper.executeAbility(player, abilityPerk);
 				break;
 			case ACTIVE_GROUND_SLAM:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch GROUND SLAM");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch GROUND SLAM");
 				GroundSlamHelper.executeAbility(player, abilityPerk);
 				break;
 			case ACTIVE_AIR_DASH:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch AIR DASH");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch AIR DASH");
 				AirDashHelper.triggerAbility(player, abilityPerk);
 				break;
             case ACTIVE_FIRE_DASH:
-                ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch FIRE DASH");
+                ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch FIRE DASH");
                 FireDashHelper.triggerAbility(player, abilityPerk);
                 break;
 			case ACTIVE_SANCTUARY:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch SANCTUARY");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch SANCTUARY");
 				SanctuaryHelper.toggleOrStart(player, abilityPerk);
 				break;
 			case ACTIVE_CURSE_FIELD:
-				ArsAffinity.LOGGER.info("ACTIVE ABILITY: Dispatch CURSE FIELD");
+				ArsAffinity.LOGGER.debug("ACTIVE ABILITY: Dispatch CURSE FIELD");
 				CurseFieldHelper.toggleOrStart(player, abilityPerk);
 				break;
 			default:

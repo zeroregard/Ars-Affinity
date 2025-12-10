@@ -526,7 +526,7 @@ public class PerkTreeScreen extends Screen {
         
         if (mouseX >= buttonX && mouseX < buttonX + buttonSize && 
             mouseY >= buttonY && mouseY < buttonY + buttonSize) {
-            ArsAffinity.LOGGER.info("Glyph button clicked for school: {}", school);
+            ArsAffinity.LOGGER.debug("Glyph button clicked for school: {}", school);
             try {
                 minecraft.setScreen(new SchoolGlyphScreen(this, school));
             } catch (Exception e) {

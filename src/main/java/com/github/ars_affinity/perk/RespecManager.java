@@ -56,7 +56,7 @@ public class RespecManager {
      */
     public static boolean respecSchool(Player player, SpellSchool school) {
         if (!canRespecSchool(player, school)) {
-        ArsAffinity.LOGGER.info("Player {} cannot afford to respec school {}", 
+        ArsAffinity.LOGGER.debug("Player {} cannot afford to respec school {}", 
             player.getName().getString(), school.getId());
             return false;
         }
@@ -70,7 +70,7 @@ public class RespecManager {
         // Get all allocated perks for this school
         Map<String, PerkAllocation> allocatedPerks = affinityData.getPerksForSchool(school);
         if (allocatedPerks.isEmpty()) {
-            ArsAffinity.LOGGER.info("No perks allocated for school {} - nothing to respec", school.getId());
+            ArsAffinity.LOGGER.debug("No perks allocated for school {} - nothing to respec", school.getId());
             return false;
         }
         
@@ -94,7 +94,7 @@ public class RespecManager {
         // Mark data as dirty
         affinityData.setDirty(true);
         
-        ArsAffinity.LOGGER.info("Player {} respecced school {} - returned {} points, cost {} levels", 
+        ArsAffinity.LOGGER.debug("Player {} respecced school {} - returned {} points, cost {} levels", 
             player.getName().getString(), school.getId(), totalPointsToReturn, RESPEC_COST_PER_SCHOOL);
         
         return true;
@@ -108,7 +108,7 @@ public class RespecManager {
      */
     public static boolean respecAllSchools(Player player) {
         if (!canRespecAllSchools(player)) {
-            ArsAffinity.LOGGER.info("Player {} cannot afford to respec all schools", player.getName().getString());
+            ArsAffinity.LOGGER.debug("Player {} cannot afford to respec all schools", player.getName().getString());
             return false;
         }
         
@@ -121,7 +121,7 @@ public class RespecManager {
         // Get all allocated perks
         java.util.Set<PerkAllocation> allAllocatedPerks = affinityData.getAllAllocatedPerks();
         if (allAllocatedPerks.isEmpty()) {
-            ArsAffinity.LOGGER.info("No perks allocated - nothing to respec");
+            ArsAffinity.LOGGER.debug("No perks allocated - nothing to respec");
             return false;
         }
         
@@ -148,7 +148,7 @@ public class RespecManager {
         // Mark data as dirty
         affinityData.setDirty(true);
         
-        ArsAffinity.LOGGER.info("Player {} respecced all schools - returned {} total points, cost {} levels", 
+        ArsAffinity.LOGGER.debug("Player {} respecced all schools - returned {} total points, cost {} levels", 
             player.getName().getString(), pointsToReturn.values().stream().mapToInt(Integer::intValue).sum(), RESPEC_COST_ALL_SCHOOLS);
         
         return true;

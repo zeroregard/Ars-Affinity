@@ -52,7 +52,7 @@ public class CuriosDataGen implements DataProvider {
             
         try {
             DataProvider.saveStable(output, data, dataPath);
-            ArsAffinity.LOGGER.info("Generated curios entities data: {}", dataPath);
+            ArsAffinity.LOGGER.debug("Generated curios entities data: {}", dataPath);
         } catch (Exception e) {
             ArsAffinity.LOGGER.error("Failed to save curios entities data: {}", e.getMessage());
         }
@@ -81,7 +81,7 @@ public class CuriosDataGen implements DataProvider {
             
         try {
             DataProvider.saveStable(output, data, dataPath);
-            ArsAffinity.LOGGER.info("Generated curios slots data: {}", dataPath);
+            ArsAffinity.LOGGER.debug("Generated curios slots data: {}", dataPath);
         } catch (Exception e) {
             ArsAffinity.LOGGER.error("Failed to save curios slots data: {}", e.getMessage());
         }

@@ -36,7 +36,7 @@ public class ArsAffinityClient {
     );
     
     public static void init(IEventBus modEventBus) {
-        ArsAffinity.LOGGER.info("Initializing Ars Affinity client...");
+        ArsAffinity.LOGGER.debug("Initializing Ars Affinity client...");
         
         ParticleRegistry.PARTICLES.register(modEventBus);
         
@@ -47,13 +47,13 @@ public class ArsAffinityClient {
     }
     
     private static void clientSetup(final FMLClientSetupEvent event) {
-        ArsAffinity.LOGGER.info("Ars Affinity client setup complete!");
+        ArsAffinity.LOGGER.debug("Ars Affinity client setup complete!");
     }
     
     private static void registerKeybindings(final RegisterKeyMappingsEvent event) {
         event.register(AFFINITY_UI_KEY.get());
         event.register(ABILITY_KEY.get());
-        ArsAffinity.LOGGER.info("Ars Affinity keybindings registered!");
+        ArsAffinity.LOGGER.debug("Ars Affinity keybindings registered!");
     }
     
     @SubscribeEvent

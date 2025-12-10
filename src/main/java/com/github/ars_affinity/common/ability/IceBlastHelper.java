@@ -31,12 +31,12 @@ import java.util.List;
 public class IceBlastHelper {
     
     public static void executeAbility(ServerPlayer player, AffinityPerk.ActiveAbilityPerk perk) {
-        ArsAffinity.LOGGER.info("ICE BLAST: Starting execution for player {} with perk: damage={}, freezeTime={}, radius={}, cooldown={}", 
+        ArsAffinity.LOGGER.debug("ICE BLAST: Starting execution for player {} with perk: damage={}, freezeTime={}, radius={}, cooldown={}", 
             player.getName().getString(), perk.damage, perk.freezeTime, perk.radius, perk.cooldown);
         
         IManaCap manaCap = player.getCapability(CapabilityRegistry.MANA_CAPABILITY);
         if (manaCap == null) {
-            ArsAffinity.LOGGER.info("ICE BLAST: Player {} has no mana capability", player.getName().getString());
+            ArsAffinity.LOGGER.debug("ICE BLAST: Player {} has no mana capability", player.getName().getString());
             return;
         }
         
@@ -45,7 +45,7 @@ public class IceBlastHelper {
         double requiredMana = perk.manaCost * maxMana;
         
         if (currentMana < requiredMana) {
-            ArsAffinity.LOGGER.info("ICE BLAST: Player {} doesn't have enough mana. Required: {}, Current: {}", 
+            ArsAffinity.LOGGER.debug("ICE BLAST: Player {} doesn't have enough mana. Required: {}, Current: {}", 
                 player.getName().getString(), requiredMana, currentMana);
             return;
         }

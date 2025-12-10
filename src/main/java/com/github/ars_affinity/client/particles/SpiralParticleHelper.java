@@ -113,8 +113,8 @@ public class SpiralParticleHelper {
     }
     
     public static void spawnSpiralParticles(ClientLevel level, Player player, SpellSchool school, int particleCount, int delayTicks) {
-        ArsAffinity.LOGGER.info("=== SPIRAL PARTICLE HELPER START ===");
-        ArsAffinity.LOGGER.info("SpiralParticleHelper.spawnSpiralParticles called with level={}, player={}, school={}, count={}",
+        ArsAffinity.LOGGER.debug("=== SPIRAL PARTICLE HELPER START ===");
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper.spawnSpiralParticles called with level={}, player={}, school={}, count={}",
             level != null ? "ClientLevel" : "null", 
             player != null ? player.getName().getString() : "null", 
             school != null ? school.getId() : "null", 
@@ -124,7 +124,7 @@ public class SpiralParticleHelper {
             ArsAffinity.LOGGER.warn("SpiralParticleHelper: Null parameters detected, aborting particle spawn");
             ArsAffinity.LOGGER.warn("SpiralParticleHelper: level={}, player={}, school={}", 
                 level != null, player != null, school != null);
-            ArsAffinity.LOGGER.info("=== SPIRAL PARTICLE HELPER END (NULL PARAMS) ===");
+            ArsAffinity.LOGGER.debug("=== SPIRAL PARTICLE HELPER END (NULL PARAMS) ===");
             return;
         }
         
@@ -137,17 +137,17 @@ public class SpiralParticleHelper {
             scale = 1.0f;
         }
         
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Using color={}, scale={}", color, scale);
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Using color={}, scale={}", color, scale);
         
         Vec3 playerPos = player.position();
         double x = playerPos.x;
         double y = playerPos.y; // Spawn at bottom of player
         double z = playerPos.z;
         
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Player position: ({}, {}, {}), eye height: {}", 
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Player position: ({}, {}, {}), eye height: {}", 
             playerPos.x, playerPos.y, playerPos.z, player.getEyeHeight());
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Spawning particles at position ({}, {}, {})", x, y, z);
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Particle type: {}", ParticleRegistry.SPIRAL_FIRE.get());
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Spawning particles at position ({}, {}, {})", x, y, z);
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Particle type: {}", ParticleRegistry.SPIRAL_FIRE.get());
         
         // Register the particle effect for position tracking
         registerParticleEffect(player.getId(), school.getId().toString(), x, y, z);
@@ -183,7 +183,7 @@ public class SpiralParticleHelper {
                 successfulSpawns++;
                 
                 if (i < 5) { // Log first 5 particles for debugging
-                    ArsAffinity.LOGGER.info("SpiralParticleHelper: Spawned particle {} at ({}, {}, {})", 
+                    ArsAffinity.LOGGER.debug("SpiralParticleHelper: Spawned particle {} at ({}, {}, {})", 
                         i, x + offsetX, y + offsetY, z + offsetZ);
                 }
             } catch (Exception e) {
@@ -191,8 +191,8 @@ public class SpiralParticleHelper {
             }
         }
         
-        ArsAffinity.LOGGER.info("SpiralParticleHelper: Successfully spawned {}/{} particles", successfulSpawns, particleCount);
-        ArsAffinity.LOGGER.info("=== SPIRAL PARTICLE HELPER END ===");
+        ArsAffinity.LOGGER.debug("SpiralParticleHelper: Successfully spawned {}/{} particles", successfulSpawns, particleCount);
+        ArsAffinity.LOGGER.debug("=== SPIRAL PARTICLE HELPER END ===");
     }
     
     public static ParticleColor getSchoolColor(SpellSchool school) {
