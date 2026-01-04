@@ -284,15 +284,15 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         
         String nodeId = node.getId();
         
-        // Check if already allocated
-        if (allocatedPerks.containsKey(nodeId)) {
-            return false;
+        synchronized (allocatedPerks) {
+            if (allocatedPerks.containsKey(nodeId)) {
+                return false;
+            }
+            
+            PerkAllocation allocation = new PerkAllocation(node);
+            allocatedPerks.put(nodeId, allocation);
+            unlockedNodes.add(nodeId);
         }
-        
-        // Allocate the perk
-        PerkAllocation allocation = new PerkAllocation(node);
-        allocatedPerks.put(nodeId, allocation);
-        unlockedNodes.add(nodeId);
         
         // Update available points
         updateAvailablePoints(node.getSchool());
@@ -308,22 +308,23 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     }
     
     public boolean deallocatePerk(String nodeId) {
-        PerkAllocation allocation = allocatedPerks.get(nodeId);
-        if (allocation == null) {
-            return false;
-        }
-        
-        // Check if any other perks depend on this one
-        for (PerkAllocation otherAllocation : allocatedPerks.values()) {
-            if (otherAllocation.getNode().getPrerequisites().contains(nodeId)) {
-                ArsAffinity.LOGGER.warn("Cannot deallocate {} - other perks depend on it", nodeId);
+        PerkAllocation allocation;
+        synchronized (allocatedPerks) {
+            allocation = allocatedPerks.get(nodeId);
+            if (allocation == null) {
                 return false;
             }
+            
+            for (PerkAllocation otherAllocation : allocatedPerks.values()) {
+                if (otherAllocation.getNode().getPrerequisites().contains(nodeId)) {
+                    ArsAffinity.LOGGER.warn("Cannot deallocate {} - other perks depend on it", nodeId);
+                    return false;
+                }
+            }
+            
+            allocatedPerks.remove(nodeId);
+            unlockedNodes.remove(nodeId);
         }
-        
-        // Deallocate the perk
-        allocatedPerks.remove(nodeId);
-        unlockedNodes.remove(nodeId);
         
         // Update available points
         updateAvailablePoints(allocation.getSchool());
@@ -347,7 +348,9 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     }
     
     public Set<PerkAllocation> getAllAllocatedPerks() {
-        return Set.copyOf(allocatedPerks.values());
+        synchronized (allocatedPerks) {
+            return new HashSet<>(allocatedPerks.values());
+        }
     }
     
     public Set<PerkAllocation> getAllocatedPerksForSchool(SpellSchool school) {
@@ -399,16 +402,16 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             return;
         }
         
-        // Check if we're removing an active ability
-        boolean hadActiveAbility = hasAnyActiveAbility();
-        
-        // Remove all allocated perks for this school
-        allocatedPerks.entrySet().removeIf(entry -> 
-            entry.getValue().getSchool().equals(school));
-        
-        // Remove unlocked nodes for this school
-        unlockedNodes.removeIf(nodeId -> 
-            nodeId.startsWith(school.getId().toString()));
+        boolean hadActiveAbility;
+        synchronized (allocatedPerks) {
+            hadActiveAbility = hasAnyActiveAbility();
+            
+            allocatedPerks.entrySet().removeIf(entry -> 
+                entry.getValue().getSchool().equals(school));
+            
+            unlockedNodes.removeIf(nodeId -> 
+                nodeId.startsWith(school.getId().toString()));
+        }
         
         // Reset available points
         updateAvailablePoints(school);
@@ -427,8 +430,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             return;
         }
         
-        allocatedPerks.clear();
-        unlockedNodes.clear();
+        synchronized (allocatedPerks) {
+            allocatedPerks.clear();
+            unlockedNodes.clear();
+        }
         
         for (SpellSchool school : SUPPORTED_SCHOOLS) {
             updateAvailablePoints(school);
@@ -563,16 +568,17 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
             }
         }
         
-        // Deserialize allocated perks
         ListTag allocatedPerksTag = tag.getList("allocatedPerks", Tag.TAG_COMPOUND);
-        allocatedPerks.clear();
-        for (Tag perkTag : allocatedPerksTag) {
-            if (perkTag instanceof CompoundTag compoundTag) {
-                PerkAllocation allocation = PerkAllocation.deserializeNBT(compoundTag);
-                if (allocation != null) {
-                    allocatedPerks.put(allocation.getNodeId(), allocation);
-                } else {
-                    ArsAffinity.LOGGER.warn("Failed to deserialize perk allocation, skipping");
+        synchronized (allocatedPerks) {
+            allocatedPerks.clear();
+            for (Tag perkTag : allocatedPerksTag) {
+                if (perkTag instanceof CompoundTag compoundTag) {
+                    PerkAllocation allocation = PerkAllocation.deserializeNBT(compoundTag);
+                    if (allocation != null) {
+                        allocatedPerks.put(allocation.getNodeId(), allocation);
+                    } else {
+                        ArsAffinity.LOGGER.warn("Failed to deserialize perk allocation, skipping");
+                    }
                 }
             }
         }
