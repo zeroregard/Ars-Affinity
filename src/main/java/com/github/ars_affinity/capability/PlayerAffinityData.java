@@ -231,9 +231,11 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     
     public Map<String, PerkAllocation> getPerksForSchool(SpellSchool school) {
         Map<String, PerkAllocation> schoolPerks = new HashMap<>();
-        for (Map.Entry<String, PerkAllocation> entry : allocatedPerks.entrySet()) {
-            if (entry.getValue().getSchool().equals(school)) {
-                schoolPerks.put(entry.getKey(), entry.getValue());
+        synchronized (allocatedPerks) {
+            for (Map.Entry<String, PerkAllocation> entry : allocatedPerks.entrySet()) {
+                if (entry.getValue().getSchool().equals(school)) {
+                    schoolPerks.put(entry.getKey(), entry.getValue());
+                }
             }
         }
         return schoolPerks;
@@ -246,10 +248,12 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     }
     
     private int getAllocatedPointsForSchool(SpellSchool school) {
-        return allocatedPerks.values().stream()
-            .filter(allocation -> allocation.getSchool().equals(school))
-            .mapToInt(PerkAllocation::getPointsInvested)
-            .sum();
+        synchronized (allocatedPerks) {
+            return allocatedPerks.values().stream()
+                .filter(allocation -> allocation.getSchool().equals(school))
+                .mapToInt(PerkAllocation::getPointsInvested)
+                .sum();
+        }
     }
     
     // Perk Allocation
@@ -340,11 +344,15 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     }
     
     public boolean isPerkAllocated(String nodeId) {
-        return allocatedPerks.containsKey(nodeId);
+        synchronized (allocatedPerks) {
+            return allocatedPerks.containsKey(nodeId);
+        }
     }
     
     public PerkAllocation getAllocatedPerk(String nodeId) {
-        return allocatedPerks.get(nodeId);
+        synchronized (allocatedPerks) {
+            return allocatedPerks.get(nodeId);
+        }
     }
     
     public Set<PerkAllocation> getAllAllocatedPerks() {
@@ -354,30 +362,38 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
     }
     
     public Set<PerkAllocation> getAllocatedPerksForSchool(SpellSchool school) {
-        return allocatedPerks.values().stream()
-            .filter(allocation -> allocation.getSchool().equals(school))
-            .collect(java.util.stream.Collectors.toSet());
+        synchronized (allocatedPerks) {
+            return allocatedPerks.values().stream()
+                .filter(allocation -> allocation.getSchool().equals(school))
+                .collect(java.util.stream.Collectors.toSet());
+        }
     }
     
     // Active Ability Management
     public boolean hasAnyActiveAbility() {
-        return allocatedPerks.values().stream()
-            .anyMatch(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()));
+        synchronized (allocatedPerks) {
+            return allocatedPerks.values().stream()
+                .anyMatch(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()));
+        }
     }
     
     public AffinityPerkType getCurrentActiveAbilityType() {
-        return allocatedPerks.values().stream()
-            .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
-            .findFirst()
-            .map(PerkAllocation::getPerkType)
-            .orElse(null);
+        synchronized (allocatedPerks) {
+            return allocatedPerks.values().stream()
+                .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
+                .findFirst()
+                .map(PerkAllocation::getPerkType)
+                .orElse(null);
+        }
     }
     
     public PerkAllocation getCurrentActiveAbilityAllocation() {
-        return allocatedPerks.values().stream()
-            .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
-            .findFirst()
-            .orElse(null);
+        synchronized (allocatedPerks) {
+            return allocatedPerks.values().stream()
+                .filter(allocation -> ActiveAbilityHelper.isActiveAbility(allocation.getPerkType()))
+                .findFirst()
+                .orElse(null);
+        }
     }
     
     private void updateActiveAbilityData() {
@@ -511,8 +527,10 @@ public class PlayerAffinityData implements INBTSerializable<CompoundTag> {
         
         // Serialize allocated perks
         ListTag allocatedPerksTag = new ListTag();
-        for (PerkAllocation allocation : allocatedPerks.values()) {
-            allocatedPerksTag.add(allocation.serializeNBT());
+        synchronized (allocatedPerks) {
+            for (PerkAllocation allocation : allocatedPerks.values()) {
+                allocatedPerksTag.add(allocation.serializeNBT());
+            }
         }
         tag.put("allocatedPerks", allocatedPerksTag);
         
