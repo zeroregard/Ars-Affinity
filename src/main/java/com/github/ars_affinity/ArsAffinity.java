@@ -174,6 +174,7 @@ public class ArsAffinity {
     }
     
     private void onServerStopping(ServerStoppingEvent event) {
+        ParticleUpdateScheduler.shutdown();
         PlayerAffinityDataProvider.saveAllData();
         PlayerAffinityDataProvider.clearCache();
         WetTicksProvider.clearCache();
